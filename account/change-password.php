@@ -115,7 +115,7 @@
                                 <label for="user_phone" class="form-label">Confirm new password</label>
                                 <input type="password" name="confirm" class="form-control" id="confirm" required>
                             </div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-warning">Submit</button>
                         </form>
                         <a href="<?= PROOT; ?>account/settings">update profile >></a>
                     </section>

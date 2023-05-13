@@ -9,6 +9,11 @@ $nav_bg = 'bg-light';
 include ('inc/nav.inc.php');
 
 ?>
+<style>
+    .bg-primary {
+        background-color: orange !important;
+    }
+</style>
     <section class="pt-6 pt-md-8 pb-8 pb-md-9 bg-light">
         <div class="container-lg">
             <div class="row align-items-center">
@@ -18,12 +23,12 @@ include ('inc/nav.inc.php');
                 <div class="col-md-6 order-md-0 text-center text-md-start" data-aos="fade-up">
                     <h1 class="display-3 mb-4">
                         Need for paper. <br /> Use
-                        <span class="text-primary-light">Vonna.</span>
+                        <span class="text-warning">Vonna.</span>
                     </h1>
                     <p class="fs-lg">
                         Distribute comfort and satisfaction to Offices and Institutions when it comes to the need for Paper. 
                     </p>
-                    <a class="btn btn-primary-light lift" href="<?= PROOT; ?>auth/signup">
+                    <a class="btn btn-warning lift" href="<?= PROOT; ?>auth/signup">
                         Get Started
                     </a>
                     <a class="btn btn-white lift ms-3" href="<?= PROOT; ?>account/index">
@@ -78,7 +83,7 @@ include ('inc/nav.inc.php');
                     </h2>
                     <div class="row">
                         <div class="col-12 col-md-auto">
-                            <div class="icon text-primary-light mb-2">
+                            <div class="icon text-warning mb-2">
                                 <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h24v24H0z"/><path d="M6 9v6a3 3 0 003 3h6v.818C15 20.232 14.232 21 12.818 21H5.182C3.768 21 3 20.232 3 18.818v-7.636C3 9.768 3.768 9 5.182 9H6z" fill="#335EEA"/><path d="M10.182 4h7.636C19.232 4 20 4.768 20 6.182v7.636C20 15.232 19.232 16 17.818 16h-7.636C8.768 16 8 15.232 8 13.818V6.182C8 4.768 8.768 4 10.182 4z" fill="#335EEA" opacity=".3"/></g></svg>
                             </div>
                         </div>
@@ -93,7 +98,7 @@ include ('inc/nav.inc.php');
                     </div>
                     <div class="row">
                         <div class="col-12 col-md-auto">
-                            <div class="icon text-primary-light mb-2">
+                            <div class="icon text-warning mb-2">
                                 <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h24v24H0z"/><path d="M4 4l7.631-1.43a2 2 0 01.738 0L20 4v9.283a8.51 8.51 0 01-4 7.217l-3.47 2.169a1 1 0 01-1.06 0L8 20.5a8.51 8.51 0 01-4-7.217V4z" fill="#335EEA" opacity=".3"/><path d="M11.175 14.75a.946.946 0 01-.67-.287l-1.917-1.917a.926.926 0 010-1.342c.383-.383 1.006-.383 1.341 0l1.246 1.246 3.163-3.162a.926.926 0 011.341 0 .926.926 0 010 1.341l-3.833 3.834a.946.946 0 01-.671.287z" fill="#335EEA"/></g></svg>
                             </div>
                         </div>
@@ -213,7 +218,7 @@ include ('inc/nav.inc.php');
         <div class="container-lg">
             <div class="row justify-content-center">
                 <div class="col-md-10 col-lg-8 text-center">
-                    <h6 class="text-uppercase text-primary mb-5">
+                    <h6 class="text-uppercase text-warning mb-5">
                         Vonna Gh
                     </h6>
                     <h2 class="display-1 mb-4">
@@ -221,7 +226,7 @@ include ('inc/nav.inc.php');
                     </h2>
                     <p>Our Company is built to handle large supplies to Institutions such as Schools, Corporation as well as Enterprises who require the use of various forms of paper products.
                     </p>
-                    <a class="btn btn-primary lift" href="<?= PROOT; ?>auth/signup">
+                    <a class="btn btn-warning lift" href="<?= PROOT; ?>auth/signup">
                         Get Started
                     </a>
                 </div>

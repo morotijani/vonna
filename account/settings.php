@@ -137,7 +137,7 @@
                                 <label for="user_physical_address" class="form-label">Physical Address *</label>
                                 <input type="text" name="user_physical_address" class="form-control" id="user_physical_address" value="<?= $user_physical_address; ?>" required>
                             </div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-warning">Submit</button>
                         </form>
                         <a href="<?= PROOT; ?>account/change-password">change password >></a>
                     </section>

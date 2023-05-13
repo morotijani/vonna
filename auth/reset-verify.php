@@ -74,7 +74,7 @@ if ($userId != 0 && !empty($userId)) {
                             </label>
                             <input class="form-control" id="code" name="code" type="text" placeholder="Verify">
                         </div>
-                        <button class="btn w-100 btn-primary mb-2">
+                        <button class="btn w-100 btn-warning mb-2">
                             Verify
                         </button>
                         <a href="<?= PROOT; ?>auth/signin" class="">Cancel</a>

@@ -95,7 +95,7 @@
 			                </label>
 			                <input class="form-control" id="authEmail" name="authEmail" type="email" placeholder="Your email">
 			            </div>
-			            <button class="btn w-100 btn-primary mb-2"type="submit">
+			            <button class="btn w-100 btn-warning mb-2"type="submit">
 			                Resend Verification Email
 			            </button>
 			            <a href="<?= PROOT; ?>store/login" class="">Cancel</a>

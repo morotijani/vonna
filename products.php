@@ -20,7 +20,7 @@
                         Direct supply of quality papers,<br>
                         to instituitions at factory prices.
                     </p>
-                    <a class="btn btn-primary lift" href="<?= PROOT; ?>auth/signup">
+                    <a class="btn btn-warning lift" href="<?= PROOT; ?>auth/signup">
                         Create an Account
                     </a>
                 </div>
@@ -167,7 +167,7 @@
                 <div class="row justify-content-center">
                     <div class="col-md-10 col-lg-8 text-center">
                         <hr class="hr-sm bg-warning mx-auto mb-10 mb-md-12">
-                        <h6 class="text-uppercase text-primary mb-5">
+                        <h6 class="text-uppercase text-warning mb-5">
                             Order today
                         </h6>
                         <h2 class="display-1 mb-4">
@@ -176,7 +176,7 @@
                         <p>
                             Vonna is legally registered Enterprise which serves as a vehicle to adequately distribute comfort and satisfaction to Offices and Institutions when it comes to the need for Paper
                         </p>
-                        <a class="btn btn-primary lift" href="<?= PROOT; ?>account/index">
+                        <a class="btn btn-warning lift" href="<?= PROOT; ?>account/index">
                             Order Now
                         </a>
                     </div>

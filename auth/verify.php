@@ -24,7 +24,7 @@ if (user_is_logged_in()) {
                     <p class="text-muted">
                         A verification link has been sent to your email account. Please check your <b>spam folder</b> if not found in your <b>inbox</b> to verify your Vonna account.
                     </p>
-                    <a class="btn btn-primary" href="<?= PROOT . 'auth/signin'; ?>">
+                    <a class="btn btn-warning" href="<?= PROOT . 'auth/signin'; ?>">
                         Login
                     </a>
                 </div>

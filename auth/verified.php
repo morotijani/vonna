@@ -59,7 +59,7 @@
                     <p class="text-muted">
                        <?= $msg; ?>
                     </p>
-                    <a class="btn btn-primary" href="<?= PROOT . 'auth/signin'; ?>">
+                    <a class="btn btn-warning" href="<?= PROOT . 'auth/signin'; ?>">
                         Login
                     </a>
                 </div>

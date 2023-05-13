@@ -99,7 +99,7 @@ if ($userId != 0 && $code != 0) {
                                 </a>
                             </div>
                         </div>
-                        <button class="btn w-100 btn-primary mb-2" type="submit">
+                        <button class="btn w-100 btn-warning mb-2" type="submit">
                             Reset Password
                         </button>
                         <a href="<?= PROOT; ?>auth/signin" class="">Cancel</a>

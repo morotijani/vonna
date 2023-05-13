@@ -13,7 +13,7 @@
         <div class="container-lg">
             <div class="row justify-content-center">
                 <div class="col-md-10 col-lg-8">
-                    <h6 class="text-uppercase text-primary text-center mb-5">
+                    <h6 class="text-uppercase text-warning text-center mb-5">
                         Vonna
                     </h6>
                     <h1 class="display-3 text-center mb-4">

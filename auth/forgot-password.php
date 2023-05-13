@@ -99,7 +99,7 @@
                             </label>
                             <input class="form-control" id="email" name="email" type="email" placeholder="Your email">
                         </div>
-                        <button class="btn w-100 btn-primary mb-2">
+                        <button class="btn w-100 btn-warning mb-2">
                             Recover Password
                         </button>
                         <a href="<?= PROOT; ?>auth/signin" class="">Cancel</a>

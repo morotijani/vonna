@@ -113,7 +113,7 @@
                                 </a>
                             </div>
                         </div>
-                        <button type="submit" class="btn w-100 btn-primary" name="submit_signup" id="submit_signup">
+                        <button type="submit" class="btn w-100 btn-warning" name="submit_signup" id="submit_signup">
                             Sign up
                         </button>
                     </form>

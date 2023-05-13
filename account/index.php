@@ -198,7 +198,7 @@
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn w-100 btn-primary" id="orderButton" name="orderButton" disabled>
+                            <button type="submit" class="btn w-100 btn-warning" id="orderButton" name="orderButton" disabled>
                                 Order Now
                             </button>
                         </form>

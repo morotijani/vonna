@@ -169,7 +169,7 @@
 										      	<div class="modal-footer">
 										        	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 										        	<a href="javascript:;" class="btn btn-warning" onclick="(confirm('Customer will be <?= ($user['user_trash'] == 0) ? 'Deactivated' : 'Activated'; ?>!') ? window.location = '<?= PROOT; ?>adminvonna/Customers?status=<?= ($user['user_trash'] == 0) ? '1' : '0'; ?>&id=<?= $user['user_id']; ?>' : '');"><?= ($user['user_trash'] == 0) ? 'Deactivate' : 'Activate'; ?></a>
-										        	<a href="javascript:;" class="btn btn-danger" onclick="(confirm('Customer will be deleted and any of his/her orders!') ? window.location = '<?= PROOT; ?>adminvonna/Customers?delete=<?= $user['user_id']; ?>' : '');">Delete</a>
+										        	<a href="javascript:;" class="btn btn-danger" onclick="(confirm('Customer will be deleted and any of his/her orders!') ? window.location = '<?= PROOT; ?>adminvonna/Customers/<?= $user['user_id']; ?>' : '');">Delete</a>
 										      	</div>
 										    </div>
 										 </div>

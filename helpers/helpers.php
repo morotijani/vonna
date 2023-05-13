@@ -581,7 +581,7 @@ function get_all_faqs() {
 			$output .= '
 				<tr>
 					<td>
-						<a href="Faq?edit='.$row["id"].'" class="btn btn-sm btn-secondary"><i data-feather="edit"></i></a>
+						<a href="'. PROOT .'adminvonna/Faq/'.$row["id"].'" class="btn btn-sm btn-secondary"><i data-feather="edit"></i></a>
 					</td>
 					<td>'.ucwords($row["faq_head"]).'</td>
 					<td>'.ucwords($row["faq_body"]).'</td>

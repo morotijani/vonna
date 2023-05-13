@@ -282,7 +282,7 @@
 						  				<td><?= ucwords($order['user_fullname']); ?></td>
 						  				<td><?= pretty_date($order['orders_orderdate']); ?></td>
 						  				<td>
-						  					<a href="<?= PROOT; ?>adminvonna/Orders?details=<?= $order['orders_id']; ?>" class="btn btn-warning">Details</a>						  						
+						  					<a href="<?= PROOT; ?>adminvonna/Orders/<?= $order['orders_id']; ?>" class="btn btn-warning">Details</a>						  						
 						  				</td>
 						  			</tr>
 					  			<?php $i++; endforeach; ?>

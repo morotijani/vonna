@@ -16,6 +16,35 @@
 	$contact_count = $statement->rowCount();
 	$contacts = $statement->fetchAll();
 
+
+	// Delete Customer
+	if (isset($_GET['delete']) && !empty($_GET['delete'])) {
+		$id = sanitize((int)$_GET['delete']);
+		
+		$sql = "
+			SELECT * FROM vonna_contact 
+			WHERE contact_id = ? 
+			LIMIT 1
+		";
+		$statement = $conn->prepare($sql);
+		$statement->execute([$id]);
+		if ($statement->rowCount() > 0) {
+			$delete = "
+				DELETE FROM vonna_contact 
+				WHERE contact_id = ? 
+			";
+			$statement = $conn->prepare($delete);
+			$result = $statement->execute([$id]);
+			if ($result) {
+				$_SESSION['flash_success'] = 'Message deleted!';
+				redirect(PROOT . 'adminvonna/Contacts');
+				
+			}
+		} else {
+			$_SESSION['flash_error'] = 'Message not found!';
+			redirect(PROOT . 'adminvonna/Contacts');
+		}
+	}
 ?>
 
 <!DOCTYPE html>
@@ -255,7 +284,7 @@
 						  				<td><?= nl2br($contact['contact_message']); ?></td>
 						  				<td><?= pretty_date($contact['contact_date']); ?></td>
 						  				<td>
-						  					<a href="javascript:;" class="btn btn-warning">Delete</a>						  						
+						  					<a href="javascript:;"  onclick="(confirm('Message will be deleted!') ? window.location = '<?= PROOT; ?>adminvonna/Contacts/<?= $contact['contact_id']; ?>' : '');" class="btn btn-warning">Delete</a>						  						
 						  				</td>
 						  			</tr>
 

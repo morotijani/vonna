@@ -155,7 +155,7 @@
                                             <td><?= pretty_date($order['orders_orderdate']); ?></td>
                                             <td>
                                                 <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#Modal<?= $order['orders_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
-                                                <a href="?delete=<?= $order['orders_id']; ?>" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
+                                                <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/orders/<?= $order['orders_id']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
                                             </td>
                                         </tr>
 

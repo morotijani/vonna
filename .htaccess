@@ -11,8 +11,30 @@ RewriteRule ^collection/([a-zA-Z-0-9-]+)/ collection.php?brand=$1 [NC,L]
 
 RewriteRule ^shop/account-address/([0-9a-zA-Z]+)$ shop/account-address.php?edit=$1 [NC,L]
 
+#Delete order
+RewriteRule ^account/orders/([0-9a-zA-Z]+)$ account/orders.php?deleted=$1 [NC,L]
+
+#verify account
 RewriteRule ^auth/verified/([0-9a-zA-Z]+)$ auth/verified.php?vericode=$1 [NC,L]
 
+#ADMIN, order details
+RewriteRule ^adminvonna/Orders/([0-9a-zA-Z]+)$ adminvonna/Orders.php?details=$1 [NC,L]
+#ADMIN, paid order
+#RewriteRule ^adminvonna/Orders/([0-9a-zA-Z]+)$ adminvonna/Orders.php?paid=$1 [NC,L]
+#ADMIN, ordered order
+#RewriteRule ^adminvonna/Orders/([0-9a-zA-Z]+)$ adminvonna/Orders.php?ordered=$1 [NC,L]
+
+#ADMIN, delete customer
+RewriteRule ^adminvonna/Customers/([0-9a-zA-Z]+)$ adminvonna/Customers.php?delete=$1 [NC,L]
+
+#ADMIN, delete contact
+RewriteRule ^adminvonna/Contacts/([0-9a-zA-Z]+)$ adminvonna/Contacts.php?delete=$1 [NC,L]
+
+#ADMIN, edit faq
+RewriteRule ^adminvonna/Faq/([0-9a-zA-Z]+)$ adminvonna/Faq.php?edit=$1 [NC,L]
+
+#ADMIN, delete faq
+#RewriteRule ^adminvonna/Faq/([0-9a-zA-Z]+)$ adminvonna/Faq.php?trash=$1 [NC,L]
 
 RewriteCond %{REQUEST_FILENAME} !-d
 
@@ -20,7 +42,7 @@ RewriteCond %{REQUEST_FILENAME}\.php -f
 
 RewriteRule ^(.*)$ $1.php
 
-RewriteCond $1 !^(media|admin|shop|helpers|fonts|dist|controller|connection|robots\.txt)
+RewriteCond $1 !^(media|adminvonna|helpers|fonts|dist|controller|connection|robots\.txt)
 
 RewriteRule ^([^\.]+)$ $1.php [NC,L]
 

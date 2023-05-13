@@ -79,7 +79,7 @@ if ($_POST) {
                     <p>Best Regards, Vonna Gh.</p>
                 ';
                 send_email($contact_name, $contact_email, 'Message received, Vonna Gh.', $message);
-                echo js_alert("Message sent successfully.");
+                $_SESSION['flash_success'] = "Message sent successfully.";
                 redirect(PROOT . "contact");
             }
         //}
@@ -148,7 +148,8 @@ if ($_POST) {
                     </div>
 
                     <!-- Form -->
-                    <form method="POST">
+                    <form method="POST" id="contactForm">
+                        <?= $flash; ?>
                         <div class="row">
                             <div class="col-md-6">
 

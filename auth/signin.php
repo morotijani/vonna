@@ -50,7 +50,7 @@ if (isset($_POST['submit_login'])) {
                     }
                 }
             } else {
-                $errors = '<div class="alert alert-light text-danger" role="alert">User account Terminated.</div>';
+                $errors = '<div class="alert alert-light text-danger" role="alert">User account Deactivated.</div>';
             }
         }
     }
@@ -76,7 +76,7 @@ if (isset($_POST['submit_login'])) {
                             <label class="visually-hidden" for="authEmail">
                                 Your email
                             </label>
-                            <input class="form-control" id="authEmail" name="authEmail" type="email" placeholder="Your email">
+                            <input class="form-control" id="authEmail" name="authEmail" type="email" placeholder="Your email" autocomplete="nope" autofocus>
                         </div>
                         <div class="form-group">
                             <div class="input-group inpit-group-merge">

@@ -94,15 +94,15 @@
                         </h2>
                         <form method="POST">
                             <div class="mb-3">
-                                <label for="user_fullname" class="form-label">Full name</label>
+                                <label for="user_fullname" class="form-label">Full name *</label>
                                 <input type="text" class="form-control" id="user_fullname" name="user_fullname" value="<?= $user_fullname; ?>" required>
                             </div>
                             <div class="mb-3">
-                                <label for="user_email" class="form-label">Email address</label>
+                                <label for="user_email" class="form-label">Email address *</label>
                                 <input type="email" class="form-control" id="user_email" name="user_email" value="<?= $user_email?>" required>
                             </div>
                             <div class="mb-3">
-                                <label for="user_phone" class="form-label">Phone</label>
+                                <label for="user_phone" class="form-label">Phone *</label>
                                 <input type="text" name="user_phone" class="form-control" id="user_phone" value="<?= $user_phone; ?>" required>
                             </div>
                             <div class="mb-3">
@@ -118,23 +118,23 @@
                                 <input type="text" name="user_size_of_instituition" class="form-control" id="user_size_of_instituition" value="<?= $user_size_of_instituition; ?>">
                             </div>
                             <div class="mb-3">
-                                <label for="user_country" class="form-label">Country</label>
+                                <label for="user_country" class="form-label">Country *</label>
                                 <input type="text" name="user_country" class="form-control" id="user_country" value="<?= $user_country; ?>" required>
                             </div>
                             <div class="mb-3">
-                                <label for="user_state" class="form-label">State/Region</label>
+                                <label for="user_state" class="form-label">State/Region *</label>
                                 <input type="text" name="user_state" class="form-control" id="user_state" value="<?= $user_state; ?>" required>
                             </div>
                             <div class="mb-3">
-                                <label for="user_city" class="form-label">City</label>
+                                <label for="user_city" class="form-label">City *</label>
                                 <input type="text" name="user_city" class="form-control" id="user_city" value="<?= $user_city; ?>" required>
                             </div>
                             <div class="mb-3">
-                                <label for="user_postal_address" class="form-label">Postal Address</label>
+                                <label for="user_postal_address" class="form-label">Postal Address *</label>
                                 <input type="text" name="user_postal_address" class="form-control" id="user_postal_address" value="<?= $user_postal_address; ?>" required>
                             </div>
                             <div class="mb-3">
-                                <label for="user_physical_address" class="form-label">Physical Address</label>
+                                <label for="user_physical_address" class="form-label">Physical Address *</label>
                                 <input type="text" name="user_physical_address" class="form-control" id="user_physical_address" value="<?= $user_physical_address; ?>" required>
                             </div>
                             <button type="submit" class="btn btn-primary">Submit</button>

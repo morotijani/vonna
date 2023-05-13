@@ -27,7 +27,7 @@
                         Vonna Ghana
                     </h2>
                     <p class="mb-6">
-                      Vonna is legally registered Enterprise which serves as a vehicle to adequately distribute comfort and satisfaction to Offices and Institutions when it comes to the need for Paper. We work in conjunction with paper Mill Factories to make various sizes of paper available at factory prices. Our Company is built to handle large supplies to Institutions such as Schools, Corporation as well as Enterprises who require the use of various forms of paper products.
+                      <?= nl2br($about_info); ?>
                     </p>
                 </div>
             </div>

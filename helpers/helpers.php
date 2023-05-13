@@ -275,14 +275,14 @@ function getTitle() {
 
 // Sessions For login
 function adminLogin($admin_id) {
-	$_SESSION['MFAdmin'] = $admin_id;
+	$_SESSION['VNAdmin'] = $admin_id;
 	global $conn;
 	$data = array(
 		':admin_last_login' => date("Y-m-d H:i:s"),
 		':admin_id' => (int)$admin_id
 	);
 	$query = "
-		UPDATE mifo_admin 
+		UPDATE vonna_admin 
 		SET admin_last_login = :admin_last_login 
 		WHERE admin_id = :admin_id";
 	$statement = $conn->prepare($query);
@@ -294,14 +294,14 @@ function adminLogin($admin_id) {
 }
 
 function admin_is_logged_in(){
-	if (isset($_SESSION['MFAdmin']) && $_SESSION['MFAdmin'] > 0) {
+	if (isset($_SESSION['VNAdmin']) && $_SESSION['VNAdmin'] > 0) {
 		return true;
 	}
 	return false;
 }
 
 // Redirect admin if !logged in
-function admn_login_redirect($url = 'login') {
+function admin_login_redirect($url = 'login') {
 	$_SESSION['flash_error'] = '<div class="text-center" id="temporary" style="margin-top: 60px;">You must be logged in to access that page.</div>';
 	header('Location: '.$url);
 }
@@ -421,8 +421,8 @@ function  get_all_product($product_trash = '') {
 		ON mifo_brand.brand_id = mifo_product.product_brand  
 		INNER JOIN mifo_category
 		ON mifo_category.category_id = mifo_product.product_category
-		LEFT JOIN mifo_admin
-		ON mifo_admin.admin_id = mifo_product.product_added_by
+		LEFT JOIN vonna_admin
+		ON vonna_admin.admin_id = mifo_product.product_added_by
 		WHERE mifo_product.product_trash = :product_trash
 		AND mifo_category.category_trash = :category_trash
 		ORDER BY mifo_product.product_id DESC
@@ -568,7 +568,7 @@ function get_all_faqs() {
 	$output = '';
 
 	$query = "
-		SELECT * FROM mifo_faq 
+		SELECT * FROM vonna_faq 
 		ORDER BY id DESC
 	";
 	$statement = $conn->prepare($query);
@@ -578,49 +578,24 @@ function get_all_faqs() {
 
 	if ($count_row > 0) {
 		foreach ($result as $row) {
-			$parent_id = (int)$row["id"];
-			$child = $conn->query("
-				SELECT * FROM mifo_faq_details 
-				WHERE faq_parent = {$parent_id}
-			")->fetchAll();
-
-
 			$output .= '
-				<tr class="bg-warning">
+				<tr>
 					<td>
-						<a href="admin.faq?edit-parent='.$row["id"].'" class="btn btn-sm btn-secondary"><i data-feather="edit"></i></a>
+						<a href="Faq?edit='.$row["id"].'" class="btn btn-sm btn-secondary"><i data-feather="edit"></i></a>
 					</td>
-					<td>'.ucwords($row["faq_heading"]).'</td>
-					<td>Parent</td>
-					<td>'.pretty_date($row["faq_added_date"]).'</td>
+					<td>'.ucwords($row["faq_head"]).'</td>
+					<td>'.ucwords($row["faq_body"]).'</td>
+					<td>'.pretty_date($row["createdAt"]).'</td>
 					<td>
 						<span id="'.$row["id"].'" onclick="delete_faq_all(id = '.$row["id"].');" class="btn btn-sm btn-light"><i data-feather="trash-2"></i></span>
 					</td>
 				</tr>
 			';
-			foreach ($child as $child_row) {
-				// code...
-				$output .= '
-
-				<tr class="bg-light">
-					<td>
-						<a href="admin.faq?edit='.$child_row["id"].'&parent='.$row['id'].'" class="btn btn-sm btn-secondary"><i data-feather="edit"></i></a>
-					</td>
-					<td>'.ucwords($row["faq_heading"]).'</td>
-					<td>'.ucwords($child_row["faq_question"]).'</td>
-					<td>'.ucwords($child_row["faq_answer"]).'</td>
-					<td>'.pretty_date($child_row["faq_added_date"]).'</td>
-					<td>
-						<span id="'.$child_row["faq_parent"].'" onclick="delete_faq(id = '.$child_row["id"].');" class="btn btn-sm btn-light">Delete</span>
-						</td>
-					</tr>
-				';
-			}
 		}
 	} else {
 		$output = '
 			<tr>
-				<td colspan="4">No category found.</td>
+				<td colspan="5">No data found.</td>
 			</tr>
 		';
 	}
@@ -632,10 +607,8 @@ function faq_exist($id) {
 	global $conn;
 
 	$query = "
-        SELECT * FROM mifo_faq_details 
-        INNER JOIN mifo_faq 
-        ON mifo_faq.id = mifo_faq_details.faq_parent
-        WHERE mifo_faq_details.id = :id 
+        SELECT * FROM vonna_faq 
+        WHERE id = :id 
         LIMIT 1
     ";
     $statement = $conn->prepare($query);
@@ -702,7 +675,7 @@ function get_all_admins() {
 	$output = '';
 
 	$query = "
-		SELECT * FROM mifo_admin 
+		SELECT * FROM vonna_admin 
 		WHERE admin_trash = :admin_trash
 	";
 	$statement = $conn->prepare($query);
@@ -747,7 +720,7 @@ function get_admin_profile() {
 	$output = '';
 
 	$query = "
-		SELECT * FROM mifo_admin 
+		SELECT * FROM vonna_admin 
 		WHERE admin_id = :admin_id 
 		AND admin_trash = :admin_trash 
 		LIMIT 1

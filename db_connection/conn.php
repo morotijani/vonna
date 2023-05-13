@@ -47,6 +47,9 @@
 	$street_1 = '';
 	$street_2 = '';
 	$about_info = '';
+	$about_facebook = '';
+	$about_twitter = '';
+	$about_instagram = '';
 	foreach ($site_result as $site_row) {
 	    $country = ucwords($site_row["about_country"]);
 	    $state = ucwords($site_row["about_state"]);
@@ -59,6 +62,9 @@
 	    $street_2 = ucwords($site_row["about_street2"]);
 	    
         $about_info = $site_row['about_info'];
+        $about_facebook = $site_row['about_facebook'];
+        $about_twitter = $site_row['about_twitter'];
+        $about_instagram = $site_row['about_instagram'];
 	}
 
  	require BASEURL.'vendor/autoload.php';

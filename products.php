@@ -17,8 +17,8 @@
                         One stop to run your <span class="text-underline-warning">paper works</span>.
                     </h1>
                     <p class="fs-lg text-muted">
-                        From point of sale to payroll,<br>
-                        we got you covered for everything.
+                        Direct supply of quality papers,<br>
+                        to instituitions at factory prices.
                     </p>
                     <a class="btn btn-primary lift" href="<?= PROOT; ?>auth/signup">
                         Create an Account

@@ -1,5 +1,5 @@
 <?php 
-    // 404 PAGE
+    // INDEX PAGE
     //echo md5(uniqid(mt_rand(), true)) . '<br>';
     //echo time() . mt_rand() . 23;
     require_once ('./../db_connection/conn.php');
@@ -23,7 +23,7 @@
         $a_type = '';
         $color = '';
 
-        $userid = 1;
+        $userid = $user_id;
         $orderid = time() . mt_rand() . $userid;
         $order_date = date('Y-m-d H:i:s');
 

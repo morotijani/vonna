@@ -74,7 +74,7 @@ include ('inc/nav.inc.php');
                 </div>
                 <div class="col-md-6 col-xl-5 order-md-0 text-center text-md-start">
                     <h2 class="display-4 mb-6">
-                        Simple, accessible for all.
+                        Anything, paper.
                     </h2>
                     <div class="row">
                         <div class="col-12 col-md-auto">

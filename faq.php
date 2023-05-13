@@ -8,6 +8,7 @@ include ('inc/header.inc.php');
 $nav_bg = '';
 include ('inc/nav.inc.php');
 
+$rows = $conn->query('SELECT * FROM vonna_faq')->fetchAll();
 ?>
 
 
@@ -41,56 +42,18 @@ include ('inc/nav.inc.php');
         	<div class="card rounded-top-start-3 rounded-bottom-end-3" style="z-index: 1;">
               	<div class="card-body">
                 	<div class="list-group list-group-lg list-group-flush my-n7" id="faq">
-                  		<div class="list-group-item">
-                    		<a class="collapse-toggle fs-lg fw-bold text-decoration-none text-reset" data-bs-toggle="collapse" href="#faqOne" role="button" aria-expanded="true" aria-controls="faqOne">
-                      			What is Vonna About?
-                    		</a>
-                    		<div class="collapse show" id="faqOne" data-bs-parent="#faq">
-                      			<p class="mt-2 mb-0">
-                        			Vonna is legally registered Enterprise which serves as a vehicle to adequately distribute comfort and satisfaction to Offices and Institutions when it comes to the need for Paper.
-                      			</p>
-                    		</div>
-                  		</div>
-		                <div class="list-group-item">
-		                    <a class="collapse-toggle fs-lg fw-bold text-decoration-none text-reset" data-bs-toggle="collapse" href="#faqTwo" role="button" aria-expanded="false" aria-controls="faqTwo">
-		                     	Does Vonna work with any paper mill factories?
-		                    </a>
-		                    <div class="collapse" id="faqTwo" data-bs-parent="#faq">
-		                      	<p class="mt-2 mb-0">
-		                        	Yes. We work in conjunction with paper Mill Factories to make various sizes of paper available at factory prices.
-		                     	</p>
-		                    </div>
-		                </div>
-		                <div class="list-group-item">
-		                    <a class="collapse-toggle fs-lg fw-bold text-decoration-none text-reset" data-bs-toggle="collapse" href="#faqThree" role="button" aria-expanded="false" aria-controls="faqThree">
-	                      		Their supplies
-	                    	</a>
-	                    	<div class="collapse" id="faqThree" data-bs-parent="#faq">
-	                      		<p class="mt-2 mb-0">
-	                        		Our Company is built to handle large supplies to Institutions such as Schools, Corporation as well as Enterprises who require the use of various forms of paper products.
-	                      		</p>
-	                    	</div>
-		                </div>
-		                <div class="list-group-item">
-		                    <a class="collapse-toggle fs-lg fw-bold text-decoration-none text-reset" data-bs-toggle="collapse" href="#faqFour" role="button" aria-expanded="false" aria-controls="faqFour">
-		                      	How to make an order?
-		                    </a>
-		                    <div class="collapse" id="faqFour" data-bs-parent="#faq">
-		                      	<p class="mt-2 mb-0">
-		                        	Create and verify account, after log into your account and start making orders.  
-		                      	</p>
-		                    </div>
-                  		</div>
-		                <div class="list-group-item">
-		                    <a class="collapse-toggle fs-lg fw-bold text-decoration-none text-reset" data-bs-toggle="collapse" href="#faqFive" role="button" aria-expanded="false" aria-controls="faqFive">
-		                      	How to purchase product?
-		                    </a>
-		                    <div class="collapse" id="faqFive" data-bs-parent="#faq">
-		                      	<p class="mt-2 mb-0">
-		                        	After a product order, you will make payment after delivery or before delivery either cash or digital. 
-		                      	</p>
-		                    </div>
-                  		</div>
+                		<?php foreach ($rows as $row): ?>
+	                  		<div class="list-group-item">
+	                    		<a class="collapse-toggle fs-lg fw-bold text-decoration-none text-reset" data-bs-toggle="collapse" href="#faq<?= $row['id']; ?>" role="button" aria-expanded="true" aria-controls="faq<?= $row['id']; ?>">
+	                      			<?= $row['faq_head']; ?>
+	                    		</a>
+	                    		<div class="collapse" id="faq<?= $row['id']; ?>" data-bs-parent="#faq">
+	                      			<p class="mt-2 mb-0">
+	                        			<?= nl2br($row['faq_body']); ?>
+	                      			</p>
+	                    		</div>
+	                  		</div>
+                		<?php endforeach; ?>
                 	</div>
                 </div>
     		</div>

@@ -91,13 +91,13 @@
                             <label class="visually-hidden" for="authFullname">
                                 Your Full name
                             </label>
-                            <input class="form-control" id="authFullname" name="authFullname" type="text" placeholder="Your Full name" value="<?= $fullname; ?>">
+                            <input class="form-control" id="authFullname" name="authFullname" type="text" placeholder="Your Full name" value="<?= $fullname; ?>" autofocus>
                         </div>
                         <div class="form-group">
                             <label class="visually-hidden" for="authEmail">
                                 Your email
                             </label>
-                            <input class="form-control" id="authEmail" name="authEmail" type="email" placeholder="Your email" value="<?= $email; ?>">
+                            <input class="form-control" id="authEmail" name="authEmail" type="email" placeholder="Your email" value="<?= $email; ?>" autocomplete>
                         </div>
                         <div class="form-group">
                             <label class="visually-hidden" for="authPhone">

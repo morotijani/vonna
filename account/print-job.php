@@ -77,131 +77,141 @@
     }
 
 ?>
+    <header class="py-3 mb-3 border-bottom">
+        <div class="container d-grid gap-3 align-items-center" style="grid-template-columns: 1fr 2fr;">
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-body-emphasis text-decoration-none dropdown-toggle show" data-bs-toggle="dropdown" aria-expanded="true">
+                    VONNA
+                    <!-- <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg> -->
+                </a>
+                <ul class="dropdown-menu text-small shadow" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 34px);" data-popper-placement="bottom-start">
+                    <li><a class="dropdown-item active" href="<?= PROOT; ?>account/index" aria-current="page">Home</a></li>
+                    <li><a class="dropdown-item" href="<?= PROOT; ?>account/index">Order</a></li>
+                    <li><a class="dropdown-item" href="<?= PROOT; ?>account/print-job">Print Job</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="<?= PROOT; ?>account/orders">Orders</a></li>
+                    <li><a class="dropdown-item" href="<?= PROOT; ?>index">Visit Site</a></li>
+                </ul>
+            </div>
+
+            <div class="d-flex align-items-center">
+                <form class="w-100 me-3" role="search">
+                    <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
+                </form>
+
+                <div class="flex-shrink-0 dropdown">
+                    <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://github.com/mdo.png" alt="mdo" class="rounded-circle" width="32" height="32">
+                    </a>
+                    <ul class="dropdown-menu text-small shadow" style="">
+                        <li><a class="dropdown-item" href="<?= PROOT; ?>account/settings">Settings</a></li>
+                        <li><a class="dropdown-item" href="<?= PROOT; ?>account/profile">Profile</a></li>
+                        <li><a class="dropdown-item" href="<?= PROOT; ?>account/change-password">Change Password</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="<?= PROOT; ?>auth/logout">Sign out</a></li>
+                  </ul>
+                </div>
+            </div>
+        </div>
+    </header>
 
     <!-- BODY -->
     <main class="">
         <?= $flash; ?>
         <div class="container-lg d-flex flex-column">
-            <div class="row align-items-start">
-                <div class="col-lg-3 col-xl-2">
-                    <div class="my-6 my-md-9 px-lg-8 border-start">
-
-                        <!-- List -->
-                        <ul class="list-unstyled fs-xs mb-0">
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>index">Visit Site</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/index">Order</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/print-job">Print job</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/orders">Orders</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/profile">Profile</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/settings">Settings</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/change-password">Change Password</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>auth/logout">Logout</a>
-                            </li>
-                        </ul>
-
-                    </div>
-                </div>
-                <div class="col-lg-9 col-xl-8 offset-lg-3 offset-xl-2 py-6 py-md-9">
+            <div class="row align-items-start justify-content-center">
+                <div class="col-lg-12 py-6 py-md-9">
                     <section class="py-1">
                         <h2 class="display-3 text-center mb-4">
-                            Make An <span class="text-underline-warning">Order</span>
+                            Print <span class="text-underline-warning">job</span>
                         </h2>
-                        <form id="orderForm" method="POST">
+                        <form id="printjobForm" method="POST">
                             <div class="form-group">
-                                <label class="visually-hidden" for="product">
-                                    What item do you want:
+                                <label class="visually-hidden" for="print-type">
+                                    what print job do you want?
                                 </label>
-                                <select class="form-control" id="product" name="product" type="text">
-                                    <option value="">What item do you want:</option>
-                                    <option value="Plain Paper">Plain Paper</option>
-                                    <option value="Ruled Paper">Ruled Paper</option>
-                                    <option value="Flip Chart">Flip Chart</option>
-                                    <option value="Notepad">Notepad</option>
-                                    <option value="Envelope">Envelope</option>
+                                <select class="form-control" id="print-type" name="print-type" type="text">
+                                    <option value="">what print job do you want?</option>
+                                    <option>Examination questions</option>
+                                    <option>Thesis</option>
+                                    <option>Fliers</option>
+                                    <option>Banners</option>
+                                    <option>Receipt books</option>
+                                    <option>Invoice</option>
+                                    <option>Customized office Files</option>
                                 </select>
                             </div>
+ 
+                            <div class="exams d-none">
+                                <table class="table table-sm" id="dynamic_field">  
+                                    <tr>  
+                                        <td><input type="text" name="name-of-subject[]" placeholder="Name of subject" class="form-control name-of-subject" /></td>  
+                                        <td><input type="number" min='0' name="number-to-be-printed[]" placeholder="Number to be printed" class="form-control number-to-be-printed" /></td>  
+                                        <td>
+                                            <select type="text" name="level[]" placeholder="Enter your Name" class="form-control level">
+                                                <option>Level</option>
+                                                <option>Tertiary</option>
+                                                <option>SHS</option>
+                                                <option>JHS</option>
+                                                <option>Primary</option>
+                                                <option>Kindargarten</option>
+                                                <option>Nursery</option>
+                                            </select>
+                                        </td>  
+                                        <td><input type="text" name="class-or-form[]" placeholder="Class/Form" class="form-control class-or-form" /></td>  
+                                        <td><button type="button" name="add" id="add" class="btn btn-sm btn-success">Add subject</button></td>  
+                                    </tr>  
+                                </table>
 
-                            <div id="plainpaper" class="d-none">
                                 <div class="form-group">
-                                    <select class="form-control" id="plain_A_type" name="plain_A_type" type="text">
-                                        <option value="">What size of paper would you need:</option>
-                                        <option value="A4">A4</option>
-                                        <option value="A3">A3</option>
-                                        <option value="A1">A1</option>
-                                    </select>
+                                    <label for="">Do you have the questions typed already?</label>
+                                    <br>
+                                    <input type="radio" class="" name="typed-already" value="Yes">
+                                    <label for="">Yes</label>
+                                    <br>
+                                    <input type="radio" class="" name="typed-already" value="Yes">
+                                    <label for="">No</label>
                                 </div>
-                                <div class="input-group form-group">
-                                    <select type="text" class="form-control" name="plainpaper_type" id="plainpaper_type">
-                                        <option value="">What quantity would you want</option>
-                                        <option value="Rim(s)">Rim(s)</option>
-                                        <option value="Box(es)">Box(es)</option>
-                                    </select>
-                                    <span class="input-group-text">&</span>
-                                    <input type="number" min="1" class="form-control" name="plainpaper_qty" id="plainpaper_qty" placeholder="Quantity" aria-label="Server">
-                                </div>
-                            </div>
 
-                            <div id="ruledpaper" class="d-none">
+                                <div class="form-group d-none yes-typed">
+                                    <label for="">If yes, upload your typed work here?</label>
+                                    <input type="file" name="upload-typed-work" class="form-control">
+                                </div>
+
+                                <div class="form-group d-none no-typed">
+                                    <label for="">If no, Do you want us to type for you?</label>
+                                    <br>
+                                    <input type="radio" class="" name="want-us-to-type" value="Yes">
+                                    <label for="">Yes</label>
+                                    <br>
+                                    <input type="radio" class="" name="want-us-to-type" value="Yes">
+                                    <label for="">No</label>
+                                </div>
+
                                 <div class="form-group">
-                                    <label class="visually-hidden" for="ruledpaper_qty">
-                                        Ruled Paper
-                                    </label>
-                                    <input type="number" min="1" class="form-control" name="ruledpaper_qty" id="ruledpaper_qty" placeholder="Quantity" aria-label="Server">
-                                </div>
-                            </div>
-
-                            <div id="flipchart" class="d-none">
-                                <div class="input-group form-group">
-                                    <input type="text" class="form-control" name="flipchart_size" id="flipchart_size" placeholder="What size do you want:" aria-label="Server">
-                                    <span class="input-group-text">&</span>
-                                    <input type="number" min="1" class="form-control" name="flipchart_qty" id="flipchart_qty" placeholder="Quantity" aria-label="Server">
-                                </div>
-                            </div>
-
-                            <div id="notepad" class="d-none">
-                                <div class="input-group form-group">
-                                    <input type="text" min="1" class="form-control" name="notepad_size" id="notepad_size" placeholder="What size do you want:" aria-label="Server">
-                                    <span class="input-group-text">&</span>
-                                    <input type="number" min="1" class="form-control" name="notepad_qty" id="notepad_qty" placeholder="Quantity" aria-label="Server">
-                                </div>
-                            </div>
-
-                            <div id="envelope" class="d-none">
-                                <div class="input-group form-group">
-                                    <select class="form-control" id="envelope_color" name="envelope_color" type="text">
-                                        <option value="">What color of Envelopes would you want:</option>
-                                        <option value="Brown">Brown</option>
-                                        <option value="White">White</option>
+                                    <select name="when-to-be-delivered" id="" class="form-control">
+                                        <option value="">When do you want the print job delivered?</option>
+                                        <option>Hours</option>
+                                        <option>Days</option>
                                     </select>
-                                    <span class="input-group-text">&</span>
-                                    <input type="number" min="1" class="form-control" name="envelope_qty" id="envelope_qty" placeholder="Quantity" aria-label="Server">
                                 </div>
+
                                 <div class="form-group">
-                                    <select class="form-control" id="envelope_type" name="envelope_type" type="text">
-                                        <option value="">What size of Envelope do you want:</option>
-                                        <option value="A4">A4</option>
-                                        <option value="A3">A3</option>
-                                        <option value="A1">A1</option>
-                                    </select>
+                                    <label for="">Enter devlivery Address here</label>
+                                    <input type="text" name="delivery-address-1" class="form-control" id="" placeholder="Receipient Contact 1">
+                                    <br>
+                                    <input type="text" name="delivery-address-2" class="form-control" id="" placeholder="Receipient Contact 2">
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn w-100 btn-warning" id="orderButton" name="orderButton" disabled>
+                            <div class="thesis d-none"></div>
+                            <div class="fliers d-none"></div>
+                            <div class="banners d-none"></div>
+                            <div class="receipt d-none"></div>
+                            <div class="invoice d-none"></div>
+                            <div class="customized d-none"></div>
+
+                            <button type="submit" class="btn w-100 btn-warning" id="printjobSubmitButton" name="printjobSubmitButton" disabled>
                                 Order Now
                             </button>
                         </form>
@@ -230,6 +240,69 @@
         }
 
         $(document).ready(function() {
+
+            $("#print-type").change(function(e) {
+                event.preventDefault()
+                var printType = $("#print-type option:selected").text();
+
+                if (printType == 'Examination questions') {
+                    $('.exams').removeClass('d-none');
+
+                    var i = 1;  
+                    $('#add').click(function() {  
+                        i++;  
+                        $('#dynamic_field').append('<tr id="row'+i+'"><td><input type="text" name="name[]" placeholder="Enter your Name" class="form-control name_list" /></td><td><button type="button" name="remove" id="'+i+'" class="btn btn-sm btn-danger btn_remove">X</button></td></tr>');  
+                        $('#dynamic_field').append(`
+                            <tr id='row'+i+'"><td><input type="text" name="name[]" placeholder="Enter your Name" class="form-control name_list" /></td><td><button type="button" name="remove" id="'+i+'" class="btn btn-sm btn-danger btn_remove">X</button></td></tr>');  
+                    });
+
+                    $(document).on('click', '.btn_remove', function() {  
+                        var button_id = $(this).attr("id");   
+                        $('#row'+button_id+'').remove();  
+                    });
+
+                    $('#submit').click(function() {            
+                       $.ajax ({  
+                            url:"name.php",  
+                            method:"POST",  
+                            data:$('#add_name').serialize(),  
+                            success:function(data) {  
+                                alert(data);  
+                                $('#add_name')[0].reset();  
+                            }  
+                        });
+                    });  
+                    
+                    // $("#print-type").click(function() {}
+
+                }
+
+                if (printType == 'Thesis') {
+                    
+                }
+
+                if (printType == 'Fliers') {
+                    
+                }
+
+                if (printType == 'Banners') {
+                    
+                }
+
+                if (printType == 'Receipt books') {
+                    
+                }
+
+                if (printType == 'Invoice') {
+                    
+                }
+
+                if (printType == 'Customized office Files') {
+                    
+                }
+                
+            })
+
             $("#product").change(function() {
 
                 // var selectedVal = $("#product option:selected").text();

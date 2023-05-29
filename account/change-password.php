@@ -7,6 +7,7 @@
         user_login_redirect();
     }
     include ('../inc/header.inc.php');
+    include ('header.account.php');
 
     $errors = '';
     $hashed = $user_data['user_password'];
@@ -65,38 +66,8 @@
     <main class="">
         <?= $flash; ?>
         <div class="container-lg d-flex flex-column">
-            <div class="row align-items-start">
-                <div class="col-lg-3 col-xl-2">
-                    <div class="my-6 my-md-9 px-lg-8 border-start">
-
-                        <!-- List -->
-                        <ul class="list-unstyled fs-xs mb-0">
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>index">Visit Site</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/index">App</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/orders">Orders</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/profile">Profile</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/settings">Settings</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/change-password">Change Password</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>auth/logout">Logout</a>
-                            </li>
-                        </ul>
-
-                    </div>
-                </div>
-                <div class="col-lg-9 col-xl-8 offset-lg-3 offset-xl-2 py-6 py-md-9">
+            <div class="row align-items-start justify-content-center">
+                <div class="col-lg-12 py-6 py-md-9">
                     <section class="py-1">
                         <h2 class="display-3 text-center mb-4">
                             Change <span class="text-underline-warning">password</span>

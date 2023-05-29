@@ -7,6 +7,7 @@
         user_login_redirect();
     }
     include ('../inc/header.inc.php');
+    include ('header.account.php');
 
   
     // FETCH ALL ORDERS
@@ -75,38 +76,8 @@
     <main class="">
         <?= $flash; ?>
         <div class="container-lg d-flex flex-column">
-            <div class="row align-items-start">
-                <div class="col-lg-3 col-xl-2">
-                    <div class="my-6 my-md-9 px-lg-8 border-start">
-
-                        <!-- List -->
-                        <ul class="list-unstyled fs-xs mb-0">
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>index">Visit Site</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/index">App</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/orders">Orders</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/profile">Profile</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/settings">Settings</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>account/change-password">Change Password</a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="text-reset" href="<?= PROOT; ?>auth/logout">Logout</a>
-                            </li>
-                        </ul>
-
-                    </div>
-                </div>
-                <div class="col-lg-9">
+            <div class="row align-items-start justify-content-center">
+                <div class="col-lg-12">
                     <section class="py-6">
                         <h2 class="display-3 text-center mb-4">
                             Your <span class="text-underline-warning">orders</span>

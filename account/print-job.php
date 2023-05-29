@@ -7,6 +7,7 @@
         user_login_redirect();
     }
     include ('../inc/header.inc.php');
+    include ('header.account.php');
 
     if (isset($_SERVER['REQUEST_METHOD']) == 'POST' && isset($_POST['orderButton'])) {
         // code...
@@ -77,43 +78,7 @@
     }
 
 ?>
-    <header class="py-3 mb-3 border-bottom">
-        <div class="container d-grid gap-3 align-items-center" style="grid-template-columns: 1fr 2fr;">
-            <div class="dropdown">
-                <a href="#" class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-body-emphasis text-decoration-none dropdown-toggle show" data-bs-toggle="dropdown" aria-expanded="true">
-                    VONNA
-                    <!-- <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg> -->
-                </a>
-                <ul class="dropdown-menu text-small shadow" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 34px);" data-popper-placement="bottom-start">
-                    <li><a class="dropdown-item active" href="<?= PROOT; ?>account/index" aria-current="page">Home</a></li>
-                    <li><a class="dropdown-item" href="<?= PROOT; ?>account/index">Order</a></li>
-                    <li><a class="dropdown-item" href="<?= PROOT; ?>account/print-job">Print Job</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="<?= PROOT; ?>account/orders">Orders</a></li>
-                    <li><a class="dropdown-item" href="<?= PROOT; ?>index">Visit Site</a></li>
-                </ul>
-            </div>
 
-            <div class="d-flex align-items-center">
-                <form class="w-100 me-3" role="search">
-                    <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
-                </form>
-
-                <div class="flex-shrink-0 dropdown">
-                    <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://github.com/mdo.png" alt="mdo" class="rounded-circle" width="32" height="32">
-                    </a>
-                    <ul class="dropdown-menu text-small shadow" style="">
-                        <li><a class="dropdown-item" href="<?= PROOT; ?>account/settings">Settings</a></li>
-                        <li><a class="dropdown-item" href="<?= PROOT; ?>account/profile">Profile</a></li>
-                        <li><a class="dropdown-item" href="<?= PROOT; ?>account/change-password">Change Password</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="<?= PROOT; ?>auth/logout">Sign out</a></li>
-                  </ul>
-                </div>
-            </div>
-        </div>
-    </header>
 
     <!-- BODY -->
     <main class="">

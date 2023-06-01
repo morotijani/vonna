@@ -9,16 +9,15 @@
     include ('../inc/header.inc.php');
     include ('header.account.php');
 
+    $message = '';
     if (isset($_SERVER['REQUEST_METHOD']) == 'POST' && isset($_POST['printjobSubmitButton'])) {
         $post = (cleanPost(isset($_POST) ? $_POST : ''));
-        dnd($post);
-
         if (isset($_POST['print_type']) && $post['print_type'] == "Examination questions") {
             $print_type = ((isset($_POST['print_type']) && !empty($_POST['print_type'])) ? $post['print_type'] : '');
-            $name_of_subject = ((isset($_POST['name_of_subject']) && !empty($_POST['name_of_subject'])) ? $post['name_of_subject'] : '');
-            $number_to_be_printed = ((isset($_POST['number_to_be_printed']) && !empty($_POST['number_to_be_printed'])) ? $post['number_to_be_printed'] : '');
-            $level = ((isset($_POST['level']) && !empty($_POST['level'])) ? $post['level'] : '');
-            $class_or_form = ((isset($_POST['class_or_form']) && !empty($_POST['class_or_form'])) ? $post['class_or_form'] : '');
+            // $name_of_subject = ((isset($_POST['name_of_subject']) && !empty($_POST['name_of_subject'])) ? $post['name_of_subject'] : '');
+            // $number_to_be_printed = ((isset($_POST['number_to_be_printed']) && !empty($_POST['number_to_be_printed'])) ? $post['number_to_be_printed'] : '');
+            // $level = ((isset($_POST['level']) && !empty($_POST['level'])) ? $post['level'] : '');
+            // $class_or_form = ((isset($_POST['class_or_form']) && !empty($_POST['class_or_form'])) ? $post['class_or_form'] : '');
             $total_students = ((isset($_POST['total_students']) && !empty($_POST['total_students'])) ? $post['total_students'] : '');
             $typed_already = ((isset($_POST['typed_already']) && !empty($_POST['typed_already'])) ? $post['typed_already'] : '');
             $want_us_to_type = ((isset($_POST['want_us_to_type']) && !empty($_POST['want_us_to_type'])) ? $post['want_us_to_type'] : '');
@@ -27,33 +26,84 @@
             $delivery_address_2 = ((isset($_POST['delivery_address_2']) && !empty($_POST['delivery_address_2'])) ? $post['delivery_address_2'] : '');
 
             $count_subjects = count($post['name_of_subject']);
-            if ($count_subjects > 0) {  
+            if ($count_subjects > 0) {
+                $name_of_subject = '';
+                $number_to_be_printed = '';
+                $level = '';
+                $class_or_form = '';
                 for ($i = 0; $i < $count_subjects; $i++) {
                     if ($post['name_of_subject'][$i] != '') {
-                        // code...
+                        $name_of_subject .= $post['name_of_subject'][$i] . ',';
+                        $number_to_be_printed .= $post['number_to_be_printed'][$i] . ',';
+                        $level .= $post['level'][$i] . ',';
+                        $class_or_form .= $post['class_or_form'][$i] . ',';
                     }
                 }
             }
 
+            $upload_typed_work = '';
             if (isset($_FILES['upload_typed_work'])) {
-                echo 'setted';
-                if (!empty($_FILES)) {
-                    echo 'not';
-                    $count_files = count($_FILES['upload_typed_work']['name']);
-                    dnd($count_files);
+                $count_files = count($_FILES['upload_typed_work']['name']);
+                for ($i = 0; $i < $count_files; $i++) {
+                    if (!empty($_FILES['upload_typed_work']['name'][$i])) {
+                        $fileName = $_FILES['upload_typed_work']['name'][$i];
+                        $fileSize = $_FILES['upload_typed_work']['size'][$i];
+                        $fileType = $_FILES['upload_typed_work']['type'][$i];
+                        $fileTmpName = $_FILES['upload_typed_work']['tmp_name'][$i];
+                        $fileError = $_FILES['upload_typed_work']['error'][$i];
+
+                        $fileExt = explode('.', $fileName);
+                        $fileActualExt = strtolower(end($fileExt));
+
+                        $maxSize = 10000000; //10mb 
+                        $allowed = array('jpg', 'pdf','jpeg', 'pdf', 'png');
+
+                        if (in_array($fileActualExt, $allowed)) {
+                            if ($fileError === 0) {
+                                if ($fileSize < $maxSize) {
+                                    $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                    $fileDestination =  'media/uploads/' . $fileNewName;
+                                    if (file_exists($fileDestination)) {
+                                        $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                        $fileDestination = 'media/uploads/' . $fileNewName;
+                                    }
+                                    $moveFiles = move_uploaded_file($fileTmpName, $fileDestination);
+                                    if ($moveFiles) {
+                                        $upload_typed_work .= $fileDestination . ',';
+                                    } else {
+                                        $message = 'Your file(s) was not able to upload.';
+                                    }
+                                } else {
+                                }
+                            } else {
+                                $message = 'There was an error uploading your file(s).';
+                            }
+                        } else {
+                            $message = 'You cannot upload file(s) of this type!';
+                        }
+                    }
                 }
-            } else {
-                echo 'qsd';
             }
 
 
+            $printjob_id = time() . mt_rand() . $user_id;
+            $printjob_createdAt = date('Y-m-d H:i:s');
 
-            $query = "
-                INSERT INTO `vonna_printjob` (`printjob_id`, `printjob_print_type`, `printjob_name_of_subject`, `printjob_number_to_be_printed`, `printjob_level`, `printjob_class_or_form`, `printjob_total_students`, `printjob_typed_already`, `printjob_upload_typed_work`, `printjob_want_us_to_type`, `printjob_when_to_be_delivered`, `printjob_delivery_address_1`, `printjob_delivery_address_2`, `printjob_createdAt`) 
-                VALUES ()
-            ";
-            $statement = $conn->prepare($query);
-            $statement->execute($data);
+            $data = [$printjob_id, $user_id, $print_type, rtrim($name_of_subject, ', '), rtrim($number_to_be_printed, ', '), rtrim($level, ', '), rtrim($class_or_form, ', '), $total_students, $typed_already, rtrim($upload_typed_work, ', '), $want_us_to_type, $when_to_be_delivered, $delivery_address_1, $delivery_address_2, $printjob_createdAt];
+            if (!empty($message)) {
+                echo js_alert($message);
+            } else {
+                $query = "
+                    INSERT INTO `vonna_printjob` (`printjob_id`, `printjob_userid`, `printjob_print_type`, `printjob_name_of_subject`, `printjob_number_to_be_printed`, `printjob_level`, `printjob_class_or_form`, `printjob_total_students`, `printjob_typed_already`, `printjob_upload_typed_work`, `printjob_want_us_to_type`, `printjob_when_to_be_delivered`, `printjob_delivery_address_1`, `printjob_delivery_address_2`, `printjob_createdAt`) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ";
+                $statement = $conn->prepare($query);
+                $result = $statement->execute($data);
+                if ($result) {
+                    $_SESSION['flash_success'] = 'Print job send successfully';
+                    redirect(PROOT . 'account/print-job');
+                }
+            }
         }
 
     }
@@ -67,6 +117,20 @@
         <div class="container-lg d-flex flex-column">
             <div class="row align-items-start justify-content-center">
                 <div class="col-lg-12 py-6 py-md-9">
+                    <ul class="nav justify-content-center">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="<?= PROOT; ?>account/print-job">Print Job</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-secondary" href="<?= PROOT; ?>account/print-job/requests">Requests</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-secondary" href="<?= PROOT; ?>account/print-job">Rerefesh</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-secondary" href="<?= PROOT; ?>account/index">Go home</a>
+                        </li>
+                    </ul>
                     <section class="py-1">
                         <h2 class="display-3 text-center mb-4">
                             Print <span class="text-underline-warning">job</span>
@@ -136,14 +200,16 @@
                                     <input type="file" name="upload_typed_work[]" multiple id="upload-typed-work" class="form-control" accept="application/msword, application/vnd.ms-powerpoint, text/plain, application/pdf, .doc, .docx, image/*">
                                 </div>
 
-                                <label for="">If no, Do you want us to type for you?</label>
-                                <br>
-                                <div class="form-check d-none no-typed">
-                                    <input type="radio" class="form-check-input" name="want_us_to_type" id="want-us-to-typeYes" value="Yes">
-                                    <label for="want-us-to-typeYes" class="form-check-label">Yes</label>
+                                <div class="d-none no-typed">
+                                    <label for="">If no, Do you want us to type for you?</label>
                                     <br>
-                                    <input type="radio" class="form-check-input" name="want_us_to_type" id="want-us-to-typeNo" value="No">
-                                    <label for="want-us-to-typeNo" class="form-check-label">No</label>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" name="want_us_to_type" id="want-us-to-typeYes" value="Yes">
+                                        <label for="want-us-to-typeYes" class="form-check-label">Yes</label>
+                                        <br>
+                                        <input type="radio" class="form-check-input" name="want_us_to_type" id="want-us-to-typeNo" value="No">
+                                        <label for="want-us-to-typeNo" class="form-check-label">No</label>
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
@@ -162,7 +228,91 @@
                                 </div>
                             </div>
 
-                            <div class="thesis d-none"></div>
+                            <!-- THESIS/RESEARCH -->
+                            <div class="thesis d-none">
+                                <label for="">Do you have a thesis/research topic already?</label>
+                                <br>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" name="already_have_tr" id="already-have-trYes" value="Yes">
+                                    <label for="already-have-trYes" class="form-check-label">Yes</label>
+                                    <br>
+                                    <input type="radio" class="form-check-input" name="already_have_tr" id="already-have-trNo" value="No">
+                                    <label for="already-have-trNo" class="form-check-label">No</label>
+                                </div>
+
+                                <div class="form-group d-none yes-have">
+                                    <label for="your-thesis-research"></label>
+                                    <input type="text" name="your_thesis_research" id="your-thesis-research" class="form-control" placeholder="If yes, What is your thesis/research topic?">
+                                </div>
+
+                                <div class="d-none no-have">
+                                    <label for="">if no, would you want us to get you a suitable research/thesis topic?</label>
+                                    <br>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" name="get_for_you" id="get-for-youYes" value="Yes">
+                                        <label for="get-for-youYes" class="form-check-label">Yes</label>
+                                        <br>
+                                        <input type="radio" class="form-check-input" name="get_for_you" id="get-for-youNo" value="No">
+                                        <label for="get-for-youNo" class="form-check-label">No</label>
+                                    </div>
+                                </div>
+
+                                <label for="">Have you typed your thesis/research already?</label>
+                                <br>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" name="have_you_typed" id="have-you-typedYes" value="Yes">
+                                    <label for="have-you-typedYes" class="form-check-label">Yes</label>
+                                    <br>
+                                    <input type="radio" class="form-check-input" name="have_you_typed" id="have-you-typedNo" value="No">
+                                    <label for="have-you-typedNo" class="form-check-label">No</label>
+                                </div>
+
+                                <div class="d-none no-typed-tr">
+                                    <label for="">if no, do you want us to handle the typing of your thesis/research for you?</label>
+                                    <br>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" name="handle_typing" id="handle-typingYes" value="Yes">
+                                        <label for="handle-typingYes" class="form-check-label">Yes</label>
+                                        <br>
+                                        <input type="radio" class="form-check-input" name="handle_typing" id="handle-typingNo" value="No">
+                                        <label for="handle-typingNo" class="form-check-label">No</label>
+                                    </div>
+                                </div>
+
+                                <label for="">Have you effected the final editing to your thesis/research topic already?</label>
+                                <br>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" name="final_editing" id="final-editingYes" value="Yes">
+                                    <label for="final-editingYes" class="form-check-label">Yes</label>
+                                    <br>
+                                    <input type="radio" class="form-check-input" name="final_editing" id="final-editingNo" value="No">
+                                    <label for="final-editingNo" class="form-check-label">No</label>
+                                </div>
+
+                                <div class="form-group d-none yes-effected">
+                                    <label for="upload-typed-work">If yes , Upload your work here</label>
+                                    <input type="file" name="upload_work_tr[]" multiple id="upload-work-tr" class="form-control" accept="application/msword, application/vnd.ms-powerpoint, text/plain, application/pdf, .doc, .docx, image/*">
+                                </div>
+
+                                <div class="form-group d-none no-effected">
+                                    <label for="upload-typed-work">If no, upload your thesis/research so far</label>
+                                    <input type="file" name="upload_tr[]" multiple id="upload-tr" class="form-control" accept="application/msword, application/vnd.ms-powerpoint, text/plain, application/pdf, .doc, .docx, image/*">
+                                </div>
+ 
+                                <label for="">When do you want your work delivered?</label>
+                                <div class="input-group mb-3">
+                                    <select name="delivered_tr" id="delivered-tr" class="form-select">
+                                        <option value="">...</option>
+                                        <option value="Day(s):">Day(s):</option>
+                                        <option value="Week(s):">Week(s):</option>
+                                    </select>
+                                    <input type="number" min="1" name="day_week" id="day-week" class="form-control" placeholder="Number">
+                                </div>
+
+
+                            </div>
+
+                            <!-- FLIERS -->
                             <div class="fliers d-none"></div>
                             <div class="banners d-none"></div>
                             <div class="receipt d-none"></div>
@@ -170,7 +320,7 @@
                             <div class="customized d-none"></div>
 
                             <button type="submit" class="btn w-100 btn-warning" id="printjobSubmitButton" name="printjobSubmitButton" disabled>
-                                Order Now
+                                Send print job now
                             </button>
                         </form>
                     </section>
@@ -209,7 +359,7 @@
                     // add more fields
                     var i = 1;  
                     $('#add').click(function() {  
-                        i++;  
+                        i++; 
                         $('#dynamic_field').append(`
                             <tr id="row` + i +`"> 
                                 <td><input type="text" name="name_of_subject[]" placeholder="Name of subject" class="form-control name-of-subject" required></td>  
@@ -252,6 +402,7 @@
                             $('.yes-typed').addClass('d-none');
 
                             $('#want-us-to-typeYes').attr('required', true);
+                            $('#upload-typed-work').val('');
                             $('#upload-typed-work').attr('required', false);
                             
                             $('input[name="want_us_to_type"]').click(function() {
@@ -272,26 +423,64 @@
 
                     $('#printjobSubmitButton').attr('disabled', false);
 
-
-                    // $('#submit').click(function() {
-
-                    //    $.ajax ({  
-                    //         url:"name.php",  
-                    //         method:"POST",  
-                    //         data:$('#add_name').serialize(),  
-                    //         success:function(data) {  
-                    //             alert(data);  
-                    //             $('#add_name')[0].reset();  
-                    //         }  
-                    //     });
-                    // });  
-                    
-                    // $("#print-type").click(function() {}
-
                 }
 
                 if (printType == 'Thesis') {
+                    $('.thesis').removeClass('d-none');
+                    $('.exams').addClass('d-none');
+
+                    $('#already-have-trYes').attr('required', true)
+                    $('#have-you-typedYes').attr('required', true)
+                    $('#final-editingYes').attr('required', true)
+                    $('#delivered-tr').attr('required', true)
+                    $('#day-week').attr('required', true)
                     
+                    $('input[name="already_have_tr"]').click(function() {
+                        var alreadyHave = $('input[name="already_have_tr"]:checked').val();
+                        if (alreadyHave == 'Yes') {
+                            $('.yes-have').removeClass('d-none');
+                            $('.no-have').addClass('d-none');
+                            
+                            $('#your-thesis-research').attr('required', true)
+                            $('#get-for-youYes').attr('required', false)
+                        } else if (alreadyHave == 'No') {
+                            $('.no-have').removeClass('d-none');
+                            $('.yes-have').addClass('d-none');
+
+                            $('#get-for-youYes').attr('required', true)
+                            $('#your_thesis_research').attr('required', false)
+                        }
+                    })
+
+                    $('input[name="have_you_typed"]').click(function() {
+                        var youTyped = $('input[name="have_you_typed"]:checked').val();
+                        if (youTyped == 'No') {
+                            $('.no-typed-tr').removeClass('d-none');
+                            $('#handle-typingYes').attr('required', true);
+                        } else {
+                            $('.no-typed-tr').addClass('d-none');
+                            $('#handle-typingYes').attr('required', false);
+                        }
+                    })
+                    
+                    $('input[name="final_editing"]').click(function() {
+                        var final = $('input[name="final_editing"]:checked').val();
+                        if (final == 'Yes') {
+                            $('.yes-effected').removeClass('d-none');
+                            $('.no-effected').addClass('d-none');
+                            $('#upload-work-tr').attr('required', true);
+                            $('#upload-tr').attr('required', false);
+
+                        } else if (final == 'No') {
+                            $('.no-effected').removeClass('d-none');
+                            $('.yes-effected').addClass('d-none');
+                            $('#upload-tr').attr('required', true);
+                            $('#upload-work-tr').attr('required', false);
+
+                        }
+                    })
+
+                    $('#printjobSubmitButton').attr('disabled', false);
                 }
 
                 if (printType == 'Fliers') {

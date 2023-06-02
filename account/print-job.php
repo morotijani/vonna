@@ -12,91 +12,214 @@
     $message = '';
     if (isset($_SERVER['REQUEST_METHOD']) == 'POST' && isset($_POST['printjobSubmitButton'])) {
         $post = (cleanPost(isset($_POST) ? $_POST : ''));
-        if (isset($_POST['print_type']) && $post['print_type'] == "Examination questions") {
-            $print_type = ((isset($_POST['print_type']) && !empty($_POST['print_type'])) ? $post['print_type'] : '');
-            // $name_of_subject = ((isset($_POST['name_of_subject']) && !empty($_POST['name_of_subject'])) ? $post['name_of_subject'] : '');
-            // $number_to_be_printed = ((isset($_POST['number_to_be_printed']) && !empty($_POST['number_to_be_printed'])) ? $post['number_to_be_printed'] : '');
-            // $level = ((isset($_POST['level']) && !empty($_POST['level'])) ? $post['level'] : '');
-            // $class_or_form = ((isset($_POST['class_or_form']) && !empty($_POST['class_or_form'])) ? $post['class_or_form'] : '');
-            $total_students = ((isset($_POST['total_students']) && !empty($_POST['total_students'])) ? $post['total_students'] : '');
-            $typed_already = ((isset($_POST['typed_already']) && !empty($_POST['typed_already'])) ? $post['typed_already'] : '');
-            $want_us_to_type = ((isset($_POST['want_us_to_type']) && !empty($_POST['want_us_to_type'])) ? $post['want_us_to_type'] : '');
-            $when_to_be_delivered = ((isset($_POST['when_to_be_delivered']) && !empty($_POST['when_to_be_delivered'])) ? $post['when_to_be_delivered'] : '');;
-            $delivery_address_1 = ((isset($_POST['delivery_address_1']) && !empty($_POST['delivery_address_1'])) ? $post['delivery_address_1'] : '');
-            $delivery_address_2 = ((isset($_POST['delivery_address_2']) && !empty($_POST['delivery_address_2'])) ? $post['delivery_address_2'] : '');
 
-            $count_subjects = count($post['name_of_subject']);
-            if ($count_subjects > 0) {
-                $name_of_subject = '';
-                $number_to_be_printed = '';
-                $level = '';
-                $class_or_form = '';
-                for ($i = 0; $i < $count_subjects; $i++) {
-                    if ($post['name_of_subject'][$i] != '') {
-                        $name_of_subject .= $post['name_of_subject'][$i] . ',';
-                        $number_to_be_printed .= $post['number_to_be_printed'][$i] . ',';
-                        $level .= $post['level'][$i] . ',';
-                        $class_or_form .= $post['class_or_form'][$i] . ',';
-                    }
-                }
-            }
+        if (isset($_POST['print_type'])) {
+            if ($post['print_type'] == "Examination questions") {
+                $print_type = ((isset($_POST['print_type']) && !empty($_POST['print_type'])) ? $post['print_type'] : '');
+                // $name_of_subject = ((isset($_POST['name_of_subject']) && !empty($_POST['name_of_subject'])) ? $post['name_of_subject'] : '');
+                // $number_to_be_printed = ((isset($_POST['number_to_be_printed']) && !empty($_POST['number_to_be_printed'])) ? $post['number_to_be_printed'] : '');
+                // $level = ((isset($_POST['level']) && !empty($_POST['level'])) ? $post['level'] : '');
+                // $class_or_form = ((isset($_POST['class_or_form']) && !empty($_POST['class_or_form'])) ? $post['class_or_form'] : '');
+                $total_students = ((isset($_POST['total_students']) && !empty($_POST['total_students'])) ? $post['total_students'] : '');
+                $typed_already = ((isset($_POST['typed_already']) && !empty($_POST['typed_already'])) ? $post['typed_already'] : '');
+                $want_us_to_type = ((isset($_POST['want_us_to_type']) && !empty($_POST['want_us_to_type'])) ? $post['want_us_to_type'] : '');
+                $when_to_be_delivered = ((isset($_POST['when_to_be_delivered']) && !empty($_POST['when_to_be_delivered'])) ? $post['when_to_be_delivered'] : '');;
+                $delivery_address_1 = ((isset($_POST['delivery_address_1']) && !empty($_POST['delivery_address_1'])) ? $post['delivery_address_1'] : '');
+                $delivery_address_2 = ((isset($_POST['delivery_address_2']) && !empty($_POST['delivery_address_2'])) ? $post['delivery_address_2'] : '');
 
-            $upload_typed_work = '';
-            if (isset($_FILES['upload_typed_work'])) {
-                $count_files = count($_FILES['upload_typed_work']['name']);
-                for ($i = 0; $i < $count_files; $i++) {
-                    if (!empty($_FILES['upload_typed_work']['name'][$i])) {
-                        $fileName = $_FILES['upload_typed_work']['name'][$i];
-                        $fileSize = $_FILES['upload_typed_work']['size'][$i];
-                        $fileType = $_FILES['upload_typed_work']['type'][$i];
-                        $fileTmpName = $_FILES['upload_typed_work']['tmp_name'][$i];
-                        $fileError = $_FILES['upload_typed_work']['error'][$i];
-
-                        $fileExt = explode('.', $fileName);
-                        $fileActualExt = strtolower(end($fileExt));
-
-                        $maxSize = 10000000; //10mb 
-                        $allowed = array('jpg', 'pdf','jpeg', 'pdf', 'png');
-
-                        if (in_array($fileActualExt, $allowed)) {
-                            if ($fileError === 0) {
-                                if ($fileSize < $maxSize) {
-                                    $fileNewName = uniqid('', true) . "." . $fileActualExt;
-                                    $fileDestination =  'media/uploads/' . $fileNewName;
-                                    if (file_exists($fileDestination)) {
-                                        $fileNewName = uniqid('', true) . "." . $fileActualExt;
-                                        $fileDestination = 'media/uploads/' . $fileNewName;
-                                    }
-                                    $moveFiles = move_uploaded_file($fileTmpName, $fileDestination);
-                                    if ($moveFiles) {
-                                        $upload_typed_work .= $fileDestination . ',';
-                                    } else {
-                                        $message = 'Your file(s) was not able to upload.';
-                                    }
-                                } else {
-                                }
-                            } else {
-                                $message = 'There was an error uploading your file(s).';
-                            }
-                        } else {
-                            $message = 'You cannot upload file(s) of this type!';
+                $count_subjects = count($post['name_of_subject']);
+                if ($count_subjects > 0) {
+                    $name_of_subject = '';
+                    $number_to_be_printed = '';
+                    $level = '';
+                    $class_or_form = '';
+                    for ($i = 0; $i < $count_subjects; $i++) {
+                        if ($post['name_of_subject'][$i] != '') {
+                            $name_of_subject .= $post['name_of_subject'][$i] . ',';
+                            $number_to_be_printed .= $post['number_to_be_printed'][$i] . ',';
+                            $level .= $post['level'][$i] . ',';
+                            $class_or_form .= $post['class_or_form'][$i] . ',';
                         }
                     }
                 }
-            }
+
+                $upload_typed_work = '';
+                if (isset($_FILES['upload_typed_work'])) {
+                    $count_files = count($_FILES['upload_typed_work']['name']);
+                    for ($i = 0; $i < $count_files; $i++) {
+                        if (!empty($_FILES['upload_typed_work']['name'][$i])) {
+                            $fileName = $_FILES['upload_typed_work']['name'][$i];
+                            $fileSize = $_FILES['upload_typed_work']['size'][$i];
+                            $fileType = $_FILES['upload_typed_work']['type'][$i];
+                            $fileTmpName = $_FILES['upload_typed_work']['tmp_name'][$i];
+                            $fileError = $_FILES['upload_typed_work']['error'][$i];
+
+                            $fileExt = explode('.', $fileName);
+                            $fileActualExt = strtolower(end($fileExt));
+
+                            $maxSize = 10000000; //10mb 
+                            $allowed = array('jpg', 'pdf','jpeg', 'pdf', 'png');
+
+                            if (in_array($fileActualExt, $allowed)) {
+                                if ($fileError === 0) {
+                                    if ($fileSize < $maxSize) {
+                                        $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                        $fileDestination =  'media/uploads/' . $fileNewName;
+                                        if (file_exists($fileDestination)) {
+                                            $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                            $fileDestination = 'media/uploads/' . $fileNewName;
+                                        }
+                                        $moveFiles = move_uploaded_file($fileTmpName, $fileDestination);
+                                        if ($moveFiles) {
+                                            $upload_typed_work .= $fileDestination . ',';
+                                        } else {
+                                            $message = 'Your file(s) was not able to upload.';
+                                        }
+                                    } else {
+                                    }
+                                } else {
+                                    $message = 'There was an error uploading your file(s).';
+                                }
+                            } else {
+                                $message = 'You cannot upload file(s) of this type!';
+                            }
+                        }
+                    }
+                }
 
 
-            $printjob_id = time() . mt_rand() . $user_id;
-            $printjob_createdAt = date('Y-m-d H:i:s');
+                $printjob_id = time() . mt_rand() . $user_id;
+                $printjob_createdAt = date('Y-m-d H:i:s');
 
-            $data = [$printjob_id, $user_id, $print_type, rtrim($name_of_subject, ', '), rtrim($number_to_be_printed, ', '), rtrim($level, ', '), rtrim($class_or_form, ', '), $total_students, $typed_already, rtrim($upload_typed_work, ', '), $want_us_to_type, $when_to_be_delivered, $delivery_address_1, $delivery_address_2, $printjob_createdAt];
-            if (!empty($message)) {
-                echo js_alert($message);
-            } else {
+                $data = [$printjob_id, $user_id, $print_type, rtrim($name_of_subject, ', '), rtrim($number_to_be_printed, ', '), rtrim($level, ', '), rtrim($class_or_form, ', '), $total_students, $typed_already, rtrim($upload_typed_work, ', '), $want_us_to_type, $when_to_be_delivered, $delivery_address_1, $delivery_address_2, $printjob_createdAt];
                 $query = "
                     INSERT INTO `vonna_printjob` (`printjob_id`, `printjob_userid`, `printjob_print_type`, `printjob_name_of_subject`, `printjob_number_to_be_printed`, `printjob_level`, `printjob_class_or_form`, `printjob_total_students`, `printjob_typed_already`, `printjob_upload_typed_work`, `printjob_want_us_to_type`, `printjob_when_to_be_delivered`, `printjob_delivery_address_1`, `printjob_delivery_address_2`, `printjob_createdAt`) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ";
+                   
+            
+            } else if ($post['print_type'] == "Thesis") {
+                $already_have_tr = ((isset($_POST['already_have_tr']) && !empty($_POST['already_have_tr'])) ? sanitize($_POST['already_have_tr']) : '');
+                $your_thesis_research = ((isset($_POST['your_thesis_research']) && !empty($_POST['your_thesis_research'])) ? sanitize($_POST['your_thesis_research']) : '');
+                $get_for_you = ((isset($_POST['get_for_you']) && !empty($_POST['get_for_you'])) ? sanitize($_POST['get_for_you']) : '');
+                $have_you_typed = ((isset($_POST['have_you_typed']) && !empty($_POST['have_you_typed'])) ? sanitize($_POST['have_you_typed']) : '');
+                $handle_typing = ((isset($_POST['handle_typing']) && !empty($_POST['handle_typing'])) ? sanitize($_POST['handle_typing']) : '');
+                $final_editing = ((isset($_POST['final_editing']) && !empty($_POST['final_editing'])) ? sanitize($_POST['final_editing']) : '');
+                //$upload_work_tr = ((isset($_POST['upload_work_tr']) && !empty($_POST['upload_work_tr'])) ? sanitize($_POST['upload_work_tr']) : '');
+                //$upload_tr = ((isset($_POST['upload_tr']) && !empty($_POST['upload_tr'])) ? sanitize($_POST['upload_tr']) : '');
+                $delivered_tr = ((isset($_POST['delivered_tr']) && !empty($_POST['delivered_tr'])) ? sanitize($_POST['delivered_tr']) : '');
+                $day_week = ((isset($_POST['day_week']) && !empty($_POST['day_week'])) ? sanitize($_POST['day_week']) : '');
+                $thesis_id = time() . mt_rand() . $user_id;
+                $createdAt = date('Y-m-d H:i:s');
+
+                $upload_work_tr = '';
+                if (isset($_FILES['upload_work_tr'])) {
+                    $count_files = count($_FILES['upload_work_tr']['name']);
+                    for ($i = 0; $i < $count_files; $i++) {
+                        if (!empty($_FILES['upload_work_tr']['name'][$i])) {
+                            $fileName = $_FILES['upload_work_tr']['name'][$i];
+                            $fileSize = $_FILES['upload_work_tr']['size'][$i];
+                            $fileType = $_FILES['upload_work_tr']['type'][$i];
+                            $fileTmpName = $_FILES['upload_work_tr']['tmp_name'][$i];
+                            $fileError = $_FILES['upload_work_tr']['error'][$i];
+
+                            $fileExt = explode('.', $fileName);
+                            $fileActualExt = strtolower(end($fileExt));
+
+                            $maxSize = 10000000; //10mb 
+                            $allowed = array('jpg', 'pdf','jpeg', 'pdf', 'png');
+
+                            if (in_array($fileActualExt, $allowed)) {
+                                if ($fileError === 0) {
+                                    if ($fileSize < $maxSize) {
+                                        $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                        $fileDestination =  'media/uploads/' . $fileNewName;
+                                        if (file_exists($fileDestination)) {
+                                            $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                            $fileDestination = 'media/uploads/' . $fileNewName;
+                                        }
+                                        $moveFiles = move_uploaded_file($fileTmpName, $fileDestination);
+                                        if ($moveFiles) {
+                                            $upload_work_tr .= $fileDestination . ',';
+                                        } else {
+                                            $message = 'Your file(s) was not able to upload.';
+                                        }
+                                    } else {
+                                    }
+                                } else {
+                                    $message = 'There was an error uploading your file(s).';
+                                }
+                            } else {
+                                $message = 'You cannot upload file(s) of this type!';
+                            }
+                        }
+                    }
+                }
+
+                $upload_tr = '';
+                if (isset($_FILES['upload_tr'])) {
+                    $count_files = count($_FILES['upload_tr']['name']);
+                    for ($i = 0; $i < $count_files; $i++) {
+                        if (!empty($_FILES['upload_tr']['name'][$i])) {
+                            $fileName = $_FILES['upload_tr']['name'][$i];
+                            $fileSize = $_FILES['upload_tr']['size'][$i];
+                            $fileType = $_FILES['upload_tr']['type'][$i];
+                            $fileTmpName = $_FILES['upload_tr']['tmp_name'][$i];
+                            $fileError = $_FILES['upload_tr']['error'][$i];
+
+                            $fileExt = explode('.', $fileName);
+                            $fileActualExt = strtolower(end($fileExt));
+
+                            $maxSize = 10000000; //10mb 
+                            $allowed = array('jpg', 'pdf','jpeg', 'pdf', 'png');
+
+                            if (in_array($fileActualExt, $allowed)) {
+                                if ($fileError === 0) {
+                                    if ($fileSize < $maxSize) {
+                                        $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                        $fileDestination =  'media/uploads/' . $fileNewName;
+                                        if (file_exists($fileDestination)) {
+                                            $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                            $fileDestination = 'media/uploads/' . $fileNewName;
+                                        }
+                                        $moveFiles = move_uploaded_file($fileTmpName, $fileDestination);
+                                        if ($moveFiles) {
+                                            $upload_tr .= $fileDestination . ',';
+                                        } else {
+                                            $message = 'Your file(s) was not able to upload.';
+                                        }
+                                    } else {
+                                    }
+                                } else {
+                                    $message = 'There was an error uploading your file(s).';
+                                }
+                            } else {
+                                $message = 'You cannot upload file(s) of this type!';
+                            }
+                        }
+                    }
+                }
+
+                $data = [$thesis_id, $user_id, $already_have_tr, $your_thesis_research, $get_for_you, $have_you_typed, $handle_typing, $final_editing, $upload_work_tr, $upload_tr, $delivered_tr, $day_week, $createdAt];
+                $query = "
+                    INSERT INTO `vonna_printjob_thesis`(`thesis_id`, `thesis_userid`, `thesis_already_have_tr`, `thesis_your_thesis_research`, `thesis_get_for_you`, `thesis_have_you_typed`, `thesis_handle_typing`, `thesis_final_editing`, `thesis_upload_work_tr`, `thesis_upload_tr`, `thesis_delivered_tr`, `thesis_day_week`, `thesis_createdAt`) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ";
+            } else if ($post['print_type'] == "Fliers") {
+                
+            } else if ($post['print_type'] == "Banners") {
+                
+            } else if ($post['print_type'] == "Receipt books") {
+                
+            } else if ($post['print_type'] == "Invoice") {
+                
+            } else if ($post['print_type'] == "Customized office Files") {
+                
+            }
+
+            if (!empty($message)) {
+                echo js_alert($message);
+            } else {
                 $statement = $conn->prepare($query);
                 $result = $statement->execute($data);
                 if ($result) {
@@ -156,10 +279,10 @@
                                 <table class="table table-sm">  
                                     <tbody id="dynamic_field">
                                         <tr>  
-                                            <td><input type="text" name="name_of_subject[]" placeholder="Name of subject" class="form-control name-of-subject" required></td>  
-                                            <td><input type="number" min='0' name="number_to_be_printed[]" placeholder="Number to be printed" class="form-control number-to-be-printed" required></td>  
+                                            <td><input type="text" name="name_of_subject[]" placeholder="Name of subject" class="form-control name-of-subject"></td>  
+                                            <td><input type="number" min='0' name="number_to_be_printed[]" placeholder="Number to be printed" class="form-control number-to-be-printed"></td>  
                                             <td>
-                                                <select type="text" name="level[]" placeholder="Enter your Name" class="form-control level" required>
+                                                <select type="text" name="level[]" class="form-control level">
                                                     <option value="">Level</option>
                                                     <option value="Tertiary">Tertiary</option>
                                                     <option value="SHS">SHS</option>
@@ -169,21 +292,21 @@
                                                     <option value="Nursery">Nursery</option>
                                                 </select>
                                             </td>  
-                                            <td><input type="text" name="class_or_form[]" placeholder="Class/Form" class="form-control class-or-form" required></td>  
+                                            <td><input type="text" name="class_or_form[]" placeholder="Class/Form" class="form-control class-or-form"></td>  
                                             <td><button type="button" name="add" id="add" class="btn btn-sm btn-success">Add subject</button></td>  
                                         </tr>  
                                     </tbody>
                                 </table>
 
                                 <div class="form-group">
-                                    <input type="number" class="form-control" name="total_students" id="total_students" required min="0" placeholder="What is the total size of your student body?">
+                                    <input type="number" class="form-control" name="total_students" id="total_students" min="0" placeholder="What is the total size of your student body?">
                                 </div>
 
 
                                 <label>Do you have the questions typed already?</label>
                                 <br>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="typed_already" id="typed-alreadyYes" value="Yes" required>
+                                    <input class="form-check-input" type="radio" name="typed_already" id="typed-alreadyYes" value="Yes">
                                     <label class="form-check-label" for="typed-alreadyYes">
                                         Yes
                                     </label>
@@ -213,10 +336,10 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <select name="when_to_be_delivered" id="when-to-be-delivered" class="form-control" required>
+                                    <select name="when_to_be_delivered" id="when-to-be-delivered" class="form-control">
                                         <option value="">When do you want the print job delivered?</option>
-                                        <option>Hours</option>
-                                        <option>Days</option>
+                                        <option value="Hours">Hours</option>
+                                        <option value="Days">Days</option>
                                     </select>
                                 </div>
 
@@ -241,7 +364,6 @@
                                 </div>
 
                                 <div class="form-group d-none yes-have">
-                                    <label for="your-thesis-research"></label>
                                     <input type="text" name="your_thesis_research" id="your-thesis-research" class="form-control" placeholder="If yes, What is your thesis/research topic?">
                                 </div>
 
@@ -302,7 +424,7 @@
                                 <label for="">When do you want your work delivered?</label>
                                 <div class="input-group mb-3">
                                     <select name="delivered_tr" id="delivered-tr" class="form-select">
-                                        <option value="">...</option>
+                                        <option value="">Open to select</option>
                                         <option value="Day(s):">Day(s):</option>
                                         <option value="Week(s):">Week(s):</option>
                                     </select>
@@ -355,6 +477,15 @@
 
                 if (printType == 'Examination questions') {
                     $('.exams').removeClass('d-none');
+                    $('.thesis').addClass('d-none');
+
+                    $('input[name="name_of_subject[]"]').attr('required', true)
+                    $('input[name="number_to_be_printed[]"]').attr('required', true)
+                    $('select[name="level[]"]').attr('required', true)
+                    $('input[name="class_or_form[]"]').attr('required', true)
+                    $('input[name="total_students"]').attr('required', true)
+                    $('input[name="typed_already"]').attr('required', true)
+                    $('select[name="when_to_be_delivered"]').attr('required', true)
 
                     // add more fields
                     var i = 1;  
@@ -366,13 +497,13 @@
                                 <td><input type="number" min='0' name="number_to_be_printed[]" placeholder="Number to be printed" class="form-control number-to-be-printed" required></td>  
                                 <td>
                                     <select type="text" name="level[]" placeholder="Enter your Name" class="form-control level" required>
-                                        <option>Level</option>
-                                        <option>Tertiary</option>
-                                        <option>SHS</option>
-                                        <option>JHS</option>
-                                        <option>Primary</option>
-                                        <option>Kindargarten</option>
-                                        <option>Nursery</option>
+                                        <option value="">Level</option>
+                                        <option value="Tertiary">Tertiary</option>
+                                        <option value="SHS">SHS</option>
+                                        <option value="JHS">JHS</option>
+                                        <option value="Primary">Primary</option>
+                                        <option value="Kindargarten">Kindargarten</option>
+                                        <option value="Nursery">Nursery</option>
                                     </select>
                                 </td>
                                 <td><input type="text" name="class_or_form[]" placeholder="Class/Form" class="form-control class-or-form" required></td>  
@@ -423,9 +554,7 @@
 
                     $('#printjobSubmitButton').attr('disabled', false);
 
-                }
-
-                if (printType == 'Thesis') {
+                } else if (printType == 'Thesis') {
                     $('.thesis').removeClass('d-none');
                     $('.exams').addClass('d-none');
 
@@ -434,6 +563,17 @@
                     $('#final-editingYes').attr('required', true)
                     $('#delivered-tr').attr('required', true)
                     $('#day-week').attr('required', true)
+
+                    $('input[name="name_of_subject[]"]').attr('disabled', true)
+                    $('input[name="number_to_be_printed[]"]').attr('disabled', true)
+                    $('select[name="level[]"]').attr('disabled', true)
+                    $('input[name="class_or_form[]"]').attr('disabled', true)
+                    $('input[name="total_students"]').attr('disabled', true)
+                    $('input[name="typed_already"]').attr('disabled', true)
+                    $('select[name="when_to_be_delivered"]').attr('disabled', true)
+                    $('input[name="delivery_address_1"]').attr('disabled', true)
+                    $('input[name="delivery_address_2"]').attr('disabled', true)
+
                     
                     $('input[name="already_have_tr"]').click(function() {
                         var alreadyHave = $('input[name="already_have_tr"]:checked').val();
@@ -443,12 +583,15 @@
                             
                             $('#your-thesis-research').attr('required', true)
                             $('#get-for-youYes').attr('required', false)
+
+                            $('input[name="get_for_you"]').prop('checked', false);
                         } else if (alreadyHave == 'No') {
                             $('.no-have').removeClass('d-none');
                             $('.yes-have').addClass('d-none');
 
                             $('#get-for-youYes').attr('required', true)
-                            $('#your_thesis_research').attr('required', false)
+                            $('#your-thesis-research').val('');
+                            $('#your-thesis-research').attr('required', false)
                         }
                     })
 
@@ -481,25 +624,15 @@
                     })
 
                     $('#printjobSubmitButton').attr('disabled', false);
-                }
-
-                if (printType == 'Fliers') {
+                } else if (printType == 'Fliers') {
                     
-                }
-
-                if (printType == 'Banners') {
+                } else if (printType == 'Banners') {
                     
-                }
-
-                if (printType == 'Receipt books') {
+                } else if (printType == 'Receipt books') {
                     
-                }
-
-                if (printType == 'Invoice') {
+                } else if (printType == 'Invoice') {
                     
-                }
-
-                if (printType == 'Customized office Files') {
+                } else if (printType == 'Customized office Files') {
                     
                 }
                 

@@ -206,7 +206,65 @@
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ";
             } else if ($post['print_type'] == "Fliers") {
-                
+                $size_to_print = ((isset($_POST['size_to_print']) && !empty($_POST['size_to_print'])) ? sanitize($_POST['size_to_print']) : '');
+                $quantity_to_print = ((isset($_POST['quantity_to_print']) && !empty($_POST['quantity_to_print'])) ? sanitize($_POST['quantity_to_print']) : '');
+                $have_designs = ((isset($_POST['have_designs']) && !empty($_POST['have_designs'])) ? sanitize($_POST['have_designs']) : '');
+                $us_to_design = ((isset($_POST['us_to_design']) && !empty($_POST['us_to_design'])) ? sanitize($_POST['us_to_design']) : '');
+                $flier_for = ((isset($_POST['flier_for']) && !empty($_POST['flier_for'])) ? sanitize($_POST['flier_for']) : '');
+                // $design_file = ((isset($_POST['design_file']) && !empty($_POST['design_file'])) ? sanitize($_POST['design_file']) : '');
+                $date_to_deliver = ((isset($_POST['date_to_deliver']) && !empty($_POST['date_to_deliver'])) ? sanitize($_POST['date_to_deliver']) : '');
+                $flier_id = time() . mt_rand() . $user_id;
+                $createdAt = date('Y-m-d H:i:s');
+
+                $design_file = '';
+                if (isset($_FILES['design_file'])) {
+                    $count_files = count($_FILES['design_file']['name']);
+                    for ($i = 0; $i < $count_files; $i++) {
+                        if (!empty($_FILES['design_file']['name'][$i])) {
+                            $fileName = $_FILES['design_file']['name'][$i];
+                            $fileSize = $_FILES['design_file']['size'][$i];
+                            $fileType = $_FILES['design_file']['type'][$i];
+                            $fileTmpName = $_FILES['design_file']['tmp_name'][$i];
+                            $fileError = $_FILES['design_file']['error'][$i];
+
+                            $fileExt = explode('.', $fileName);
+                            $fileActualExt = strtolower(end($fileExt));
+
+                            $maxSize = 10000000; //10mb 
+                            $allowed = array('jpg', 'pdf','jpeg', 'pdf', 'png');
+
+                            if (in_array($fileActualExt, $allowed)) {
+                                if ($fileError === 0) {
+                                    if ($fileSize < $maxSize) {
+                                        $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                        $fileDestination =  'media/uploads/' . $fileNewName;
+                                        if (file_exists($fileDestination)) {
+                                            $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                            $fileDestination = 'media/uploads/' . $fileNewName;
+                                        }
+                                        $moveFiles = move_uploaded_file($fileTmpName, $fileDestination);
+                                        if ($moveFiles) {
+                                            $design_file .= $fileDestination . ',';
+                                        } else {
+                                            $message = 'Your file(s) was not able to upload.';
+                                        }
+                                    } else {
+                                    }
+                                } else {
+                                    $message = 'There was an error uploading your file(s).';
+                                }
+                            } else {
+                                $message = 'You cannot upload file(s) of this type!';
+                            }
+                        }
+                    }
+                }
+
+                $data = [$flier_id, $userid, $size_to_print, $quantity_to_print, $have_designs, $us_to_design, $flier_for, $design_file, $date_to_deliver, $createdAt];
+                $query = "
+                    INSERT INTO `vonna_printjob_fliers`(`flier_id`, `flier_userid`, `flier_size_to_print`, `flier_quantity_to_print`, `flier_have_designs`, `flier_us_to_design`, `flier_for`, `flier_design_file`, `flier_date_to_deliver`, `flier_createdAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ";
+
             } else if ($post['print_type'] == "Banners") {
                 
             } else if ($post['print_type'] == "Receipt books") {
@@ -259,7 +317,7 @@
                             Print <span class="text-underline-warning">job</span>
                         </h2>
                         <form id="printjobForm" method="POST" enctype="multipart/form-data">
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label class="visually-hidden" for="print-type">
                                     what print job do you want?
                                 </label>
@@ -305,7 +363,7 @@
 
                                 <label>Do you have the questions typed already?</label>
                                 <br>
-                                <div class="form-check">
+                                <div class="form-check mb-3">
                                     <input class="form-check-input" type="radio" name="typed_already" id="typed-alreadyYes" value="Yes">
                                     <label class="form-check-label" for="typed-alreadyYes">
                                         Yes
@@ -318,12 +376,12 @@
                                     </label>
                                 </div>
 
-                                <div class="form-group d-none yes-typed">
+                                <div class="form-group d-none yes-typed mb-3">
                                     <label for="upload-typed-work">If yes, upload your typed work here?</label>
                                     <input type="file" name="upload_typed_work[]" multiple id="upload-typed-work" class="form-control" accept="application/msword, application/vnd.ms-powerpoint, text/plain, application/pdf, .doc, .docx, image/*">
                                 </div>
 
-                                <div class="d-none no-typed">
+                                <div class="d-none no-typed mb-3">
                                     <label for="">If no, Do you want us to type for you?</label>
                                     <br>
                                     <div class="form-check">
@@ -335,7 +393,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group mb-3">
                                     <select name="when_to_be_delivered" id="when-to-be-delivered" class="form-control">
                                         <option value="">When do you want the print job delivered?</option>
                                         <option value="Hours">Hours</option>
@@ -355,7 +413,7 @@
                             <div class="thesis d-none">
                                 <label for="">Do you have a thesis/research topic already?</label>
                                 <br>
-                                <div class="form-check">
+                                <div class="form-check mb-3">
                                     <input type="radio" class="form-check-input" name="already_have_tr" id="already-have-trYes" value="Yes">
                                     <label for="already-have-trYes" class="form-check-label">Yes</label>
                                     <br>
@@ -367,7 +425,7 @@
                                     <input type="text" name="your_thesis_research" id="your-thesis-research" class="form-control" placeholder="If yes, What is your thesis/research topic?">
                                 </div>
 
-                                <div class="d-none no-have">
+                                <div class="d-none no-have mb-3">
                                     <label for="">if no, would you want us to get you a suitable research/thesis topic?</label>
                                     <br>
                                     <div class="form-check">
@@ -381,7 +439,7 @@
 
                                 <label for="">Have you typed your thesis/research already?</label>
                                 <br>
-                                <div class="form-check">
+                                <div class="form-check mb-3">
                                     <input type="radio" class="form-check-input" name="have_you_typed" id="have-you-typedYes" value="Yes">
                                     <label for="have-you-typedYes" class="form-check-label">Yes</label>
                                     <br>
@@ -389,7 +447,7 @@
                                     <label for="have-you-typedNo" class="form-check-label">No</label>
                                 </div>
 
-                                <div class="d-none no-typed-tr">
+                                <div class="d-none no-typed-tr mb-3">
                                     <label for="">if no, do you want us to handle the typing of your thesis/research for you?</label>
                                     <br>
                                     <div class="form-check">
@@ -403,7 +461,7 @@
 
                                 <label for="">Have you effected the final editing to your thesis/research topic already?</label>
                                 <br>
-                                <div class="form-check">
+                                <div class="form-check mb-3">
                                     <input type="radio" class="form-check-input" name="final_editing" id="final-editingYes" value="Yes">
                                     <label for="final-editingYes" class="form-check-label">Yes</label>
                                     <br>
@@ -416,7 +474,7 @@
                                     <input type="file" name="upload_work_tr[]" multiple id="upload-work-tr" class="form-control" accept="application/msword, application/vnd.ms-powerpoint, text/plain, application/pdf, .doc, .docx, image/*">
                                 </div>
 
-                                <div class="form-group d-none no-effected">
+                                <div class="form-group d-none no-effected mb-3">
                                     <label for="upload-typed-work">If no, upload your thesis/research so far</label>
                                     <input type="file" name="upload_tr[]" multiple id="upload-tr" class="form-control" accept="application/msword, application/vnd.ms-powerpoint, text/plain, application/pdf, .doc, .docx, image/*">
                                 </div>
@@ -435,8 +493,99 @@
                             </div>
 
                             <!-- FLIERS -->
-                            <div class="fliers d-none"></div>
-                            <div class="banners d-none"></div>
+                            <div class="fliers d-none">
+                                <div class="form-group mb-3">
+                                    <input type="text" name="size_to_print" id="size-to-print" class="form-control" id="" placeholder="What size do you want to print?">
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <input type="number" name="quantity_to_print" id="quantity-to-print" class="form-control" id="" placeholder="what quantity do you want to print?">
+                                </div>
+
+                                <label for="">Do you have your design(s) already?</label>
+                                <br>
+                                <div class="form-check mb-3">
+                                    <input type="radio" class="form-check-input" name="have_designs" id="have-designsYes" value="Yes">
+                                    <label for="have-designsYes" class="form-check-label">Yes</label>
+                                    <br>
+                                    <input type="radio" class="form-check-input" name="have_designs" id="have-designsNo" value="No">
+                                    <label for="have-designsNo" class="form-check-label">No</label>
+                                </div>
+
+                                <div class="d-none no-have-designs mb-3">
+                                    <label for="">If NO, Do you want us to design your flier for you?</label>
+                                    <br>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" name="us_to_design" id="us-to-designYes" value="Yes">
+                                        <label for="us-to-designYes" class="form-check-label">Yes</label>
+                                        <br>
+                                        <input type="radio" class="form-check-input" name="us_to_design" id="us-to-designNo" value="No">
+                                        <label for="us-to-designNo" class="form-check-label">No</label>
+                                    </div>
+                                </div>
+
+                                <div class="d-none yes-us-designs mb-3">
+                                    <input type="text" name="flier_for" id="flier-for" class="form-control" placeholder="If yes What occasion are you designing the flier for?">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Upload your design(s) or sample designs here.</label>
+                                    <input type="file" name="design_file[]" multiple id="design-file" class="form-control">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>When do you want the job delivered?</label>
+                                    <input type="date" name="date_to_deliver" id="date-to-deliver" class="form-control">
+                                </div>
+
+                            </div>
+
+                            <!-- BANNERS -->
+                            <div class="banners d-none">
+                                <div class="mb-3">
+                                    <label>What size do you want?</label>
+                                    <input type="text" name="size" id="size" class="form-control">
+                                    <div class="form-text">eg. 8 x 4</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>What quantity do you want?</label>
+                                    <input type="number" min="1" name="banner_quantity" id="banner-quantity" class="form-control">
+                                    <div class="form-text">eg. 8 x 4</div>
+                                </div>
+
+                                <label for="">Do you have your designs already?</label>
+                                <br>
+                                <div class="form-check mb-3">
+                                    <input type="radio" class="form-check-input" name="have_banner_designs" id="have-banner-designsYes" value="Yes">
+                                    <label for="have-banner-designsYes" class="form-check-label">Yes</label>
+                                    <br>
+                                    <input type="radio" class="form-check-input" name="have_banner_designs" id="have-banner-designsNo" value="No">
+                                    <label for="have-banner-designsNo" class="form-check-label">No</label>
+                                </div>
+
+                                <div class="d-none yes-have-banner-designs mb-3">
+                                    <div class="form-check">
+                                        <label for="">If yes, Upload your design here</label>
+                                        <input type="file" name="[]" class="form-check-input" name="us_to_design" id="us-to-designYes" value="Yes">
+                                        <label for="us-to-designNo" class="form-check-label">No</label>
+                                    </div>
+                                </div>
+
+                                <div class="d-none no-have-banner-designs mb-3">
+                                    <label for="">If No, Do you want us to do the design for you?</label>
+                                    <br>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" name="us_to_design" id="us-to-designYes" value="Yes">
+                                        <label for="us-to-designYes" class="form-check-label">Yes</label>
+                                        <br>
+                                        <input type="radio" class="form-check-input" name="us_to_design" id="us-to-designNo" value="No">
+                                        <label for="us-to-designNo" class="form-check-label">No</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- RECEIPT -->
                             <div class="receipt d-none"></div>
                             <div class="invoice d-none"></div>
                             <div class="customized d-none"></div>
@@ -478,6 +627,7 @@
                 if (printType == 'Examination questions') {
                     $('.exams').removeClass('d-none');
                     $('.thesis').addClass('d-none');
+                    $('.fliers').addClass('d-none');
 
                     $('input[name="name_of_subject[]"]').attr('required', true)
                     $('input[name="number_to_be_printed[]"]').attr('required', true)
@@ -486,6 +636,47 @@
                     $('input[name="total_students"]').attr('required', true)
                     $('input[name="typed_already"]').attr('required', true)
                     $('select[name="when_to_be_delivered"]').attr('required', true)
+
+                    $('input[name="name_of_subject[]"]').attr('disabled', false)
+                    $('input[name="number_to_be_printed[]"]').attr('disabled', false)
+                    $('select[name="level[]"]').attr('disabled', false)
+                    $('input[name="class_or_form[]"]').attr('disabled', false)
+                    $('input[name="total_students"]').attr('disabled', false)
+                    $('input[name="typed_already"]').attr('disabled', false)
+                    $('select[name="when_to_be_delivered"]').attr('disabled', false)
+
+                    // 
+                    $('#already-have-trYes').attr('disabled', true)
+                    $('#have-you-typedYes').attr('disabled', true)
+                    $('#final-editingYes').attr('disabled', true)
+                    $('#delivered-tr').attr('disabled', true)
+                    $('#day-week').attr('disabled', true)
+                    $('#size-to-print').attr('disabled', true)
+                    $('#quantity-to-print').attr('disabled', true)
+                    $('#have-designsYes').attr('disabled', true)
+                    $('#design-file').attr('disabled', true)
+                    $('#date-to-deliver').attr('disabled', true)
+                    $('#already-have-trYes').attr('required', false)
+                    $('#have-you-typedYes').attr('required', false)
+                    $('#final-editingYes').attr('required', false)
+                    $('#delivered-tr').attr('required', false)
+                    $('#day-week').attr('required', false)
+                    $('#size-to-print').attr('required', false)
+                    $('#quantity-to-print').attr('required', false)
+                    $('#have-designsYes').attr('required', false)
+                    $('#design-file').attr('required', false)
+                    $('#date-to-deliver').attr('required', false)
+
+                    $('#size-to-print').attr('required', false)
+                    $('#quantity-to-print').attr('required', false)
+                    $('#have-designsYes').attr('required', false)
+                    $('#design-file').attr('required', false)
+                    $('#date-to-deliver').attr('required', false)
+                    $('#size-to-print').attr('disabled', true)
+                    $('#quantity-to-print').attr('disabled', true)
+                    $('#have-designsYes').attr('disabled', true)
+                    $('#design-file').attr('disabled', true)
+                    $('#date-to-deliver').attr('disabled', true)
 
                     // add more fields
                     var i = 1;  
@@ -557,13 +748,22 @@
                 } else if (printType == 'Thesis') {
                     $('.thesis').removeClass('d-none');
                     $('.exams').addClass('d-none');
+                    $('.fliers').addClass('d-none');
 
+                    // 
                     $('#already-have-trYes').attr('required', true)
                     $('#have-you-typedYes').attr('required', true)
                     $('#final-editingYes').attr('required', true)
                     $('#delivered-tr').attr('required', true)
                     $('#day-week').attr('required', true)
 
+                    $('#already-have-trYes').attr('disabled', false)
+                    $('#have-you-typedYes').attr('disabled', false)
+                    $('#final-editingYes').attr('disabled', false)
+                    $('#delivered-tr').attr('disabled', false)
+                    $('#day-week').attr('disabled', false)
+
+                    // 
                     $('input[name="name_of_subject[]"]').attr('disabled', true)
                     $('input[name="number_to_be_printed[]"]').attr('disabled', true)
                     $('select[name="level[]"]').attr('disabled', true)
@@ -573,6 +773,26 @@
                     $('select[name="when_to_be_delivered"]').attr('disabled', true)
                     $('input[name="delivery_address_1"]').attr('disabled', true)
                     $('input[name="delivery_address_2"]').attr('disabled', true)
+                    $('#size-to-print').attr('disabled', true)
+                    $('#quantity-to-print').attr('disabled', true)
+                    $('#have-designsYes').attr('disabled', true)
+                    $('#design-file').attr('disabled', true)
+                    $('#date-to-deliver').attr('disabled', true)
+
+                    $('input[name="name_of_subject[]"]').attr('required', false)
+                    $('input[name="number_to_be_printed[]"]').attr('required', false)
+                    $('select[name="level[]"]').attr('required', false)
+                    $('input[name="class_or_form[]"]').attr('required', false)
+                    $('input[name="total_students"]').attr('required', false)
+                    $('input[name="typed_already"]').attr('required', false)
+                    $('select[name="when_to_be_delivered"]').attr('required', false)
+                    $('input[name="delivery_address_1"]').attr('required', false)
+                    $('input[name="delivery_address_2"]').attr('required', false)
+                    $('#size-to-print').attr('required', false)
+                    $('#quantity-to-print').attr('required', false)
+                    $('#have-designsYes').attr('required', false)
+                    $('#design-file').attr('required', false)
+                    $('#date-to-deliver').attr('required', false)
 
                     
                     $('input[name="already_have_tr"]').click(function() {
@@ -625,6 +845,80 @@
 
                     $('#printjobSubmitButton').attr('disabled', false);
                 } else if (printType == 'Fliers') {
+                    $('.fliers').removeClass('d-none');
+                    $('.thesis').addClass('d-none');
+                    $('.exams').addClass('d-none');
+
+                    // 
+                    $('#size-to-print').attr('required', true)
+                    $('#quantity-to-print').attr('required', true)
+                    $('#have-designsYes').attr('required', true)
+                    $('#date-to-deliver').attr('required', true)
+
+                    $('#size-to-print').attr('disabled', false)
+                    $('#quantity-to-print').attr('disabled', false)
+                    $('#have-designsYes').attr('disabled', false)
+                    $('#design-file').attr('disabled', false)
+                    $('#date-to-deliver').attr('disabled', false)
+
+                    // 
+                    $('#already-have-trYes').attr('disabled', true)
+                    $('#have-you-typedYes').attr('disabled', true)
+                    $('#final-editingYes').attr('disabled', true)
+                    $('#delivered-tr').attr('disabled', true)
+                    $('#day-week').attr('disabled', true)
+                    $('#your-thesis-research').attr('disabled', true)
+                    $('input[name="name_of_subject[]"]').attr('disabled', true)
+                    $('input[name="number_to_be_printed[]"]').attr('disabled', true)
+                    $('select[name="level[]"]').attr('disabled', true)
+                    $('input[name="class_or_form[]"]').attr('disabled', true)
+                    $('input[name="total_students"]').attr('disabled', true)
+                    $('input[name="typed_already"]').attr('disabled', true)
+                    $('select[name="when_to_be_delivered"]').attr('disabled', true)
+                    $('input[name="delivery_address_1"]').attr('disabled', true)
+                    $('input[name="delivery_address_2"]').attr('disabled', true)
+
+                    $('#already-have-trYes').attr('required', false)
+                    $('#have-you-typedYes').attr('required', false)
+                    $('#final-editingYes').attr('required', false)
+                    $('#delivered-tr').attr('required', false)
+                    $('#day-week').attr('required', false)
+                    $('#your-thesis-research').attr('required', false)
+                    $('input[name="name_of_subject[]"]').attr('required', false)
+                    $('input[name="number_to_be_printed[]"]').attr('required', false)
+                    $('select[name="level[]"]').attr('required', false)
+                    $('input[name="class_or_form[]"]').attr('required', false)
+                    $('input[name="total_students"]').attr('required', false)
+                    $('input[name="typed_already"]').attr('required', false)
+                    $('select[name="when_to_be_delivered"]').attr('required', false)
+                    $('input[name="delivery_address_1"]').attr('required', false)
+                    $('input[name="delivery_address_2"]').attr('required', false)
+
+                    $('input[name="have_designs"]').click(function() {
+                        var have = $('input[name="have_designs"]:checked').val();
+                        if (have == 'No') {
+                            $('#design-file').attr('required', false)
+                            $('.no-have-designs').removeClass('d-none');
+                            $('#us-to-designYes').attr('required', true)
+                        } else {
+                            $('#design-file').attr('required', true)
+                            $('.no-have-designs').addClass('d-none');
+                            $('#us-to-designYes').attr('required', false)
+                        }
+                    })
+
+                    $('input[name="us_to_design"]').click(function() {
+                        var usTo = $('input[name="us_to_design"]:checked').val();
+                        if (usTo == 'Yes') {
+                            $('.yes-us-designs').removeClass('d-none');
+                            $('#flier-for').attr('required', true)
+                        } else {
+                            $('.yes-us-designs').addClass('d-none');
+                            $('#flier-for').attr('required', false)
+                            $('#flier-for').val('')
+                        }
+                    })
+                    $('#printjobSubmitButton').attr('disabled', false);
                     
                 } else if (printType == 'Banners') {
                     
@@ -638,138 +932,6 @@
                 
             })
 
-            $("#product").change(function() {
-
-                // var selectedVal = $("#product option:selected").text();
-                var productVal = $("#product option:selected").val();
-                if (productVal != '') {
-                    if (productVal == 'Plain Paper') {
-                        $('#plainpaper').removeClass('d-none');
-
-                        $('#plainpaper_size').attr('required', true);
-                        $('#plainpaper_type').attr('required', true);
-                        $('#plainpaper_qty').attr('required', true);
-
-                        $('#ruledpaper_qty').attr('required', false);
-                        $('#flipchart_size').attr('required', false);
-                        $('#flipchart_qty').attr('required', false);
-                        $('#notepad_size').attr('required', false);
-                        $('#notepad_qty').attr('required', false);
-                        $('#envelope_color').attr('required', false);
-                        $('#envelope_qty').attr('required', false);
-
-
-                        $('#ruledpaper').addClass('d-none');
-                        $('#flipchart').addClass('d-none');
-                        $('#notepad').addClass('d-none');
-                        $('#envelope').addClass('d-none');
-
-
-                        // var size = $('#plainpaper_size').find(":selected").val();
-                        // var type = $('#plainpaper_type').find(":selected").val();
-                        // var qty = $('#plainpaper_qty').val();
-
-                        $('#orderButton').attr('disabled', false);
-
-                    } else if (productVal == 'Ruled Paper') {
-                        $('#ruledpaper').removeClass('d-none');
-
-                        $('#ruledpaper_qty').attr('required', true);
-
-                        $('#plainpaper_size').attr('required', false);
-                        $('#plainpaper_type').attr('required', false);
-                        $('#plainpaper_qty').attr('required', false);
-                        $('#flipchart_size').attr('required', false);
-                        $('#flipchart_qty').attr('required', false);
-                        $('#notepad_size').attr('required', false);
-                        $('#notepad_qty').attr('required', false);
-                        $('#envelope_color').attr('required', false);
-                        $('#envelope_qty').attr('required', false);
-
-                        $('#plainpaper').addClass('d-none');
-                        $('#flipchart').addClass('d-none');
-                        $('#notepad').addClass('d-none');
-                        $('#envelope').addClass('d-none');
-
-                        $('#orderButton').attr('disabled', false);
-                    } else if (productVal == 'Flip Chart') {
-                        $('#flipchart').removeClass('d-none');
-
-                        $('#flipchart_size').attr('required', true);
-                        $('#flipchart_qty').attr('required', true);
-
-                        $('#plainpaper_size').attr('required', false);
-                        $('#plainpaper_type').attr('required', false);
-                        $('#plainpaper_qty').attr('required', false);
-                        $('#ruledpaper_qty').attr('required', false);
-                        $('#notepad_size').attr('required', false);
-                        $('#notepad_qty').attr('required', false);
-                        $('#envelope_color').attr('required', false);
-                        $('#envelope_qty').attr('required', false);
-
-                        $('#plainpaper').addClass('d-none');
-                        $('#ruledpaper').addClass('d-none');
-                        $('#notepad').addClass('d-none');
-                        $('#envelope').addClass('d-none');
-
-                        $('#orderButton').attr('disabled', false);
-                    } else if (productVal == 'Notepad') {
-                        $('#notepad').removeClass('d-none');
-
-                        $('#notepad_size').attr('required', true);
-                        $('#notepad_qty').attr('required', true);
-
-                        $('#plainpaper_size').attr('required', false);
-                        $('#plainpaper_type').attr('required', false);
-                        $('#plainpaper_qty').attr('required', false);
-                        $('#ruledpaper_qty').attr('required', false);
-                        $('#flipchart_size').attr('required', false);
-                        $('#flipchart_qty').attr('required', false);
-                        $('#envelope_color').attr('required', false);
-                        $('#envelope_qty').attr('required', false);
-
-                        $('#plainpaper').addClass('d-none');
-                        $('#ruledpaper').addClass('d-none');
-                        $('#flipchart').addClass('d-none');
-                        $('#envelope').addClass('d-none');
-
-                        $('#orderButton').attr('disabled', false);
-                    } else if (productVal == 'Envelope') {
-                        $('#envelope').removeClass('d-none');
-
-                        $('#envelope_color').attr('required', true);
-                        $('#envelope_qty').attr('required', true);
-
-                        $('#plainpaper_size').attr('required', false);
-                        $('#plainpaper_type').attr('required', false);
-                        $('#plainpaper_qty').attr('required', false);
-                        $('#ruledpaper_qty').attr('required', false);
-                        $('#flipchart_size').attr('required', false);
-                        $('#flipchart_qty').attr('required', false);
-                        $('#notepad_size').attr('required', false);
-                        $('#notepad_qty').attr('required', false);
-
-                        $('#plainpaper').addClass('d-none');
-                        $('#ruledpaper').addClass('d-none');
-                        $('#flipchart').addClass('d-none');
-                        $('#notepad').addClass('d-none');
-
-                        $('#orderButton').attr('disabled', false);
-                    } else {
-                        
-                        $('#plainpaper').addClass('d-none');
-                        $('#ruledpaper').addClass('d-none');
-                        $('#flipchart').addClass('d-none');
-                        $('#notepad').addClass('d-none');
-                        $('#envelope').addClass('d-none');
-                        $('#orderButton').attr('disabled', true);
-                    }
-
-                } else {
-                    alert();
-                }
-
-            });
         });
     </script>
 

@@ -426,7 +426,66 @@
             } else if ($post['print_type'] == "Invoice") {
                 
             } else if ($post['print_type'] == "Customized office Files") {
-                
+                $customize_outfit_name = ((isset($_POST['customize_outfit_name']) && !empty($_POST['customize_outfit_name'])) ? sanitize($_POST['customize_outfit_name']) : '');
+                $customize_outfit_address = ((isset($_POST['customize_outfit_address']) && !empty($_POST['customize_outfit_address'])) ? sanitize($_POST['customize_outfit_address']) : '');
+                $customize_contact = ((isset($_POST['customize_contact']) && !empty($_POST['customize_contact'])) ? sanitize($_POST['customize_contact']) : '');
+                $customize_email = ((isset($_POST['customize_email']) && !empty($_POST['customize_email'])) ? sanitize($_POST['customize_email']) : '');
+                $customize_location = ((isset($_POST['customize_location']) && !empty($_POST['customize_location'])) ? sanitize($_POST['customize_location']) : '');
+                $customize_gps = ((isset($_POST['customize_gps']) && !empty($_POST['customize_gps'])) ? sanitize($_POST['customize_gps']) : '');
+                $customize_have_logo = ((isset($_POST['customize_have_logo']) && !empty($_POST['customize_have_logo'])) ? sanitize($_POST['customize_have_logo']) : '');
+                // $customize_upload_logo = ((isset($_POST['customize_upload_logo']) && !empty($_POST['customize_upload_logo'])) ? sanitize($_POST['customize_upload_logo']) : '');
+                $us_to_design_logo = ((isset($_POST['us_to_design_logo']) && !empty($_POST['us_to_design_logo'])) ? sanitize($_POST['us_to_design_logo']) : '');
+                $customize_id = time() . mt_rand() . $user_id;
+                $createdAt = date('Y-m-d H:i:s');
+
+                 $customize_upload_logo = '';
+                if (isset($_FILES['customize_upload_logo'])) {
+                    $count_files = count($_FILES['customize_upload_logo']['name']);
+                    for ($i = 0; $i < $count_files; $i++) {
+                        if (!empty($_FILES['customize_upload_logo']['name'][$i])) {
+                            $fileName = $_FILES['customize_upload_logo']['name'][$i];
+                            $fileSize = $_FILES['customize_upload_logo']['size'][$i];
+                            $fileType = $_FILES['customize_upload_logo']['type'][$i];
+                            $fileTmpName = $_FILES['customize_upload_logo']['tmp_name'][$i];
+                            $fileError = $_FILES['customize_upload_logo']['error'][$i];
+
+                            $fileExt = explode('.', $fileName);
+                            $fileActualExt = strtolower(end($fileExt));
+
+                            $maxSize = 10000000; //10mb 
+                            $allowed = array('jpg', 'pdf','jpeg', 'pdf', 'png');
+
+                            if (in_array($fileActualExt, $allowed)) {
+                                if ($fileError === 0) {
+                                    if ($fileSize < $maxSize) {
+                                        $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                        $fileDestination =  'media/uploads/' . $fileNewName;
+                                        if (file_exists($fileDestination)) {
+                                            $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                            $fileDestination = 'media/uploads/' . $fileNewName;
+                                        }
+                                        $moveFiles = move_uploaded_file($fileTmpName, $fileDestination);
+                                        if ($moveFiles) {
+                                            $customize_upload_logo .= $fileDestination . ',';
+                                        } else {
+                                            $message = 'Your file(s) was not able to upload.';
+                                        }
+                                    } else {
+                                    }
+                                } else {
+                                    $message = 'There was an error uploading your file(s).';
+                                }
+                            } else {
+                                $message = 'You cannot upload file(s) of this type!';
+                            }
+                        }
+                    }
+                }
+
+                $data = [$customize_id, $user_id, $customize_outfit_name, $customize_outfit_address, $customize_contact, $customize_email, $customize_location, $customize_gps, $customize_have_logo, rtrim($customize_upload_logo, ', '), $us_to_design_logo, $createdAt];
+                $query = "
+                    INSERT INTO `vonna_print_job_customze`(`customze_id`, `customze_userid`, `customize_outfit_name`, `customize_outfit_address`, `customize_contact`, `customize_email`, `customize_location`, `customize_gps`, `customize_have_logo`, `customize_upload_logo`, `customze_us_to_design_logo`, `customze_createdAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ";
             }
 
             if (!empty($message)) {
@@ -788,7 +847,69 @@
                             <div class="invoice d-none">
                                 
                             </div>
-                            <div class="customized d-none"></div>
+
+                            <!-- CUSTOMIZE -->
+                            <div class="customized d-none">
+                                <div class="mb-3">
+                                    <label for="">What is the name of your outfit?</label>
+                                    <input type="text" name="customize_outfit_name" class="form-control" id="customize-outfit-name">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="">what is your the addresss of your outfit?</label>
+                                    <input type="text" name="customize_outfit_address" class="form-control" id="customize-outfit-address">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="">Contact number</label>
+                                    <input type="tel" name="customize_contact" class="form-control" id="customize-contact">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="">Email</label>
+                                    <input type="email" name="customize_email" class="form-control" id="customize-email">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="">Location</label>
+                                    <input type="text" name="customize_location" class="form-control" id="customize-location">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="">GPS address?</label>
+                                    <input type="text" name="customize_gps" class="form-control" id="customize-gps">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="">Does your company have a logo? Yes/No</label>
+                                    <br>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" name="customize_have_logo" id="customize-have-logoYes" value="Yes">
+                                        <label for="customize-have-logoYes" class="form-check-label">Yes</label>
+                                        <br>
+                                        <input type="radio" class="form-check-input" name="customize_have_logo" id="customize-have-logoNo" value="No">
+                                        <label for="customize-have-logoNo" class="form-check-label">No</label>
+                                    </div>
+                                </div>
+
+                                <div class="d-none yes-have-logo mb-3">
+                                    <label for="customize-upload-logo">if yes, upload your logo here</label>
+                                    <input type="file" multiple name="customize_upload_logo[]" id="customize-upload-logo" class="form-control">
+                                </div>
+
+                                <div class="d-none no-have-logo mb-3">
+                                    <label for="">If No, Do you want us to design a logo for your company?</label>
+                                    <br>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" name="us_to_design_logo" id="us-to-design-logoYes" value="Yes">
+                                        <label for="us-to-design-logoYes" class="form-check-label">Yes</label>
+                                        <br>
+                                        <input type="radio" class="form-check-input" name="us_to_design_logo" id="us-to-design-logoNo" value="No">
+                                        <label for="us-to-design-logoNo" class="form-check-label">No</label>
+                                    </div>
+                                </div>
+
+                            </div>
 
                             <button type="submit" class="btn w-100 btn-warning mt-2" id="printjobSubmitButton" name="printjobSubmitButton" disabled>
                                 Send print job now
@@ -830,6 +951,7 @@
                     $('.fliers').addClass('d-none');
                     $('.banners').addClass('d-none');
                     $('.receipt').addClass('d-none');
+                    $('.customized').addClass('d-none');
 
                     $('input[name="name_of_subject[]"]').attr('required', true)
                     $('input[name="number_to_be_printed[]"]').attr('required', true)
@@ -871,6 +993,15 @@
                     $('#receipt-delivery-date').attr('required', false)
                     $('#upload-outfit-design').attr('required', false)
                     $('#upload-logo').attr('required', false)
+                    $('#customize-outfit-name').attr('required', false)
+                    $('#customize-outfit-address').attr('required', false)
+                    $('#customize-contact').attr('required', false)
+                    $('#customize-email').attr('required', false)
+                    $('#customize-location').attr('required', false)
+                    $('#customize-gps').attr('required', false)
+                    $('#customize-have-logoYes').attr('required', false)
+                    $('#customize-upload-logo').attr('required', false)
+                    $('#us-to-design-logoYes').attr('required', false)
 
                     // add more fields
                     var i = 1;  
@@ -945,6 +1076,7 @@
                     $('.fliers').addClass('d-none');
                     $('.banners').addClass('d-none');
                     $('.receipt').addClass('d-none');
+                    $('.customized').addClass('d-none');
 
                     // 
                     $('#already-have-trYes').attr('required', true)
@@ -978,6 +1110,15 @@
                     $('#receipt-delivery-date').attr('required', false)
                     $('#upload-outfit-design').attr('required', false)
                     $('#upload-logo').attr('required', false)
+                    $('#customize-outfit-name').attr('required', false)
+                    $('#customize-outfit-address').attr('required', false)
+                    $('#customize-contact').attr('required', false)
+                    $('#customize-email').attr('required', false)
+                    $('#customize-location').attr('required', false)
+                    $('#customize-gps').attr('required', false)
+                    $('#customize-have-logoYes').attr('required', false)
+                    $('#customize-upload-logo').attr('required', false)
+                    $('#us-to-design-logoYes').attr('required', false)
 
                     
                     $('input[name="already_have_tr"]').click(function() {
@@ -1035,6 +1176,7 @@
                     $('.exams').addClass('d-none');
                     $('.banners').addClass('d-none');
                     $('.receipt').addClass('d-none');
+                    $('.customized').addClass('d-none');
 
                     // 
                     $('#size-to-print').attr('required', true)
@@ -1068,6 +1210,15 @@
                     $('#receipt-delivery-date').attr('required', false)
                     $('#upload-outfit-design').attr('required', false)
                     $('#upload-logo').attr('required', false)
+                    $('#customize-outfit-name').attr('required', false)
+                    $('#customize-outfit-address').attr('required', false)
+                    $('#customize-contact').attr('required', false)
+                    $('#customize-email').attr('required', false)
+                    $('#customize-location').attr('required', false)
+                    $('#customize-gps').attr('required', false)
+                    $('#customize-have-logoYes').attr('required', false)
+                    $('#customize-upload-logo').attr('required', false)
+                    $('#us-to-design-logoYes').attr('required', false)
 
 
                     $('input[name="have_designs"]').click(function() {
@@ -1102,6 +1253,7 @@
                     $('.thesis').addClass('d-none');
                     $('.exams').addClass('d-none');
                     $('.receipt').addClass('d-none');
+                    $('.customized').addClass('d-none');
 
                     $('#banner_size').attr('required', true);
                     $('#banner_quantity').attr('required', true);
@@ -1133,6 +1285,15 @@
                     $('#receipt-delivery-date').attr('required', false)
                     $('#upload-outfit-design').attr('required', false)
                     $('#upload-logo').attr('required', false)
+                    $('#customize-outfit-name').attr('required', false)
+                    $('#customize-outfit-address').attr('required', false)
+                    $('#customize-contact').attr('required', false)
+                    $('#customize-email').attr('required', false)
+                    $('#customize-location').attr('required', false)
+                    $('#customize-gps').attr('required', false)
+                    $('#customize-have-logoYes').attr('required', false)
+                    $('#customize-upload-logo').attr('required', false)
+                    $('#us-to-design-logoYes').attr('required', false)
 
                     $('input[name="have_banner_designs"]').click(function() {
                         var have = $('input[name="have_banner_designs"]:checked').val();
@@ -1159,6 +1320,7 @@
                     $('.fliers').addClass('d-none');
                     $('.thesis').addClass('d-none');
                     $('.exams').addClass('d-none');
+                    $('.customized').addClass('d-none');
 
                     $('#outfit-name').attr('required', true)
                     $('#receipt-type').attr('required', true)
@@ -1189,6 +1351,15 @@
                     $('select[name="when_to_be_delivered"]').attr('required', false)
                     $('input[name="delivery_address_1"]').attr('required', false)
                     $('input[name="delivery_address_2"]').attr('required', false)
+                    $('#customize-outfit-name').attr('required', false)
+                    $('#customize-outfit-address').attr('required', false)
+                    $('#customize-contact').attr('required', false)
+                    $('#customize-email').attr('required', false)
+                    $('#customize-location').attr('required', false)
+                    $('#customize-gps').attr('required', false)
+                    $('#customize-have-logoYes').attr('required', false)
+                    $('#customize-upload-logo').attr('required', false)
+                    $('#us-to-design-logoYes').attr('required', false)
 
                     $('input[name="want_logo"]').click(function() {
                         var want = $('input[name="want_logo"]:checked').val();
@@ -1207,7 +1378,68 @@
                 } else if (printType == 'Invoice') {
                     
                 } else if (printType == 'Customized office Files') {
+                    $('.customized').removeClass('d-none');
+                    $('.receipt').addClass('d-none');
+                    $('.banners').addClass('d-none');
+                    $('.fliers').addClass('d-none');
+                    $('.thesis').addClass('d-none');
+                    $('.exams').addClass('d-none');
                     
+                    $('#customize-outfit-name').attr('required', true)
+                    $('#customize-outfit-address').attr('required', true)
+                    $('#customize-contact').attr('required', true)
+                    $('#customize-email').attr('required', true)
+                    $('#customize-location').attr('required', true)
+                    $('#customize-gps').attr('required', true)
+                    $('#customize-have-logoYes').attr('required', true)
+
+                    $('#outfit-name').attr('required', false)
+                    $('#receipt-type').attr('required', false)
+                    $('#want-logoYes').attr('required', false)
+                    $('#receipt-quantity').attr('required', false)
+                    $('#receipt-delivery-date').attr('required', false)
+                    $('#upload-outfit-design').attr('required', false)
+                    $('#banner_size').attr('required', false);
+                    $('#banner_quantity').attr('required', false);
+                    $('input[name="have_banner_designs"]').attr('required', false);
+                    $('#size-to-print').attr('required', false)
+                    $('#quantity-to-print').attr('required', false)
+                    $('#have-designsYes').attr('required', false)
+                    $('#date-to-deliver').attr('required', false)
+                    $('#already-have-trYes').attr('required', false)
+                    $('#have-you-typedYes').attr('required', false)
+                    $('#final-editingYes').attr('required', false)
+                    $('#delivered-tr').attr('required', false)
+                    $('#day-week').attr('required', false)
+                    $('#your-thesis-research').attr('required', false)
+                    $('input[name="name_of_subject[]"]').attr('required', false)
+                    $('input[name="number_to_be_printed[]"]').attr('required', false)
+                    $('select[name="level[]"]').attr('required', false)
+                    $('input[name="class_or_form[]"]').attr('required', false)
+                    $('input[name="total_students"]').attr('required', false)
+                    $('input[name="typed_already"]').attr('required', false)
+                    $('select[name="when_to_be_delivered"]').attr('required', false)
+                    $('input[name="delivery_address_1"]').attr('required', false)
+                    $('input[name="delivery_address_2"]').attr('required', false)
+
+                    $('input[name="customize_have_logo"]').click(function() {
+                        var have = $('input[name="customize_have_logo"]:checked').val();
+                        if (have == 'Yes') {
+                            $('.yes-have-logo').removeClass('d-none')
+                            $('#customize-upload-logo').attr('required', true)
+                            $('.no-have-logo').addClass('d-none')
+                            $('#us-to-design-logoYes').attr('required', false)
+                            $('input[name="us_to_design_logo"]').prop('checked', false)
+                        } else if (have == 'No') {
+                            $('.no-have-logo').removeClass('d-none')
+                            $('#us-to-design-logoYes').attr('required', true)
+                            $('.yes-have-logo').addClass('d-none')
+                            $('#customize-upload-logo').val('')
+                            $('#customize-upload-logo').attr('required', false)
+
+                        }
+                    })
+                    $('#printjobSubmitButton').attr('disabled', false);
                 }
                 
             })

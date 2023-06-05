@@ -438,7 +438,7 @@
                 $customize_id = time() . mt_rand() . $user_id;
                 $createdAt = date('Y-m-d H:i:s');
 
-                 $customize_upload_logo = '';
+                $customize_upload_logo = '';
                 if (isset($_FILES['customize_upload_logo'])) {
                     $count_files = count($_FILES['customize_upload_logo']['name']);
                     for ($i = 0; $i < $count_files; $i++) {
@@ -486,6 +486,72 @@
                 $query = "
                     INSERT INTO `vonna_print_job_customze`(`customze_id`, `customze_userid`, `customize_outfit_name`, `customize_outfit_address`, `customize_contact`, `customize_email`, `customize_location`, `customize_gps`, `customize_have_logo`, `customize_upload_logo`, `customze_us_to_design_logo`, `customze_createdAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ";
+            } else if ($post['print_type'] == "Call cards") {
+                $card_name = ((isset($_POST['card_name']) && !empty($_POST['card_name'])) ? sanitize($_POST['card_name']) : '');
+                $card_company_name = ((isset($_POST['card_company_name']) && !empty($_POST['card_company_name'])) ? sanitize($_POST['card_company_name']) : '');
+                $card_address = ((isset($_POST['card_address']) && !empty($_POST['card_address'])) ? sanitize($_POST['card_address']) : '');
+                $card_email = ((isset($_POST['card_email']) && !empty($_POST['card_email'])) ? sanitize($_POST['card_email']) : '');
+                $card_facebook = ((isset($_POST['card_facebook']) && !empty($_POST['card_facebook'])) ? sanitize($_POST['card_facebook']) : '');
+                $card_instagram = ((isset($_POST['card_instagram']) && !empty($_POST['card_instagram'])) ? sanitize($_POST['card_instagram']) : '');
+                $card_twitter = ((isset($_POST['card_twitter']) && !empty($_POST['card_twitter'])) ? sanitize($_POST['card_twitter']) : '');
+                $card_tiktok = ((isset($_POST['card_tiktok']) && !empty($_POST['card_tiktok'])) ? sanitize($_POST['card_tiktok']) : '');
+                $card_office_contact = ((isset($_POST['card_office_contact']) && !empty($_POST['card_office_contact'])) ? sanitize($_POST['card_office_contact']) : '');
+                $card_personal_contact = ((isset($_POST['card_personal_contact']) && !empty($_POST['card_personal_contact'])) ? sanitize($_POST['card_personal_contact']) : '');
+                $card_whatsapp = ((isset($_POST['card_whatsapp']) && !empty($_POST['card_whatsapp'])) ? sanitize($_POST['card_whatsapp']) : '');
+                $card_have_logo = ((isset($_POST['card_have_logo']) && !empty($_POST['card_have_logo'])) ? sanitize($_POST['card_have_logo']) : '');
+                // $card_upload_logo = ((isset($_POST['card_upload_logo']) && !empty($_POST['card_upload_logo'])) ? sanitize($_POST['card_upload_logo']) : '');
+                $card_us_to_design_logo = ((isset($_POST['card_us_to_design_logo']) && !empty($_POST['card_us_to_design_logo'])) ? sanitize($_POST['card_us_to_design_logo']) : '');
+                $card_id = time() . mt_rand() . $user_id;
+                $createdAt = date('Y-m-d H:i:s');
+
+                $card_upload_logo = '';
+                if (isset($_FILES['card_upload_logo'])) {
+                    $count_files = count($_FILES['card_upload_logo']['name']);
+                    for ($i = 0; $i < $count_files; $i++) {
+                        if (!empty($_FILES['card_upload_logo']['name'][$i])) {
+                            $fileName = $_FILES['card_upload_logo']['name'][$i];
+                            $fileSize = $_FILES['card_upload_logo']['size'][$i];
+                            $fileType = $_FILES['card_upload_logo']['type'][$i];
+                            $fileTmpName = $_FILES['card_upload_logo']['tmp_name'][$i];
+                            $fileError = $_FILES['card_upload_logo']['error'][$i];
+
+                            $fileExt = explode('.', $fileName);
+                            $fileActualExt = strtolower(end($fileExt));
+
+                            $maxSize = 10000000; //10mb 
+                            $allowed = array('jpg', 'pdf','jpeg', 'pdf', 'png');
+
+                            if (in_array($fileActualExt, $allowed)) {
+                                if ($fileError === 0) {
+                                    if ($fileSize < $maxSize) {
+                                        $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                        $fileDestination =  'media/uploads/' . $fileNewName;
+                                        if (file_exists($fileDestination)) {
+                                            $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                            $fileDestination = 'media/uploads/' . $fileNewName;
+                                        }
+                                        $moveFiles = move_uploaded_file($fileTmpName, $fileDestination);
+                                        if ($moveFiles) {
+                                            $card_upload_logo .= $fileDestination . ',';
+                                        } else {
+                                            $message = 'Your file(s) was not able to upload.';
+                                        }
+                                    } else {
+                                    }
+                                } else {
+                                    $message = 'There was an error uploading your file(s).';
+                                }
+                            } else {
+                                $message = 'You cannot upload file(s) of this type!';
+                            }
+                        }
+                    }
+                }
+
+                $data = [$card_id, $user_id, $card_name, $card_company_name, $card_address, $card_email, $card_facebook, $card_instagram, $card_twitter, $card_tiktok, $card_office_contact, $card_personal_contact, $card_whatsapp, $card_have_logo, rtrim($card_upload_logo, ', '), $card_us_to_design_logo, $createdAt];
+                $query = "
+                    INSERT INTO `vonna_printjob_callcards`(`card_id`, `card_userid`, `card_name`, `card_company_name`, `card_address`, `card_email`, `card_facebook`, `card_instagram`, `card_twitter`, `card_tiktok`, `card_office_contact`, `card_personal_contact`, `card_whatsapp`, `card_have_logo`, `card_upload_logo`, `card_us_to_design_logo`, `card_createdAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ";
             }
 
             if (!empty($message)) {
@@ -516,7 +582,7 @@
                             <a class="nav-link active" aria-current="page" href="<?= PROOT; ?>account/print-job">Print Job</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-secondary" href="<?= PROOT; ?>account/print-job/requests">Requests</a>
+                            <a class="nav-link text-secondary" href="<?= PROOT; ?>account/printjob-requests">Requests</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-secondary" href="<?= PROOT; ?>account/print-job">Rerefesh</a>
@@ -543,6 +609,7 @@
                                     <option value="Receipt books">Receipt books</option>
                                     <option value="Invoice">Invoice</option>
                                     <option value="Customized office Files">Customized office Files</option>
+                                    <option value="Call cards">Call cards</option>
                                 </select>
                             </div>
  
@@ -911,6 +978,89 @@
 
                             </div>
 
+                            <!-- CALL CARDS -->
+                            <div class="call-cards d-none">
+                                <div class="mb-3">
+                                    <label for="">What is your name?</label>
+                                    <input type="text" name="card_name" class="form-control" id="card-name">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="">What is the name of your company?</label>
+                                    <input type="text" name="card_company_name" class="form-control" id="card-company-name">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="">what is your address?</label>
+                                    <input type="text" name="card_address" class="form-control" id="card-address">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="">what is your email?</label>
+                                    <input type="email" name="card_email" class="form-control" id="card-email">
+                                </div>
+
+                                <label for="">what are your social media handles?</label>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-sm">
+                                        <input type="text" name="card_facebook" id="card-facebook" class="form-control" placeholder="Facebook:">
+                                    </div>
+                                    <div class="col-sm">
+                                        <input type="text" name="card_instagram" id="card-instagram" class="form-control" placeholder="Instagram:">
+                                    </div>
+                                    <div class="col-sm">
+                                        <input type="text" name="card_twitter" id="card-twitter" class="form-control" placeholder="Twitter:">
+                                    </div>
+                                    <div class="col-sm">
+                                        <input type="text" name="card_tiktok" id="card-tiktok" class="form-control" placeholder="Tik tok:">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="">Office Contact 1:</label>
+                                    <input type="text" name="card_office_contact" class="form-control" id="card-office-contact">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="">Personal Contact 2:</label>
+                                    <input type="text" name="card_personal_contact" class="form-control" id="card-personal-contact">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="">Whatsapp:</label>
+                                    <input type="text" name="card_whatsapp" class="form-control" id="card-whatsapp">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="">Does your company have a logo?</label>
+                                    <br>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" name="card_have_logo" id="card-have-logoYes" value="Yes">
+                                        <label for="card-have-logoYes" class="form-check-label">Yes</label>
+                                        <br>
+                                        <input type="radio" class="form-check-input" name="card_have_logo" id="card-have-logoNo" value="No">
+                                        <label for="card-have-logoNo" class="form-check-label">No</label>
+                                    </div>
+                                </div>
+
+                                <div class="d-none yes-card-logo mb-3">
+                                    <label for="card-upload-logo">Upload your company logo here:</label>
+                                    <input type="file" multiple name="card_upload_logo[]" id="card-upload-logo" class="form-control">
+                                </div>
+
+                                <div class="d-none no-card-logo mb-3">
+                                    <label for="">If no, Do you want us to design a logo for you?</label>
+                                    <br>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" name="card_us_to_design_logo" id="card-us-to-design-logoYes" value="Yes">
+                                        <label for="card-us-to-design-logoYes" class="form-check-label">Yes</label>
+                                        <br>
+                                        <input type="radio" class="form-check-input" name="card_us_to_design_logo" id="card-us-to-design-logoNo" value="No">
+                                        <label for="card-us-to-design-logoNo" class="form-check-label">No</label>
+                                    </div>
+                                </div>
+                            </div>
+
                             <button type="submit" class="btn w-100 btn-warning mt-2" id="printjobSubmitButton" name="printjobSubmitButton" disabled>
                                 Send print job now
                             </button>
@@ -952,6 +1102,7 @@
                     $('.banners').addClass('d-none');
                     $('.receipt').addClass('d-none');
                     $('.customized').addClass('d-none');
+                    $('.call-cards').addClass('d-none');
 
                     $('input[name="name_of_subject[]"]').attr('required', true)
                     $('input[name="number_to_be_printed[]"]').attr('required', true)
@@ -1002,6 +1153,16 @@
                     $('#customize-have-logoYes').attr('required', false)
                     $('#customize-upload-logo').attr('required', false)
                     $('#us-to-design-logoYes').attr('required', false)
+                    $('#card-name').attr('required', false)
+                    $('#card-company-name').attr('required', false)
+                    $('#card-address').attr('required', false)
+                    $('#card-email').attr('required', false)
+                    $('#card-office-contact').attr('required', false)
+                    $('#card-personal-contact').attr('required', false)
+                    $('#card-whatsapp').attr('required', false)
+                    $('#card-have-logoYes').attr('required', false)
+                    $('#card-us-to-design-logoYes').attr('required', false)
+                    $('#card-upload-logo').attr('required', false)
 
                     // add more fields
                     var i = 1;  
@@ -1077,6 +1238,7 @@
                     $('.banners').addClass('d-none');
                     $('.receipt').addClass('d-none');
                     $('.customized').addClass('d-none');
+                    $('.call-cards').addClass('d-none');
 
                     // 
                     $('#already-have-trYes').attr('required', true)
@@ -1119,6 +1281,16 @@
                     $('#customize-have-logoYes').attr('required', false)
                     $('#customize-upload-logo').attr('required', false)
                     $('#us-to-design-logoYes').attr('required', false)
+                    $('#card-name').attr('required', false)
+                    $('#card-company-name').attr('required', false)
+                    $('#card-address').attr('required', false)
+                    $('#card-email').attr('required', false)
+                    $('#card-office-contact').attr('required', false)
+                    $('#card-personal-contact').attr('required', false)
+                    $('#card-whatsapp').attr('required', false)
+                    $('#card-have-logoYes').attr('required', false)
+                    $('#card-us-to-design-logoYes').attr('required', false)
+                    $('#card-upload-logo').attr('required', false)
 
                     
                     $('input[name="already_have_tr"]').click(function() {
@@ -1177,6 +1349,7 @@
                     $('.banners').addClass('d-none');
                     $('.receipt').addClass('d-none');
                     $('.customized').addClass('d-none');
+                    $('.call-cards').addClass('d-none');
 
                     // 
                     $('#size-to-print').attr('required', true)
@@ -1219,6 +1392,16 @@
                     $('#customize-have-logoYes').attr('required', false)
                     $('#customize-upload-logo').attr('required', false)
                     $('#us-to-design-logoYes').attr('required', false)
+                    $('#card-name').attr('required', false)
+                    $('#card-company-name').attr('required', false)
+                    $('#card-address').attr('required', false)
+                    $('#card-email').attr('required', false)
+                    $('#card-office-contact').attr('required', false)
+                    $('#card-personal-contact').attr('required', false)
+                    $('#card-whatsapp').attr('required', false)
+                    $('#card-have-logoYes').attr('required', false)
+                    $('#card-us-to-design-logoYes').attr('required', false)
+                    $('#card-upload-logo').attr('required', false)
 
 
                     $('input[name="have_designs"]').click(function() {
@@ -1254,6 +1437,7 @@
                     $('.exams').addClass('d-none');
                     $('.receipt').addClass('d-none');
                     $('.customized').addClass('d-none');
+                    $('.call-cards').addClass('d-none');
 
                     $('#banner_size').attr('required', true);
                     $('#banner_quantity').attr('required', true);
@@ -1294,6 +1478,16 @@
                     $('#customize-have-logoYes').attr('required', false)
                     $('#customize-upload-logo').attr('required', false)
                     $('#us-to-design-logoYes').attr('required', false)
+                    $('#card-name').attr('required', false)
+                    $('#card-company-name').attr('required', false)
+                    $('#card-address').attr('required', false)
+                    $('#card-email').attr('required', false)
+                    $('#card-office-contact').attr('required', false)
+                    $('#card-personal-contact').attr('required', false)
+                    $('#card-whatsapp').attr('required', false)
+                    $('#card-have-logoYes').attr('required', false)
+                    $('#card-us-to-design-logoYes').attr('required', false)
+                    $('#card-upload-logo').attr('required', false)
 
                     $('input[name="have_banner_designs"]').click(function() {
                         var have = $('input[name="have_banner_designs"]:checked').val();
@@ -1321,6 +1515,7 @@
                     $('.thesis').addClass('d-none');
                     $('.exams').addClass('d-none');
                     $('.customized').addClass('d-none');
+                    $('.call-cards').addClass('d-none');
 
                     $('#outfit-name').attr('required', true)
                     $('#receipt-type').attr('required', true)
@@ -1360,6 +1555,16 @@
                     $('#customize-have-logoYes').attr('required', false)
                     $('#customize-upload-logo').attr('required', false)
                     $('#us-to-design-logoYes').attr('required', false)
+                    $('#card-name').attr('required', false)
+                    $('#card-company-name').attr('required', false)
+                    $('#card-address').attr('required', false)
+                    $('#card-email').attr('required', false)
+                    $('#card-office-contact').attr('required', false)
+                    $('#card-personal-contact').attr('required', false)
+                    $('#card-whatsapp').attr('required', false)
+                    $('#card-have-logoYes').attr('required', false)
+                    $('#card-us-to-design-logoYes').attr('required', false)
+                    $('#card-upload-logo').attr('required', false)
 
                     $('input[name="want_logo"]').click(function() {
                         var want = $('input[name="want_logo"]:checked').val();
@@ -1376,7 +1581,15 @@
 
                     $('#printjobSubmitButton').attr('disabled', false);
                 } else if (printType == 'Invoice') {
-                    
+                    $('.invoice').addClass('d-none');
+                    $('.customized').addClass('d-none');
+                    $('.receipt').addClass('d-none');
+                    $('.banners').addClass('d-none');
+                    $('.fliers').addClass('d-none');
+                    $('.thesis').addClass('d-none');
+                    $('.exams').addClass('d-none');
+                    $('.call-cards').addClass('d-none');
+
                 } else if (printType == 'Customized office Files') {
                     $('.customized').removeClass('d-none');
                     $('.receipt').addClass('d-none');
@@ -1384,6 +1597,7 @@
                     $('.fliers').addClass('d-none');
                     $('.thesis').addClass('d-none');
                     $('.exams').addClass('d-none');
+                    $('.call-cards').addClass('d-none');
                     
                     $('#customize-outfit-name').attr('required', true)
                     $('#customize-outfit-address').attr('required', true)
@@ -1421,6 +1635,16 @@
                     $('select[name="when_to_be_delivered"]').attr('required', false)
                     $('input[name="delivery_address_1"]').attr('required', false)
                     $('input[name="delivery_address_2"]').attr('required', false)
+                    $('#card-name').attr('required', false)
+                    $('#card-company-name').attr('required', false)
+                    $('#card-address').attr('required', false)
+                    $('#card-email').attr('required', false)
+                    $('#card-office-contact').attr('required', false)
+                    $('#card-personal-contact').attr('required', false)
+                    $('#card-whatsapp').attr('required', false)
+                    $('#card-have-logoYes').attr('required', false)
+                    $('#card-us-to-design-logoYes').attr('required', false)
+                    $('#card-upload-logo').attr('required', false)
 
                     $('input[name="customize_have_logo"]').click(function() {
                         var have = $('input[name="customize_have_logo"]:checked').val();
@@ -1440,6 +1664,80 @@
                         }
                     })
                     $('#printjobSubmitButton').attr('disabled', false);
+                } else if (printType == 'Call cards') {
+                    $('.call-cards').removeClass('d-none');
+                    $('.customized').addClass('d-none');
+                    $('.receipt').addClass('d-none');
+                    $('.banners').addClass('d-none');
+                    $('.fliers').addClass('d-none');
+                    $('.thesis').addClass('d-none');
+                    $('.exams').addClass('d-none');
+
+                    $('#card-name').attr('required', true)
+                    $('#card-company-name').attr('required', true)
+                    $('#card-address').attr('required', true)
+                    $('#card-email').attr('required', true)
+                    $('#card-office-contact').attr('required', true)
+                    $('#card-personal-contact').attr('required', true)
+                    $('#card-whatsapp').attr('required', true)
+                    $('#card-have-logoYes').attr('required', true)
+
+                    $('#customize-outfit-address').attr('required', false)
+                    $('#customize-contact').attr('required', false)
+                    $('#customize-email').attr('required', false)
+                    $('#customize-location').attr('required', false)
+                    $('#customize-gps').attr('required', false)
+                    $('#customize-have-logoYes').attr('required', false)
+                    $('#us-to-design-logoYes').attr('required', false)
+                    $('#customize-upload-logo').attr('required', false)
+                    $('#outfit-name').attr('required', false)
+                    $('#receipt-type').attr('required', false)
+                    $('#want-logoYes').attr('required', false)
+                    $('#receipt-quantity').attr('required', false)
+                    $('#receipt-delivery-date').attr('required', false)
+                    $('#upload-outfit-design').attr('required', false)
+                    $('#banner_size').attr('required', false);
+                    $('#banner_quantity').attr('required', false);
+                    $('input[name="have_banner_designs"]').attr('required', false);
+                    $('#size-to-print').attr('required', false)
+                    $('#quantity-to-print').attr('required', false)
+                    $('#have-designsYes').attr('required', false)
+                    $('#date-to-deliver').attr('required', false)
+                    $('#already-have-trYes').attr('required', false)
+                    $('#have-you-typedYes').attr('required', false)
+                    $('#final-editingYes').attr('required', false)
+                    $('#delivered-tr').attr('required', false)
+                    $('#day-week').attr('required', false)
+                    $('#your-thesis-research').attr('required', false)
+                    $('input[name="name_of_subject[]"]').attr('required', false)
+                    $('input[name="number_to_be_printed[]"]').attr('required', false)
+                    $('select[name="level[]"]').attr('required', false)
+                    $('input[name="class_or_form[]"]').attr('required', false)
+                    $('input[name="total_students"]').attr('required', false)
+                    $('input[name="typed_already"]').attr('required', false)
+                    $('select[name="when_to_be_delivered"]').attr('required', false)
+                    $('input[name="delivery_address_1"]').attr('required', false)
+                    $('input[name="delivery_address_2"]').attr('required', false)
+
+                    $('input[name="card_have_logo"]').click(function() {
+                        var have = $('input[name="card_have_logo"]:checked').val();
+                        if (have == 'Yes') {
+                            $('.yes-card-logo').removeClass('d-none')
+                            $('#card-upload-logo').attr('required', true)
+                            $('.no-card-logo').addClass('d-none')
+                            $('#card-us-to-design-logoYes').attr('required', false)
+                            $('input[name="card_us_to_design_logo"]').prop('checked', false)
+                        } else if (have == 'No') {
+                            $('.no-card-logo').removeClass('d-none')
+                            $('#card-us-to-design-logoYes').attr('required', true)
+                            $('.yes-card-logo').addClass('d-none')
+                            $('#card-upload-logo').val('')
+                            $('#card-upload-logo').attr('required', false)
+
+                        }
+                    })
+                    $('#printjobSubmitButton').attr('disabled', false);
+
                 }
                 
             })

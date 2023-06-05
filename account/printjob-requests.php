@@ -96,9 +96,6 @@
                             <a class="nav-link" href="<?= PROOT; ?>account/printjob-requests">Requests</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-secondary" href="<?= PROOT; ?>account/print-job">Rerefesh</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link text-secondary" href="<?= PROOT; ?>account/index">Go home</a>
                         </li>
                     </ul>
@@ -134,7 +131,7 @@
                                             $query = "
                                                 UPDATE vonna_printjob 
                                                 SET printjob_status = ? 
-                                                WHERE orders_id = ?
+                                                WHERE printjob_id = ?
                                             ";
                                             $statement = $conn->prepare($query);
                                             $result = $statement->execute([$status, $order_id]);
@@ -150,23 +147,34 @@
                                     }
 
                                     // DELETE ORDER
-                                    if (isset($_GET['deleted']) && !empty($_GET['deleted'])) {
+                                    if (isset($_GET['trashexams']) && !empty($_GET['trashexams'])) {
                                         // code...
-                                        $order_id = sanitize($_GET['deleted']);
+                                        $order_id = sanitize($_GET['trashexams']);
                                         if (is_numeric($order_id)) {
+                                            if ($_GET['media'] != '') {
+                                                // code...
+                                                $medias = explode(',', $_GET['media']);
+                                                foreach ($medias as $media) {
+                                                    if (file_exists(BASEURL . 'account/' . $media)) {
+                                                        // code...
+                                                        unlink(BASEURL . 'account/' . $media);
+                                                    }
+                                                }
+                                            }
+
                                             $query = "
                                                 DELETE FROM vonna_printjob 
-                                                WHERE orders_id = ?
+                                                WHERE printjob_id = ?
                                             ";
                                             $statement = $conn->prepare($query);
                                             $result = $statement->execute([$order_id]);
                                             if ($result) {
                                                 // code...
                                                 $_SESSION['flash_success'] = 'Order deleted successfully.';
-                                                redirect(PROOT . 'account/printjob-request');
+                                                redirect(PROOT . 'account/printjob-requests');
                                             } else {
                                                 echo js_alert('Something went wrong... please try again.');
-                                                redirect(PROOT . 'account/printjob-request');
+                                                redirect(PROOT . 'account/printjob-requests');
                                             }
                                         }
                                     }
@@ -218,7 +226,7 @@
                                                     <td><?= pretty_date($exam["printjob_createdAt"]); ?></td>
                                                     <td>
                                                         <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#Modal<?= $exam['printjob_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
-                                                        <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/printjob-requests/<?= $exam['printjob_id']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
+                                                        <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/printjob-requests?trashexams=<?= $exam['printjob_id']; ?>&media=<?= $exam['printjob_upload_typed_work']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
                                                     </td>
                                                 </tr>
                                                 <div class="modal fade" id="Modal<?= $exam['printjob_id']; ?>" tabindex="-1" aria-labelledby="ModalLabel<?= $exam['printjob_id']; ?>" aria-modal="true" role="dialog">
@@ -231,10 +239,13 @@
                                                                 </h1>
                                                                 <p class="text-muted">
                                                                     <?php 
-                                                                        $exams_files = explode(',', $exam['printjob_upload_typed_work']);
                                                                         $outputexams_file = '';
-                                                                        foreach ($exams_files as $exams_file) 
-                                                                            $outputexams_file .= '<a href="'.$exams_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        if ($exam['printjob_upload_typed_work'] != '') {
+                                                                            // code...
+                                                                            $exams_files = explode(',', $exam['printjob_upload_typed_work']);
+                                                                            foreach ($exams_files as $exams_file) 
+                                                                                $outputexams_file .= '<a href="'.$exams_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        }
 
                                                                         if ($exam['printjob_status'] == 0) {
                                                                             echo '<span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
@@ -314,6 +325,76 @@
                                 </div>
 
                                 <!-- Thesis -->
+                                <?php 
+
+                                    // CANCEL / RE ORDER
+                                    if (isset($_GET['cancelthesis']) && !empty($_GET['cancelthesis'])) {
+                                        // code...
+                                        $order_id = sanitize($_GET['cancelthesis']);
+                                        $status = $_GET['status'];
+                                        if ($status == 'new') {
+                                            $status = 0;
+                                        }
+                                        if (is_numeric($order_id)) {
+                                            $query = "
+                                                UPDATE vonna_printjob_thesis 
+                                                SET thesis_status = ? 
+                                                WHERE thesis_id = ?
+                                            ";
+                                            $statement = $conn->prepare($query);
+                                            $result = $statement->execute([$status, $order_id]);
+                                            if ($result) {
+                                                // code...
+                                                $_SESSION['flash_success'] = 'Order cancel successfully.';
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            } else {
+                                                echo js_alert('Something went wrong... please try again.');
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            }
+                                        }
+                                    }
+
+                                    // DELETE ORDER
+                                    if (isset($_GET['trashthesis']) && !empty($_GET['trashthesis'])) {
+                                        // code...
+                                        $order_id = sanitize($_GET['trashthesis']);
+                                        if (is_numeric($order_id)) {
+                                            if ($_GET['media'] != '') {
+                                                $medias = explode(',', $_GET['media']);
+                                                foreach ($medias as $media) {
+                                                    if (file_exists(BASEURL . 'account/' . $media)) {
+                                                        unlink(BASEURL . 'account/' . $media);
+                                                    }
+                                                }
+                                            }
+
+                                            if ($_GET['media1'] != '') {
+                                                $medias1 = explode(',', $_GET['media1']);
+                                                foreach ($medias1 as $media1) {
+                                                    if (file_exists(BASEURL . 'account/' . $media1)) {
+                                                        unlink(BASEURL . 'account/' . $media1);
+                                                    }
+                                                }
+                                            }
+
+                                            $query = "
+                                                DELETE FROM vonna_printjob_thesis 
+                                                WHERE thesis_id = ?
+                                            ";
+                                            $statement = $conn->prepare($query);
+                                            $result = $statement->execute([$order_id]);
+                                            if ($result) {
+                                                // code...
+                                                $_SESSION['flash_success'] = 'Order deleted successfully.';
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            } else {
+                                                echo js_alert('Something went wrong... please try again.');
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            }
+                                        }
+                                    }
+
+                                ?>
                                 <div class="tab-pane fade" id="v-pills-th" role="tabpanel" aria-labelledby="v-pills-th-tab" tabindex="0">
                                     <p class="text-center text-muted h2">THESIS/RESEARCH</p>
                                     <div class="table-responsive">
@@ -340,7 +421,7 @@
                                                             if ($thesis['thesis_status'] == 0) {
                                                                 // code...
                                                                 echo '<br><span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
-                                                                echo '&nbsp;<a href="?cancel='.$thesis["thesis_id"].'&status=4" class="">cancel order</a>';
+                                                                echo '&nbsp;<a href="?cancelthesis='.$thesis["thesis_id"].'&status=4" class="">cancel order</a>';
                                                             } elseif ($thesis['thesis_status'] == 1) {
                                                                 echo '<br><span class="badge bg-warning-soft h6 text-uppercase">Processing</span>';
                                                             } elseif ($thesis['thesis_status'] == 2) {
@@ -348,7 +429,7 @@
                                                             } elseif ($thesis['thesis_status'] == 3) {
                                                                 echo '<br><span class="badge bg-success-soft h6 text-uppercase">Ordered</span>';
                                                             } elseif ($thesis['thesis_status'] == 4) {
-                                                                echo '<br><a href="?cancel='.$thesis["thesis_id"].'&status=new" class="">re-order</a>';
+                                                                echo '<br><a href="?cancelthesis='.$thesis["thesis_id"].'&status=new" class="">re-order</a>';
                                                             } else {
                                                                 echo '';
                                                             }
@@ -358,7 +439,7 @@
                                                     <td><?= pretty_date($thesis["thesis_createdAt"]); ?></td>
                                                     <td>
                                                         <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#Modal<?= $thesis['thesis_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
-                                                        <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/orders/<?= $thesis['thesis_id']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
+                                                        <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/printjob-requests?trashthesis=<?= $thesis['thesis_id']; ?>&media=<?= $thesis['thesis_upload_work_tr']; ?>&media1=<?= $thesis['thesis_upload_tr']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
                                                     </td>
                                                 </tr>
                                                 <div class="modal fade" id="Modal<?= $thesis['thesis_id']; ?>" tabindex="-1" aria-labelledby="ModalLabel<?= $thesis['thesis_id']; ?>" aria-modal="true" role="dialog">
@@ -371,15 +452,21 @@
                                                                 </h1>
                                                                 <p class="text-muted">
                                                                     <?php 
-                                                                        $thesis_files = explode(',', $thesis['thesis_upload_work_tr']);
                                                                         $outputthesis_file = '';
-                                                                        foreach ($thesis_files as $thesis_file) 
-                                                                            $outputthesis_file .= '<a href="'.$thesis_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        if ($thesis['thesis_upload_work_tr'] != '') {
+                                                                            // code...
+                                                                            $thesis_files = explode(',', $thesis['thesis_upload_work_tr']);
+                                                                            foreach ($thesis_files as $thesis_file) 
+                                                                                $outputthesis_file .= '<a href="'.$thesis_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        }
 
-                                                                        $thesis_work_files = explode(',', $thesis['thesis_upload_tr']);
                                                                         $outputthesis_work_file = '';
-                                                                        foreach ($thesis_work_files as $thesis_work_file) 
-                                                                            $outputthesis_work_file .= '<a href="'.$thesis_work_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        if ($thesis['thesis_upload_tr'] != '') {
+                                                                            // code...
+                                                                            $thesis_work_files = explode(',', $thesis['thesis_upload_tr']);
+                                                                            foreach ($thesis_work_files as $thesis_work_file) 
+                                                                                $outputthesis_work_file .= '<a href="'.$thesis_work_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        }
 
                                                                         if ($thesis['thesis_status'] == 0) {
                                                                             echo '<span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
@@ -401,7 +488,7 @@
                                                                     <li class="list-group-item"><span class="fw-bold text-info">if no, do you want us to handle the typing of your thesis/research for you?</span> <?= $thesis['thesis_handle_typing']; ?></a></li>
                                                                     <li class="list-group-item"><span class="fw-bold text-info">Have you effected the final editing to your thesis/research topic already?</span> <?= $thesis['thesis_final_editing']; ?></a></li>
                                                                     <li class="list-group-item"><span class="fw-bold text-info">If yes , Upload your work here:</span> <?= $outputthesis_file; ?></a></li>
-                                                                    <li class="list-group-item"><span class="fw-bold text-info">If no, upload your thesis/research so far:</span> <?= $thesis_work_file; ?></a></li>
+                                                                    <li class="list-group-item"><span class="fw-bold text-info">If no, upload your thesis/research so far:</span> <?= $outputthesis_work_file; ?></a></li>
                                                                     <li class="list-group-item"><span class="fw-bold text-info">When do you want your work delivered?</span> <?= $thesis['thesis_day_week'] . ' - ' . $thesis['thesis_delivered_tr']; ?></li>
                                                                     <li class="list-group-item"><span class="fw-bold text-info">Date: </span> <?= pretty_date($thesis['thesis_createdAt']); ?></li>
                                                                 </ul>
@@ -420,6 +507,67 @@
                                 </div>
 
                                 <!-- Fliers -->
+                                <?php 
+
+                                    // CANCEL / RE ORDER
+                                    if (isset($_GET['cancelflier']) && !empty($_GET['cancelflier'])) {
+                                        // code...
+                                        $order_id = sanitize($_GET['cancelflier']);
+                                        $status = $_GET['status'];
+                                        if ($status == 'new') {
+                                            $status = 0;
+                                        }
+                                        if (is_numeric($order_id)) {
+                                            $query = "
+                                                UPDATE vonna_printjob_fliers 
+                                                SET flier_status = ? 
+                                                WHERE flier_id = ?
+                                            ";
+                                            $statement = $conn->prepare($query);
+                                            $result = $statement->execute([$status, $order_id]);
+                                            if ($result) {
+                                                // code...
+                                                $_SESSION['flash_success'] = 'Order cancel successfully.';
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            } else {
+                                                echo js_alert('Something went wrong... please try again.');
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            }
+                                        }
+                                    }
+
+                                    // DELETE ORDER
+                                    if (isset($_GET['trashflier']) && !empty($_GET['trashflier'])) {
+                                        // code...
+                                        $order_id = sanitize($_GET['trashflier']);
+                                        if (is_numeric($order_id)) {
+                                            if ($_GET['media'] != '') {
+                                                $medias = explode(',', $_GET['media']);
+                                                foreach ($medias as $media) {
+                                                    if (file_exists(BASEURL . 'account/' . $media)) {
+                                                        unlink(BASEURL . 'account/' . $media);
+                                                    }
+                                                }
+                                            }
+
+                                            $query = "
+                                                DELETE FROM vonna_printjob_fliers 
+                                                WHERE flier_id = ?
+                                            ";
+                                            $statement = $conn->prepare($query);
+                                            $result = $statement->execute([$order_id]);
+                                            if ($result) {
+                                                // code...
+                                                $_SESSION['flash_success'] = 'Order deleted successfully.';
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            } else {
+                                                echo js_alert('Something went wrong... please try again.');
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            }
+                                        }
+                                    }
+
+                                ?>
                                 <div class="tab-pane fade" id="v-pills-fl" role="tabpanel" aria-labelledby="v-pills-fl-tab" tabindex="0">
                                     <p class="text-center text-muted h2">FLIERS</p>
                                     <div class="table-responsive">
@@ -446,7 +594,7 @@
                                                             if ($flier['flier_status'] == 0) {
                                                                 // code...
                                                                 echo '<br><span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
-                                                                echo '&nbsp;<a href="?cancel='.$flier["flier_id"].'&status=4" class="">cancel order</a>';
+                                                                echo '&nbsp;<a href="?cancelflier='.$flier["flier_id"].'&status=4" class="">cancel order</a>';
                                                             } elseif ($flier['flier_status'] == 1) {
                                                                 echo '<br><span class="badge bg-warning-soft h6 text-uppercase">Processing</span>';
                                                             } elseif ($flier['flier_status'] == 2) {
@@ -454,7 +602,7 @@
                                                             } elseif ($flier['flier_status'] == 3) {
                                                                 echo '<br><span class="badge bg-success-soft h6 text-uppercase">Ordered</span>';
                                                             } elseif ($flier['flier_status'] == 4) {
-                                                                echo '<br><a href="?cancel='.$flier["thesis_id"].'&status=new" class="">re-order</a>';
+                                                                echo '<br><a href="?cancelflier='.$flier["flier_id"].'&status=new" class="">re-order</a>';
                                                             } else {
                                                                 echo '';
                                                             }
@@ -465,7 +613,7 @@
                                                     <td><?= pretty_date($flier["flier_createdAt"]); ?></td>
                                                     <td>
                                                         <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#Modal<?= $flier['flier_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
-                                                        <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/orders/<?= $flier['flier_id']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
+                                                        <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/printjob-requests?trashflier=<?= $flier['flier_id']; ?>&media=<?= $flier['flier_design_file']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
                                                     </td>
                                                 </tr>
                                                 <div class="modal fade" id="Modal<?= $flier['flier_id']; ?>" tabindex="-1" aria-labelledby="ModalLabel<?= $flier['flier_id']; ?>" aria-modal="true" role="dialog">
@@ -478,10 +626,13 @@
                                                                 </h1>
                                                                 <p class="text-muted">
                                                                     <?php 
-                                                                        $flier_files = explode(',', $flier['flier_design_file']);
                                                                         $outputflier_file = '';
-                                                                        foreach ($flier_files as $flier_file) 
-                                                                            $outputflier_file .= '<a href="'.$flier_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        if ($flier['flier_design_file'] != '') {
+                                                                            // code...
+                                                                            $flier_files = explode(',', $flier['flier_design_file']);
+                                                                            foreach ($flier_files as $flier_file) 
+                                                                                $outputflier_file .= '<a href="'.$flier_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        }
 
                                                                         if ($flier['flier_status'] == 0) {
                                                                             echo '<span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
@@ -520,6 +671,67 @@
                                 </div>
 
                                 <!-- Banners -->
+                                <?php 
+
+                                    // CANCEL / RE ORDER
+                                    if (isset($_GET['cancelbanner']) && !empty($_GET['cancelbanner'])) {
+                                        // code...
+                                        $order_id = sanitize($_GET['cancelbanner']);
+                                        $status = $_GET['status'];
+                                        if ($status == 'new') {
+                                            $status = 0;
+                                        }
+                                        if (is_numeric($order_id)) {
+                                            $query = "
+                                                UPDATE vonna_printjob_banners 
+                                                SET banner_status = ? 
+                                                WHERE banner_id = ?
+                                            ";
+                                            $statement = $conn->prepare($query);
+                                            $result = $statement->execute([$status, $order_id]);
+                                            if ($result) {
+                                                // code...
+                                                $_SESSION['flash_success'] = 'Order cancel successfully.';
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            } else {
+                                                echo js_alert('Something went wrong... please try again.');
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            }
+                                        }
+                                    }
+
+                                    // DELETE ORDER
+                                    if (isset($_GET['trashbanner']) && !empty($_GET['trashbanner'])) {
+                                        // code...
+                                        $order_id = sanitize($_GET['trashbanner']);
+                                        if (is_numeric($order_id)) {
+                                            if ($_GET['media'] != '') {
+                                                $medias = explode(',', $_GET['media']);
+                                                foreach ($medias as $media) {
+                                                    if (file_exists(BASEURL . 'account/' . $media)) {
+                                                        unlink(BASEURL . 'account/' . $media);
+                                                    }
+                                                }
+                                            }
+
+                                            $query = "
+                                                DELETE FROM vonna_printjob_banners 
+                                                WHERE banner_id = ?
+                                            ";
+                                            $statement = $conn->prepare($query);
+                                            $result = $statement->execute([$order_id]);
+                                            if ($result) {
+                                                // code...
+                                                $_SESSION['flash_success'] = 'Order deleted successfully.';
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            } else {
+                                                echo js_alert('Something went wrong... please try again.');
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            }
+                                        }
+                                    }
+
+                                ?>
                                 <div class="tab-pane fade" id="v-pills-bn" role="tabpanel" aria-labelledby="v-pills-bn-tab" tabindex="0">
                                     <p class="text-center text-muted h2">BANNERS</p>
                                     <div class="table-responsive">
@@ -546,7 +758,7 @@
                                                             if ($banner['banner_status'] == 0) {
                                                                 // code...
                                                                 echo '<br><span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
-                                                                echo '&nbsp;<a href="?cancel='.$banner["banner_id"].'&status=4" class="">cancel order</a>';
+                                                                echo '&nbsp;<a href="?cancelbanner='.$banner["banner_id"].'&status=4" class="">cancel order</a>';
                                                             } elseif ($banner['banner_status'] == 1) {
                                                                 echo '<br><span class="badge bg-warning-soft h6 text-uppercase">Processing</span>';
                                                             } elseif ($banner['banner_status'] == 2) {
@@ -554,7 +766,7 @@
                                                             } elseif ($banner['banner_status'] == 3) {
                                                                 echo '<br><span class="badge bg-success-soft h6 text-uppercase">Ordered</span>';
                                                             } elseif ($banner['banner_status'] == 4) {
-                                                                echo '<br><a href="?cancel='.$banner["thesis_id"].'&status=new" class="">re-order</a>';
+                                                                echo '<br><a href="?cancelbanner='.$banner["banner_id"].'&status=new" class="">re-order</a>';
                                                             } else {
                                                                 echo '';
                                                             }
@@ -565,7 +777,7 @@
                                                     <td><?= pretty_date($banner["banner_createdAt"]); ?></td>
                                                     <td>
                                                         <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#Modal<?= $banner['banner_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
-                                                        <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/orders/<?= $banner['banner_id']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
+                                                        <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/printjob-requests?trashbanner=<?= $banner['banner_id']; ?>&media=<?= $banner['banner_upload_design']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
                                                     </td>
                                                 </tr>
                                                 <div class="modal fade" id="Modal<?= $banner['banner_id']; ?>" tabindex="-1" aria-labelledby="ModalLabel<?= $banner['banner_id']; ?>" aria-modal="true" role="dialog">
@@ -578,10 +790,13 @@
                                                                 </h1>
                                                                 <p class="text-muted">
                                                                     <?php 
-                                                                        $banner_files = explode(',', $banner['banner_upload_design']);
                                                                         $outputbanner_file = '';
-                                                                        foreach ($banner_files as $banner_file) 
-                                                                            $outputbanner_file .= '<a href="'.$banner_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        if ($banner['banner_upload_design'] != '') {
+                                                                            // code...
+                                                                            $banner_files = explode(',', $banner['banner_upload_design']);
+                                                                            foreach ($banner_files as $banner_file) 
+                                                                                $outputbanner_file .= '<a href="'.$banner_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        }
 
                                                                         if ($banner['banner_status'] == 0) {
                                                                             echo '<span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
@@ -618,6 +833,76 @@
                                 </div>
 
                                 <!-- Receipt -->
+                                 <?php 
+
+                                    // CANCEL / RE ORDER
+                                    if (isset($_GET['cancelreceipt']) && !empty($_GET['cancelreceipt'])) {
+                                        // code...
+                                        $order_id = sanitize($_GET['cancelreceipt']);
+                                        $status = $_GET['status'];
+                                        if ($status == 'new') {
+                                            $status = 0;
+                                        }
+                                        if (is_numeric($order_id)) {
+                                            $query = "
+                                                UPDATE vonna_print_job_receipt 
+                                                SET receipt_status = ? 
+                                                WHERE receipt_id = ?
+                                            ";
+                                            $statement = $conn->prepare($query);
+                                            $result = $statement->execute([$status, $order_id]);
+                                            if ($result) {
+                                                // code...
+                                                $_SESSION['flash_success'] = 'Order cancel successfully.';
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            } else {
+                                                echo js_alert('Something went wrong... please try again.');
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            }
+                                        }
+                                    }
+
+                                    // DELETE ORDER
+                                    if (isset($_GET['trashreceipt']) && !empty($_GET['trashreceipt'])) {
+                                        // code...
+                                        $order_id = sanitize($_GET['trashreceipt']);
+                                        if (is_numeric($order_id)) {
+                                            if ($_GET['media'] != '') {
+                                                $medias = explode(',', $_GET['media']);
+                                                foreach ($medias as $media) {
+                                                    if (file_exists(BASEURL . 'account/' . $media)) {
+                                                        unlink(BASEURL . 'account/' . $media);
+                                                    }
+                                                }
+                                            }
+
+                                            if ($_GET['media1'] != '') {
+                                                $medias1 = explode(',', $_GET['media1']);
+                                                foreach ($medias1 as $media1) {
+                                                    if (file_exists(BASEURL . 'account/' . $media1)) {
+                                                        unlink(BASEURL . 'account/' . $media1);
+                                                    }
+                                                }
+                                            }
+
+                                            $query = "
+                                                DELETE FROM vonna_print_job_receipt 
+                                                WHERE receipt_id = ?
+                                            ";
+                                            $statement = $conn->prepare($query);
+                                            $result = $statement->execute([$order_id]);
+                                            if ($result) {
+                                                // code...
+                                                $_SESSION['flash_success'] = 'Order deleted successfully.';
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            } else {
+                                                echo js_alert('Something went wrong... please try again.');
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            }
+                                        }
+                                    }
+
+                                ?>
                                 <div class="tab-pane fade" id="v-pills-rb" role="tabpanel" aria-labelledby="v-pills-rb-tab" tabindex="0">
                                     <p class="text-center text-muted h2">RECEIPT BOOKS</p>
                                     <div class="table-responsive">
@@ -645,7 +930,7 @@
                                                             if ($receipt['receipt_status'] == 0) {
                                                                 // code...
                                                                 echo '<br><span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
-                                                                echo '&nbsp;<a href="?cancel='.$receipt["receipt_id"].'&status=4" class="">cancel order</a>';
+                                                                echo '&nbsp;<a href="?cancelreceipt='.$receipt["receipt_id"].'&status=4" class="">cancel order</a>';
                                                             } elseif ($receipt['receipt_status'] == 1) {
                                                                 echo '<br><span class="badge bg-warning-soft h6 text-uppercase">Processing</span>';
                                                             } elseif ($receipt['receipt_status'] == 2) {
@@ -653,7 +938,7 @@
                                                             } elseif ($receipt['receipt_status'] == 3) {
                                                                 echo '<br><span class="badge bg-success-soft h6 text-uppercase">Ordered</span>';
                                                             } elseif ($receipt['receipt_status'] == 4) {
-                                                                echo '<br><a href="?cancel='.$receipt["thesis_id"].'&status=new" class="">re-order</a>';
+                                                                echo '<br><a href="?cancelreceipt='.$receipt["receipt_id"].'&status=new" class="">re-order</a>';
                                                             } else {
                                                                 echo '';
                                                             }
@@ -664,7 +949,7 @@
                                                     <td><?= pretty_date($receipt["receipt_createdAt"]); ?></td>
                                                     <td>
                                                         <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#Modal<?= $receipt['receipt_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
-                                                        <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/orders/<?= $receipt['receipt_id']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
+                                                        <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/printjob-requests?trashreceipt=<?= $receipt['receipt_id']; ?>&media=<?= $receipt['receipt_upload_logo']; ?>&media1=<?= $receipt['receipt_upload_outfit_design']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
                                                     </td>
                                                 </tr>
                                                 <div class="modal fade" id="Modal<?= $receipt['receipt_id']; ?>" tabindex="-1" aria-labelledby="ModalLabel<?= $receipt['receipt_id']; ?>" aria-modal="true" role="dialog">
@@ -677,15 +962,21 @@
                                                                 </h1>
                                                                 <p class="text-muted">
                                                                     <?php 
-                                                                        $receipt_logos = explode(',', $receipt['receipt_upload_logo']);
                                                                         $outputreceipt_logo = '';
-                                                                        foreach ($receipt_logos as $receipt_logo) 
-                                                                            $outputreceipt_logo .= '<a href="'.$receipt_logo.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        if ($receipt['receipt_upload_logo'] != '') {
+                                                                            // code...
+                                                                            $receipt_logos = explode(',', $receipt['receipt_upload_logo']);
+                                                                            foreach ($receipt_logos as $receipt_logo) 
+                                                                                $outputreceipt_logo .= '<a href="'.$receipt_logo.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        }
 
-                                                                        $receipt_files = explode(',', $receipt['receipt_upload_outfit_design']);
                                                                         $outputreceipt_file = '';
-                                                                        foreach ($receipt_files as $receipt_file) 
-                                                                            $outputreceipt_file .= '<a href="'.$receipt_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        if ($receipt['receipt_upload_outfit_design'] != '') {
+                                                                            // code...
+                                                                            $receipt_files = explode(',', $receipt['receipt_upload_outfit_design']);
+                                                                            foreach ($receipt_files as $receipt_file) 
+                                                                                $outputreceipt_file .= '<a href="'.$receipt_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        }
 
                                                                         if ($receipt['receipt_status'] == 0) {
                                                                             echo '<span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
@@ -729,6 +1020,67 @@
                                 </div>
 
                                 <!-- Customize -->
+                                <?php 
+
+                                    // CANCEL / RE ORDER
+                                    if (isset($_GET['cancelcustomize']) && !empty($_GET['cancelcustomize'])) {
+                                        // code...
+                                        $order_id = sanitize($_GET['cancelcustomize']);
+                                        $status = $_GET['status'];
+                                        if ($status == 'new') {
+                                            $status = 0;
+                                        }
+                                        if (is_numeric($order_id)) {
+                                            $query = "
+                                                UPDATE vonna_print_job_customze 
+                                                SET customze_status = ? 
+                                                WHERE customze_id = ?
+                                            ";
+                                            $statement = $conn->prepare($query);
+                                            $result = $statement->execute([$status, $order_id]);
+                                            if ($result) {
+                                                // code...
+                                                $_SESSION['flash_success'] = 'Order cancel successfully.';
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            } else {
+                                                echo js_alert('Something went wrong... please try again.');
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            }
+                                        }
+                                    }
+
+                                    // DELETE ORDER
+                                    if (isset($_GET['trashcustomize']) && !empty($_GET['trashcustomize'])) {
+                                        // code...
+                                        $order_id = sanitize($_GET['trashcustomize']);
+                                        if (is_numeric($order_id)) {
+                                            if ($_GET['media'] != '') {
+                                                $medias = explode(',', $_GET['media']);
+                                                foreach ($medias as $media) {
+                                                    if (file_exists(BASEURL . 'account/' . $media)) {
+                                                        unlink(BASEURL . 'account/' . $media);
+                                                    }
+                                                }
+                                            }
+
+                                            $query = "
+                                                DELETE FROM vonna_print_job_customze 
+                                                WHERE customze_id = ?
+                                            ";
+                                            $statement = $conn->prepare($query);
+                                            $result = $statement->execute([$order_id]);
+                                            if ($result) {
+                                                // code...
+                                                $_SESSION['flash_success'] = 'Order deleted successfully.';
+                                               redirect(PROOT . 'account/printjob-requests');
+                                            } else {
+                                                echo js_alert('Something went wrong... please try again.');
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            }
+                                        }
+                                    }
+
+                                ?>
                                 <div class="tab-pane fade" id="v-pills-cof" role="tabpanel" aria-labelledby="v-pills-cof-tab" tabindex="0">
                                     <p class="text-center text-muted h2">CUSTOMIZES OFFICE FILES</p>
                                     <div class="table-responsive">
@@ -756,7 +1108,7 @@
                                                             if ($customize['customze_status'] == 0) {
                                                                 // code...
                                                                 echo '<br><span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
-                                                                echo '&nbsp;<a href="?cancel='.$customize["customze_id"].'&status=4" class="">cancel order</a>';
+                                                                echo '&nbsp;<a href="?cancelcustomize='.$customize["customze_id"].'&status=4" class="">cancel order</a>';
                                                             } elseif ($customize['customze_status'] == 1) {
                                                                 echo '<br><span class="badge bg-warning-soft h6 text-uppercase">Processing</span>';
                                                             } elseif ($customize['customze_status'] == 2) {
@@ -764,7 +1116,7 @@
                                                             } elseif ($customize['customze_status'] == 3) {
                                                                 echo '<br><span class="badge bg-success-soft h6 text-uppercase">Ordered</span>';
                                                             } elseif ($customize['customze_status'] == 4) {
-                                                                echo '<br><a href="?cancel='.$customize["thesis_id"].'&status=new" class="">re-order</a>';
+                                                                echo '<br><a href="?cancelcustomize='.$customize["customze_id"].'&status=new" class="">re-order</a>';
                                                             } else {
                                                                 echo '';
                                                             }
@@ -775,7 +1127,7 @@
                                                     <td><?= pretty_date($customize["customze_createdAt"]); ?></td>
                                                     <td>
                                                         <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#Modal<?= $customize['customze_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
-                                                        <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/orders/<?= $customize['customze_id']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
+                                                        <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/printjob-requests?trashcustomize=<?= $customize['customze_id']; ?>&media=<?= $customize['customize_upload_logo']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
                                                     </td>
                                                 </tr>
                                                 <div class="modal fade" id="Modal<?= $customize['customze_id']; ?>" tabindex="-1" aria-labelledby="ModalLabel<?= $customize['customze_id']; ?>" aria-modal="true" role="dialog">
@@ -788,10 +1140,13 @@
                                                                 </h1>
                                                                 <p class="text-muted">
                                                                     <?php 
-                                                                        $customize_logos = explode(',', $customize['customize_upload_logo']);
                                                                         $outputcustomize_logo = '';
-                                                                        foreach ($customize_logos as $customize_logo) 
-                                                                            $outputcustomize_logo .= '<a href="'.$customize_logo.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        if ($customize['customize_upload_logo'] != '') {
+                                                                            // code...
+                                                                            $customize_logos = explode(',', $customize['customize_upload_logo']);
+                                                                            foreach ($customize_logos as $customize_logo) 
+                                                                                $outputcustomize_logo .= '<a href="'.$customize_logo.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        }
 
                                                                         if ($customize['customze_status'] == 0) {
                                                                             echo '<span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
@@ -833,6 +1188,67 @@
 
 
                                 <!-- Call cards -->
+                                <?php 
+
+                                    // CANCEL / RE ORDER
+                                    if (isset($_GET['cancelcards']) && !empty($_GET['cancelcards'])) {
+                                        // code...
+                                        $order_id = sanitize($_GET['cancelcards']);
+                                        $status = $_GET['status'];
+                                        if ($status == 'new') {
+                                            $status = 0;
+                                        }
+                                        if (is_numeric($order_id)) {
+                                            $query = "
+                                                UPDATE vonna_printjob_callcards 
+                                                SET card_status = ? 
+                                                WHERE card_id = ?
+                                            ";
+                                            $statement = $conn->prepare($query);
+                                            $result = $statement->execute([$status, $order_id]);
+                                            if ($result) {
+                                                // code...
+                                                $_SESSION['flash_success'] = 'Order cancel successfully.';
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            } else {
+                                                echo js_alert('Something went wrong... please try again.');
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            }
+                                        }
+                                    }
+
+                                    // DELETE ORDER
+                                    if (isset($_GET['trashcards']) && !empty($_GET['trashcards'])) {
+                                        // code...
+                                        $order_id = sanitize($_GET['trashcards']);
+                                        if (is_numeric($order_id)) {
+                                            if ($_GET['media'] != '') {
+                                                $medias = explode(',', $_GET['media']);
+                                                foreach ($medias as $media) {
+                                                    if (file_exists(BASEURL . 'account/' . $media)) {
+                                                        unlink(BASEURL . 'account/' . $media);
+                                                    }
+                                                }
+                                            }
+
+                                            $query = "
+                                                DELETE FROM vonna_printjob_callcards 
+                                                WHERE card_id = ?
+                                            ";
+                                            $statement = $conn->prepare($query);
+                                            $result = $statement->execute([$order_id]);
+                                            if ($result) {
+                                                // code...
+                                                $_SESSION['flash_success'] = 'Order deleted successfully.';
+                                               redirect(PROOT . 'account/printjob-requests');
+                                            } else {
+                                                echo js_alert('Something went wrong... please try again.');
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            }
+                                        }
+                                    }
+
+                                ?>
                                 <div class="tab-pane fade" id="v-pills-cc" role="tabpanel" aria-labelledby="v-pills-cc-tab" tabindex="0">
                                     <p class="text-center text-muted h2">CALL CARDS</p>
                                     <div class="table-responsive">
@@ -861,7 +1277,7 @@
                                                             if ($callcard['card_status'] == 0) {
                                                                 // code...
                                                                 echo '<br><span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
-                                                                echo '&nbsp;<a href="?cancel='.$callcard["card_id"].'&status=4" class="">cancel order</a>';
+                                                                echo '&nbsp;<a href="?cancelcards='.$callcard["card_id"].'&status=4" class="">cancel order</a>';
                                                             } elseif ($callcard['card_status'] == 1) {
                                                                 echo '<br><span class="badge bg-warning-soft h6 text-uppercase">Processing</span>';
                                                             } elseif ($callcard['card_status'] == 2) {
@@ -869,7 +1285,7 @@
                                                             } elseif ($callcard['card_status'] == 3) {
                                                                 echo '<br><span class="badge bg-success-soft h6 text-uppercase">Ordered</span>';
                                                             } elseif ($callcard['card_status'] == 4) {
-                                                                echo '<br><a href="?cancel='.$callcard["card_id"].'&status=new" class="">re-order</a>';
+                                                                echo '<br><a href="?cancelcards='.$callcard["card_id"].'&status=new" class="">re-order</a>';
                                                             } else {
                                                                 echo '';
                                                             }
@@ -881,7 +1297,7 @@
                                                     <td><?= pretty_date($callcard["card_createdAt"]); ?></td>
                                                     <td>
                                                         <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#Modal<?= $callcard['card_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
-                                                        <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/orders/<?= $callcard['card_id']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
+                                                        <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/printjob-requests?trashcards=<?= $callcard['card_id']; ?>&media=<?= $callcard['card_upload_logo']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
                                                     </td>
                                                 </tr>
                                                 <div class="modal fade" id="Modal<?= $callcard['card_id']; ?>" tabindex="-1" aria-labelledby="ModalLabel<?= $callcard['card_id']; ?>" aria-modal="true" role="dialog">
@@ -894,10 +1310,13 @@
                                                                 </h1>
                                                                 <p class="text-muted">
                                                                     <?php 
-                                                                        $card_files = explode(',', $callcard['card_upload_logo']);
                                                                         $outputcard_file = '';
-                                                                        foreach ($card_files as $card_file) 
-                                                                            $outputcard_file .= '<a href="'.$card_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        if ($callcard['card_upload_logo'] != '') {
+                                                                            // code...
+                                                                            $card_files = explode(',', $callcard['card_upload_logo']);
+                                                                            foreach ($card_files as $card_file) 
+                                                                                $outputcard_file .= '<a href="'.$card_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        }
 
                                                                         if ($callcard['card_status'] == 0) {
                                                                             echo '<span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';

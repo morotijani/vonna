@@ -24,6 +24,12 @@
                     Orders
                 </a>
             </li>
+            <li>
+                <a href="<?= PROOT; ?>adminvonna/Print-Job" class="nav-link link-body-emphasis">
+                    <i data-feather="server"></i>
+                    Print Jobs
+                </a>
+            </li>
             <!-- <li>
                 <a href="<?= PROOT; ?>adminvonna/Products" class="nav-link link-body-emphasis">
                     <i data-feather="table"></i>

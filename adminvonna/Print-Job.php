@@ -17,6 +17,69 @@
     $count_exams = $statement->rowCount();
     $exams = $statement->fetchAll();
 
+
+	// check for ordered order
+	if (isset($_GET['examsordered']) && !empty($_GET['examsordered'])) {
+		// code...
+		$status = sanitize((int)$_GET['examsordered']);
+		$id = sanitize($_GET['id']);
+		if ($id != '') {
+			// code...
+			$sql = "
+				UPDATE vonna_printjob 
+				SET printjob_status = ? 
+				WHERE printjob_id = ?
+			";
+			$statement = $conn->prepare($sql);
+			$result = $statement->execute([$status, $id]);
+
+			if ($result) {
+				// code...
+				$_SESSION['flash_success'] = 'Examination print job ' . (($status == 1) ? 'Un-ordered' : 'Ordered');
+				redirect(PROOT . 'adminvonna/Print-Job?pj=exams');
+			} else {
+				echo js_alert('Something went wrong... try again');
+			}
+		} else {
+			$_SESSION['flash_error'] = 'Unknow Examination print job order';
+			redirect(PROOT . 'adminvonna/Print-Job?pj=exams');
+		}
+	}
+
+
+	// check for paid order
+	if (isset($_GET['examspaid']) && !empty($_GET['examspaid'])) {
+		// code...
+		$status = sanitize((int)$_GET['examspaid']);
+		$id = sanitize($_GET['id']);
+		if ($id != '') {
+			// code...
+			$sql = "
+				UPDATE vonna_printjob 
+				SET printjob_status = ? 
+				WHERE printjob_id = ?
+			";
+			$statement = $conn->prepare($sql);
+			$result = $statement->execute([$status, $id]);
+
+			if ($result) {
+				// code...
+				$_SESSION['flash_success'] = 'Examination print job ' . (($status == 1) ? 'Not Paid' : 'Paid, ready for order');
+				redirect(PROOT . 'adminvonna/Print-Job?pj=exams');
+			} else {
+				echo js_alert('Something went wrong... try again');
+				//redirect(PROOT . 'adminvonna/Print-Job?pj=exams');
+			}
+		} else {
+			$_SESSION['flash_error'] = 'Unknow Examination print job order';
+			redirect(PROOT . 'adminvonna/Print-Job?pj=exams');
+		}
+	}
+
+
+	/**
+	 * BANNERS
+	 */
     $queryBanners = "
         SELECT * FROM vonna_printjob_banners 
         INNER JOIN vonna_user 
@@ -28,6 +91,68 @@
     $count_banners = $statement->rowCount();
     $banners = $statement->fetchAll();
 
+    // check for ordered order
+	if (isset($_GET['bannerordered']) && !empty($_GET['bannerordered'])) {
+		// code...
+		$status = sanitize((int)$_GET['bannerordered']);
+		$id = sanitize($_GET['id']);
+		if ($id != '') {
+			// code...
+			$sql = "
+				UPDATE vonna_printjob_banners 
+				SET banner_status = ? 
+				WHERE banner_id = ?
+			";
+			$statement = $conn->prepare($sql);
+			$result = $statement->execute([$status, $id]);
+
+			if ($result) {
+				// code...
+				$_SESSION['flash_success'] = 'Banner print job ' . (($status == 1) ? 'Un-ordered' : 'Ordered');
+				redirect(PROOT . 'adminvonna/Print-Job?pj=banner');
+			} else {
+				echo js_alert('Something went wrong... try again');
+			}
+		} else {
+			$_SESSION['flash_error'] = 'Unknow Banner print job order';
+			redirect(PROOT . 'adminvonna/Print-Job?pj=banner');
+		}
+	}
+
+
+	// check for paid order
+	if (isset($_GET['bannerpaid']) && !empty($_GET['bannerpaid'])) {
+		// code...
+		$status = sanitize((int)$_GET['bannerpaid']);
+		$id = sanitize($_GET['id']);
+		if ($id != '') {
+			// code...
+			$sql = "
+				UPDATE vonna_printjob_banners 
+				SET banner_status = ? 
+				WHERE banner_id = ?
+			";
+			$statement = $conn->prepare($sql);
+			$result = $statement->execute([$status, $id]);
+
+			if ($result) {
+				// code...
+				$_SESSION['flash_success'] = 'Banner print job ' . (($status == 1) ? 'Not Paid' : 'Paid, ready for order');
+				redirect(PROOT . 'adminvonna/Print-Job?pj=banner');
+			} else {
+				echo js_alert('Something went wrong... try again');
+				//redirect(PROOT . 'adminvonna/Print-Job?pj=banner');
+			}
+		} else {
+			$_SESSION['flash_error'] = 'Unknow Banner print job order';
+			redirect(PROOT . 'adminvonna/Print-Job?pj=banner');
+		}
+	}
+
+
+	/**
+	 * CALL CARDS
+	 */
     $queryCallcards = "
         SELECT * FROM vonna_printjob_callcards 
         INNER JOIN vonna_user 
@@ -83,66 +208,6 @@
     $count_receipts = $statement->rowCount();
     $receipts = $statement->fetchAll();
 
-
-	// check for ordered order
-	if (isset($_GET['ordered']) && !empty($_GET['ordered'])) {
-		// code...
-		$status = sanitize((int)$_GET['ordered']);
-		$id = sanitize($_GET['id']);
-		if ($id != '') {
-			// code...
-			$sql = "
-				UPDATE vonna_orders 
-				SET orders_status = ? 
-				WHERE orders_id = ?
-			";
-			$statement = $conn->prepare($sql);
-			$result = $statement->execute([$status, $id]);
-
-			if ($result) {
-				// code...
-				$_SESSION['flash_success'] = ($status == 1) ? 'Un-ordered' : 'Ordered';
-				redirect(PROOT . 'adminvonna/Orders');
-				//redirect(PROOT . 'adminvonna/Orders?details='.$id);
-			} else {
-				echo js_alert('Something went wrong... try again');
-			}
-		} else {
-			$_SESSION['flash_error'] = 'Unknow order';
-			redirect(PROOT . 'adminvonna/Orders?details='.$id);
-		}
-	}
-
-
-	// check for paid order
-	if (isset($_GET['paid']) && !empty($_GET['paid'])) {
-		// code...
-		$status = sanitize((int)$_GET['paid']);
-		$id = sanitize($_GET['id']);
-		if ($id != '') {
-			// code...
-			$sql = "
-				UPDATE vonna_orders 
-				SET orders_status = ? 
-				WHERE orders_id = ?
-			";
-			$statement = $conn->prepare($sql);
-			$result = $statement->execute([$status, $id]);
-
-			if ($result) {
-				// code...
-				$_SESSION['flash_success'] = ($status == 1) ? 'Not Paid' : 'Paid, ready for order';
-				redirect(PROOT . 'adminvonna/Orders');
-				//redirect(PROOT . 'adminvonna/Orders?details='.$id);
-			} else {
-				echo js_alert('Something went wrong... try again');
-				//redirect(PROOT . 'adminvonna/Orders?details='.$id);
-			}
-		} else {
-			$_SESSION['flash_error'] = 'Unknow order';
-			redirect(PROOT . 'adminvonna/Orders?details='.$id);
-		}
-	}
 
 ?>
 
@@ -353,12 +418,12 @@
                                                         </ul>
                                                         <form action="" class="mt-3">
 															<div class="form-check form-switch">
-																<input class="form-check-input" type="checkbox" role="switch" id="paidSwitch" <?= (($exam['printjob_status'] == 2 || $exam['printjob_status'] == 3) ? 'checked' : ''); ?> name="paid">
-																<label class="form-check-label" for="paidSwitch">Paid</label>
+																<input class="form-check-input" type="checkbox" role="switch" id="examsPaidSwitch" <?= (($exam['printjob_status'] == 2 || $exam['printjob_status'] == 3) ? 'checked' : ''); ?> name="paid">
+																<label class="form-check-label" for="examsPaidSwitch">Paid</label>
 															</div>
 															<div class="form-check form-switch">
-																<input class="form-check-input" type="checkbox" role="switch" id="orderedSwitch" <?= (($exam['printjob_status'] == 3) ? 'checked' : ''); ?> name="ordered" value="<?= (($exam['printjob_status'] == 2) ? 3 : 1); ?>">
-																<label class="form-check-label" for="orderedSwitch">Ordered</label>
+																<input class="form-check-input" type="checkbox" role="switch" id="examsOrderedSwitch" <?= (($exam['printjob_status'] == 3) ? 'checked' : ''); ?> name="ordered" value="<?= (($exam['printjob_status'] == 2) ? 3 : 1); ?>">
+																<label class="form-check-label" for="examsOrderedSwitch">Ordered</label>
 															</div>
 															<input type="hidden" id="orderId" value="<?= $exam['printjob_id']; ?>">						
 															<input type="hidden" id="id" value="<?= $exam['id']; ?>">						
@@ -384,6 +449,165 @@
 					<?php elseif ($_GET['pj'] == 'thesis'): ?>
 					<?php elseif ($_GET['pj'] == 'flier'): ?>
 					<?php elseif ($_GET['pj'] == 'banner'): ?>
+						<h3 class="my-4">Banners</h3>
+						<div class="table-responsive mt-5">
+							<table class="table table-hover">
+							  	<thead>
+								    <tr>
+								      	<th></th>
+                                        <th>ID</th>
+                                        <th>Size</th>
+                                        <th>Quantity</th>
+                                        <th></th>
+							    	</tr>
+							  	</thead>
+							  	<tbody>
+							  		<?php if ($count_banners > 0): ?>
+							  			 <?php $i = 1;
+                                            foreach ($banners as $banner): 
+                                        ?>
+                                        <tr>
+                                            <td><?= $i; ?></td>
+                                            <td>
+                                                <?php
+                                                    echo $banner["banner_id"];
+
+                                                    if ($banner['banner_status'] == 0) {
+	                                                	echo '<br><span class="badge bg-danger h6 text-uppercase">New</span>';
+		                                            } elseif ($banner['banner_status'] == 1) {
+		                                                echo '<br><span class="badge bg-warning h6 text-uppercase">Processing</span>';
+		                                            } elseif ($banner['banner_status'] == 2) {
+		                                                echo '<br><span class="badge bg-info h6 text-uppercase">Paid</span>';
+		                                            } elseif ($banner['banner_status'] == 3) {
+		                                                echo '<br><span class="badge bg-success h6 text-uppercase">Ordered</span>';
+		                                            } elseif ($banner['banner_status'] == 4) {
+		                                            } else {
+		                                                echo '';
+		                                            }
+                                                ?>
+                                            </td>
+                                           <td><?= $banner["banner_size"]; ?></td>
+                                            <td><?= $banner["banner_quantity"]; ?></td>
+                                            <td><?= pretty_date($banner["banner_createdAt"]); ?></td>
+                                            <td>
+                                                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#Modal<?= $banner['banner_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
+                                            </td>
+                                        </tr>
+                                        <div class="modal fade" id="Modal<?= $banner['banner_id']; ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ModalLabel<?= $banner['banner_id']; ?>" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-body text-center">
+                                                        <button class="btn-close" data-bs-dismiss="modal" type="button" aria-label="Close"></button>
+                                                        <h1 class="mb-4" id="ModalLabel<?= $banner['banner_id']; ?>">
+                                                            <?= $banner['banner_id']; ?>
+                                                        </h1>
+                                                        <p class="text-muted">
+                                                            <?php 
+                                                                $outputexams_file = '';
+                                                                if ($banner['printjob_upload_typed_work'] != '') {
+                                                                    // code...
+                                                                    $banners_files = explode(',', $banner['printjob_upload_typed_work']);
+                                                                    foreach ($banners_files as $banners_file) 
+                                                                        $outputbanners_file .= '<a href="'.$banners_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                }
+
+                                                                if ($banner['banner_status'] == 0) {
+                                                                    echo '<span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
+                                                                } elseif ($banner['banner_status'] == 1) {
+                                                                    echo '<span class="badge bg-warning-soft h6 text-uppercase">Processing</span>';
+                                                                } elseif ($banner['banner_status'] == 2) {
+                                                                    echo '<span class="badge bg-info-soft h6 text-uppercase">Paid</span>';
+                                                                } elseif ($banner['banner_status'] == 3) {
+                                                                    echo '<span class="badge bg-success-soft h6 text-uppercase">Ordered</span>';
+                                                                }
+                                                            ?>
+                                                        </p>
+                                                            
+                                                        <ul class="list-group">
+                                                            <li class="list-group-item"><span class="fw-bold text-info">What size do you want?</span> <?= $banner['banner_size']; ?></li>
+                                                            <li class="list-group-item"><span class="fw-bold text-info">What quantity do you want?</span> <?= $banner['banner_quantity']; ?></li>
+                                                            <li class="list-group-item"><span class="fw-bold text-info">Do you have your designs already?</span> <?= $banner['have_banner_designs']; ?></a></li>
+                                                            <li class="list-group-item"><span class="fw-bold text-info">If yes, Upload your design here:</span> <?= $outputbanner_file; ?></a></li>
+                                                            <li class="list-group-item"><span class="fw-bold text-info">If No, Do you want us to do the design for you?</span> <?= $banner['banner_want_us']; ?></a></li>
+                                                            <li class="list-group-item"><span class="fw-bold text-info">Date: </span> <?= pretty_date($banner['banner_createdAt']); ?></li>
+                                                            <button type="button" class="list-group-item list-group-item-action fw-bold text-primary" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Customer: <?= ucwords($banner['user_fullname']); ?></button>
+													    	<div class="collapse" id="collapseExample">
+															  	<div class="card card-body">
+															    	<ul class="list-group">
+																		<li class="list-group-item d-flex justify-content-between align-items-center">
+																		    Email
+																		    <span class="badge bg-primary rounded-pill"><?= $banner['user_email']; ?></span>
+																		</li>
+																		<li class="list-group-item d-flex justify-content-between align-items-center">
+																		    Phone
+																		    <span class="badge bg-primary rounded-pill"><?= $banner['user_phone']; ?></span>
+																		</li>
+																		<li class="list-group-item d-flex justify-content-between align-items-center">
+																		    Occupation
+																		    <span class="badge bg-primary rounded-pill"><?= $banner['user_occupation']; ?></span>
+																		</li>
+																		<li class="list-group-item d-flex justify-content-between align-items-center">
+																		    Name of instituition
+																		    <span class="badge bg-primary rounded-pill"><?= $banner['user_name_of_instituition']; ?></span>
+																		</li>
+																		<li class="list-group-item d-flex justify-content-between align-items-center">
+																		    Postal Address
+																		    <span class="badge bg-primary rounded-pill"><?= $banner['user_postal_address']; ?></span>
+																		</li>
+																		<li class="list-group-item d-flex justify-content-between align-items-center">
+																		    Pysical Address
+																		    <span class="badge bg-primary rounded-pill"><?= $banner['user_physical_address']; ?></span>
+																		</li>
+																		<li class="list-group-item d-flex justify-content-between align-items-center">
+																		    Size of instituition
+																		    <span class="badge bg-primary rounded-pill"><?= $banner['user_size_of_instituition']; ?></span>
+																		</li>
+																		<li class="list-group-item d-flex justify-content-between align-items-center">
+																		    Country
+																		    <span class="badge bg-primary rounded-pill"><?= $banner['user_country']; ?></span>
+																		</li>
+																		<li class="list-group-item d-flex justify-content-between align-items-center">
+																		    State/Region
+																		    <span class="badge bg-primary rounded-pill"><?= $banner['user_state']; ?></span>
+																		</li>
+																		<li class="list-group-item d-flex justify-content-between align-items-center">
+																		    City
+																		    <span class="badge bg-primary rounded-pill"><?= $banner['user_city']; ?></span>
+																		</li>
+																	</ul>
+															  	</div>
+															</div>
+                                                            <li class="list-group-item"><span class="fw-bold text-info">Date: </span> <?= pretty_date($banner['printjob_createdAt']); ?></li>
+                                                        </ul>
+                                                        <form action="" class="mt-3">
+															<div class="form-check form-switch">
+																<input class="form-check-input" type="checkbox" role="switch" id="bannerPaidSwitch" <?= (($banner['banner_status'] == 2 || $banner['banner_status'] == 3) ? 'checked' : ''); ?> name="paid">
+																<label class="form-check-label" for="bannerPaidSwitch">Paid</label>
+															</div>
+															<div class="form-check form-switch">
+																<input class="form-check-input" type="checkbox" role="switch" id="bannerOrderedSwitch" <?= (($banner['banner_status'] == 3) ? 'checked' : ''); ?> name="ordered" value="<?= (($banner['banner_status'] == 2) ? 3 : 1); ?>">
+																<label class="form-check-label" for="bannerOrderedSwitch">Ordered</label>
+															</div>
+															<input type="hidden" id="orderId" value="<?= $banner['banner_id']; ?>">						
+															<input type="hidden" id="id" value="<?= $banner['id']; ?>">						
+														</form>
+                                                        <!-- Text -->
+                                                        <small class="text-muted mt-2">
+                                                            <a class="text-reset" data-bs-dismiss="modal" href="javascript:;">Close.</a>
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php $i++; endforeach; ?>
+							  		<?php else: ?>
+							  			<tr>
+							  				<td rowspan="6">No orders.</td>
+							  			</tr>
+							  		<?php endif; ?>
+							  	</tbody>
+							</table>
+						</div>
 					<?php elseif ($_GET['pj'] == 'receipt'): ?>
 					<?php elseif ($_GET['pj'] == 'customize'): ?>
 					<?php elseif ($_GET['pj'] == 'card'): ?>
@@ -604,27 +828,53 @@
 
         $(document).ready(function() {
 
-            $("#paidSwitch").change(function(event) {
+        	// EXAMS
+            $("#examsPaidSwitch").change(function(event) {
             	event.preventDefault()
             	if (confirm('Are you sure')) 
 	            	var paid = 1;
 	            	var id = $('#orderId').val();
 	            	
-	            	if ($('#paidSwitch').is(":checked") == true) {
+	            	if ($('#examsPaidSwitch').is(":checked") == true) {
 	            		paid = 2;
 	            	}
-	            	window.location = '<?= PROOT; ?>adminvonna/Orders?paid='+paid+'&id='+id;
+	            	window.location = '<?= PROOT; ?>adminvonna/Print-Job?examspaid='+paid+'&id='+id;
             });
 
-            $("#orderedSwitch").change(function(event) {
+            $("#examsOrderedSwitch").change(function(event) {
             	event.preventDefault()
             	if (confirm('Are you sure')) 
 	            	var ordered = 1;
 	            	var id = $('#orderId').val();
-	            	if ($('#orderedSwitch').is(":checked") == true) {
+	            	if ($('#examsOrderedSwitch').is(":checked") == true) {
 	            		ordered = 3
 	            	}
-	            	window.location = '<?= PROOT; ?>adminvonna/Orders?ordered='+ordered+'&id='+id;
+	            	window.location = '<?= PROOT; ?>adminvonna/Print-Job?examsordered='+ordered+'&id='+id;
+            });
+
+
+            // BANNER
+            $("#bannerPaidSwitch").change(function(event) {
+            	event.preventDefault()
+            	if (confirm('Are you sure')) 
+	            	var paid = 1;
+	            	var id = $('#orderId').val();
+	            	
+	            	if ($('#bannerPaidSwitch').is(":checked") == true) {
+	            		paid = 2;
+	            	}
+	            	window.location = '<?= PROOT; ?>adminvonna/Print-Job?bannerpaid='+paid+'&id='+id;
+            });
+
+            $("#bannerOrderedSwitch").change(function(event) {
+            	event.preventDefault()
+            	if (confirm('Are you sure')) 
+	            	var ordered = 1;
+	            	var id = $('#orderId').val();
+	            	if ($('#bannerOrderedSwitch').is(":checked") == true) {
+	            		ordered = 3
+	            	}
+	            	window.location = '<?= PROOT; ?>adminvonna/Print-Job?bannerordered='+ordered+'&id='+id;
             });
         })
     </script>

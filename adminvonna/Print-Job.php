@@ -234,7 +234,8 @@
 					      	<img src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Bootstrap" width="30" height="24">
 					    </a>
 					    <div class="d-flex" role="search">
-					      <h4>Orders</h4>
+					      <h4>Print Jobs</h4>&nbsp;.&nbsp;
+					      <h4><a href="<?= PROOT; ?>adminvonna/Print-Job" class="btn btn-secondary btn-sm"> << go back</a></h4>
 					    </div>
 					</div>
 				</nav>
@@ -297,9 +298,113 @@
 							  	</tbody>
 							</table>
 						</div>
-					<?php elseif ($_GET['pj'] == 'exams'): ?>
 					<?php elseif ($_GET['pj'] == 'thesis'): ?>
+						<h3 class="my-4">Thesis / Reasearch</h3>
+						<div class="table-responsive mt-5">
+							<table class="table table-hover">
+							  	<thead>
+								    <tr>
+								      	<th></th>
+                                        <th>ID</th>
+                                        <th>Have a Topic</th>
+                                        <th>Date</th>
+                                        <th></th>
+							    	</tr>
+							  	</thead>
+							  	<tbody>
+							  		<?php if ($count_thesis > 0): ?>
+							  			 <?php $i = 1;
+                                            foreach ($thesiss as $thesis): 
+                                        ?>
+                                        <tr>
+                                            <td><?= $i; ?></td>
+                                            <td>
+                                                <?php
+                                                    echo $thesis["thesis_id"];
+
+                                                    if ($thesis['thesis_status'] == 0) {
+	                                                	echo '<br><span class="badge bg-danger h6 text-uppercase">New</span>';
+		                                            } elseif ($thesis['thesis_status'] == 1) {
+		                                                echo '<br><span class="badge bg-warning h6 text-uppercase">Processing</span>';
+		                                            } elseif ($thesis['thesis_status'] == 2) {
+		                                                echo '<br><span class="badge bg-info h6 text-uppercase">Paid</span>';
+		                                            } elseif ($thesis['thesis_status'] == 3) {
+		                                                echo '<br><span class="badge bg-success h6 text-uppercase">Ordered</span>';
+		                                            } elseif ($thesis['thesis_status'] == 4) {
+		                                            } else {
+		                                                echo '';
+		                                            }
+                                                ?>
+                                            </td>
+                                          	<td><?= $thesis["thesis_already_have_tr"]; ?></td>
+                                            <td><?= pretty_date($thesis["thesis_createdAt"]); ?></td>
+                                            <td>
+                                                <a href="<?= PROOT; ?>adminvonna/Print-Job-View.php?view=thesis&id=<?= $thesis['thesis_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
+                                            </td>
+                                        </tr>
+                                        <?php $i++; endforeach; ?>
+							  		<?php else: ?>
+							  			<tr>
+							  				<td rowspan="6">No orders.</td>
+							  			</tr>
+							  		<?php endif; ?>
+							  	</tbody>
+							</table>
+						</div>
 					<?php elseif ($_GET['pj'] == 'flier'): ?>
+						<h3 class="my-4">Flier</h3>
+						<div class="table-responsive mt-5">
+							<table class="table table-hover">
+							  	<thead>
+								    <tr>
+								      	<th></th>
+                                        <th>ID</th>
+                                        <th>Size</th>
+                                        <th>Quantity</th>
+                                        <th></th>
+							    	</tr>
+							  	</thead>
+							  	<tbody>
+							  		<?php if ($count_fliers > 0): ?>
+							  			 <?php $i = 1;
+                                            foreach ($fliers as $flier): 
+                                        ?>
+                                        <tr>
+                                            <td><?= $i; ?></td>
+                                            <td>
+                                                <?php
+                                                    echo $flier["flier_id"];
+
+                                                    if ($flier['flier_status'] == 0) {
+	                                                	echo '<br><span class="badge bg-danger h6 text-uppercase">New</span>';
+		                                            } elseif ($flier['flier_status'] == 1) {
+		                                                echo '<br><span class="badge bg-warning h6 text-uppercase">Processing</span>';
+		                                            } elseif ($flier['flier_status'] == 2) {
+		                                                echo '<br><span class="badge bg-info h6 text-uppercase">Paid</span>';
+		                                            } elseif ($flier['flier_status'] == 3) {
+		                                                echo '<br><span class="badge bg-success h6 text-uppercase">Ordered</span>';
+		                                            } elseif ($flier['flier_status'] == 4) {
+		                                            } else {
+		                                                echo '';
+		                                            }
+                                                ?>
+                                            </td>
+                                          	<td><?= $flier["flier_size_to_print"]; ?></td>
+                                            <td><?= $flier["flier_quantity_to_print"]; ?></td>
+                                            <td><?= pretty_date($flier["flier_createdAt"]); ?></td>
+                                            <td>
+                                                <a href="<?= PROOT; ?>adminvonna/Print-Job-View.php?view=flier&id=<?= $flier['flier_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
+                                            </td>
+                                        </tr>
+                                        <?php $i++; endforeach; ?>
+							  		<?php else: ?>
+							  			<tr>
+							  				<td rowspan="6">No orders.</td>
+							  			</tr>
+							  		<?php endif; ?>
+							  	</tbody>
+							</table>
+						</div>
 					<?php elseif ($_GET['pj'] == 'banner'): ?>
 						<h3 class="my-4">Banners</h3>
 						<div class="table-responsive mt-5">
@@ -371,190 +476,6 @@
 					  	<a href="?pj=card" class="list-group-item list-group-item-action">Call cards</a>
 					</div>
 				<?php endif; ?>
-
-				<?php 
-					if (isset($_GET['details']) && !empty($_GET['details'])): 
-						$id = sanitize($_GET['details']);
-
-						$query = "
-							SELECT * FROM vonna_orders 
-							INNER JOIN vonna_user 
-							ON vonna_user.user_id = vonna_orders.orders_userid 
-							WHERE vonna_orders.orders_id = ? 
-							LIMIT 1
-						";
-						$statement = $conn->prepare($query);
-						$statement->execute([$id]);
-						$detail = $statement->fetchAll();
-						if ($statement->rowCount() > 0) {
-							$updateQ = "
-								UPDATE vonna_orders 
-								SET orders_status = ? 
-								WHERE orders_id = ? 
-							";
-							$statement = $conn->prepare($updateQ);
-							$statement->execute([1, $id]);
-						?>
-							<br><br>
-							<a href="<?= PROOT; ?>adminvonna/Orders" class="badge bg-dark text-decoration-none" style="float: right;"><i data-feather="arrow-left"></i> Go back</a>
-							<ol class="list-group mt-5">
-								<li class="list-group-item d-flex justify-content-between align-items-center">
-							      	<div class="fw-bold">Order ID</div>
-								    <span class=""><?= $detail[0]['orders_id']; ?></span>
-								 </li>
-							  	<li class="list-group-item d-flex justify-content-between align-items-center">
-						      		<div class="fw-bold">Product</div>
-						      		<span><?= $detail[0]['orders_product']; ?></span>
-							  	</li>
-							  	<?php if ($detail[0]['orders_size'] != ''): ?>
-								  	<li class="list-group-item d-flex justify-content-between align-items-center">
-							      		<div class="fw-bold">Size</div>
-							     		<span><?= $detail[0]['orders_size']; ?></span>
-								  	</li>
-							  	<?php endif; ?>
-							  	<?php if ($detail[0]['orders_type'] != ''): ?>
-							  	<li class="list-group-item d-flex justify-content-between align-items-center">
-						      		<div class="fw-bold">Type</div>
-						     		<span><?= $detail[0]['orders_type']; ?></span>
-							  	</li>
-							  	<?php endif; ?>
-							  	<li class="list-group-item d-flex justify-content-between align-items-center">
-						      		<div class="fw-bold">Quantity</div>
-						     		<span><?= $detail[0]['orders_quantity']; ?></span>
-							  	</li>
-							  	<?php if ($detail[0]['orders_color'] != ''): ?>
-							  	<li class="list-group-item d-flex justify-content-between align-items-center">
-						      		<div class="fw-bold">Color</div>
-						     		<span><?= $detail[0]['orders_color']; ?></span>
-							  	</li>
-							  	<?php endif; ?>
-							  	 <button type="button" class="list-group-item list-group-item-action fw-bold text-primary" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Customer: <?= ucwords($detail[0]['user_fullname']); ?></button>
-							    	<div class="collapse" id="collapseExample">
-									  	<div class="card card-body">
-									    	<ul class="list-group">
-												<li class="list-group-item d-flex justify-content-between align-items-center">
-												    Email
-												    <span class="badge bg-primary rounded-pill"><?= $detail[0]['user_email']; ?></span>
-												</li>
-												<li class="list-group-item d-flex justify-content-between align-items-center">
-												    Phone
-												    <span class="badge bg-primary rounded-pill"><?= $detail[0]['user_phone']; ?></span>
-												</li>
-												<li class="list-group-item d-flex justify-content-between align-items-center">
-												    Occupation
-												    <span class="badge bg-primary rounded-pill"><?= $detail[0]['user_occupation']; ?></span>
-												</li>
-												<li class="list-group-item d-flex justify-content-between align-items-center">
-												    Name of instituition
-												    <span class="badge bg-primary rounded-pill"><?= $detail[0]['user_name_of_instituition']; ?></span>
-												</li>
-												<li class="list-group-item d-flex justify-content-between align-items-center">
-												    Postal Address
-												    <span class="badge bg-primary rounded-pill"><?= $detail[0]['user_postal_address']; ?></span>
-												</li>
-												<li class="list-group-item d-flex justify-content-between align-items-center">
-												    Pysical Address
-												    <span class="badge bg-primary rounded-pill"><?= $detail[0]['user_physical_address']; ?></span>
-												</li>
-												<li class="list-group-item d-flex justify-content-between align-items-center">
-												    Size of instituition
-												    <span class="badge bg-primary rounded-pill"><?= $detail[0]['user_size_of_instituition']; ?></span>
-												</li>
-												<li class="list-group-item d-flex justify-content-between align-items-center">
-												    Country
-												    <span class="badge bg-primary rounded-pill"><?= $detail[0]['user_country']; ?></span>
-												</li>
-												<li class="list-group-item d-flex justify-content-between align-items-center">
-												    State/Region
-												    <span class="badge bg-primary rounded-pill"><?= $detail[0]['user_state']; ?></span>
-												</li>
-												<li class="list-group-item d-flex justify-content-between align-items-center">
-												    City
-												    <span class="badge bg-primary rounded-pill"><?= $detail[0]['user_city']; ?></span>
-												</li>
-											</ul>
-									  	</div>
-									</div>
-							  	</li>
-							  	<li class="list-group-item d-flex justify-content-between align-items-start">
-						      		<div class="fw-bold">Date</div>
-						     		<span><?= pretty_date($detail[0]['orders_orderdate']); ?></span>
-							  	</li>
-							</ol>
-
-							<form action="" class="mt-3">
-								<div class="form-check form-switch">
-									<input class="form-check-input" type="checkbox" role="switch" id="paidSwitch" <?= (($detail[0]['orders_status'] == 2 || $detail[0]['orders_status'] == 3) ? 'checked' : ''); ?> name="paid">
-									<label class="form-check-label" for="paidSwitch">Paid</label>
-								</div>
-								<div class="form-check form-switch">
-									<input class="form-check-input" type="checkbox" role="switch" id="orderedSwitch" <?= (($detail[0]['orders_status'] == 3) ? 'checked' : ''); ?> name="ordered" value="<?= (($detail[0]['orders_status'] == 2) ? 3 : 1); ?>">
-									<label class="form-check-label" for="orderedSwitch">Ordered</label>
-								</div>
-								<input type="hidden" id="orderId" value="<?= $detail[0]['orders_id']; ?>">						
-								<input type="hidden" id="id" value="<?= $detail[0]['id']; ?>">						
-							</form>
-						<?php
-						} else {
-							$_SESSION['flash_error'] = 'Order not found!';
-							redirect(PROOT . 'adminvonna/Orders');
-						}
-				?>
-				
-				<?php else: ?>
-				<div class="table-responsive mt-5">
-					<table class="table table-hover">
-					  	<thead>
-						    <tr>
-						      	<th scope="col"></th>
-						      	<th scope="col"></th>
-						      	<th scope="col">Product</th>
-						      	<th scope="col">QTY</th>
-						      	<th scope="col">Customer</th>
-						      	<th scope="col">Date</th>
-						      	<th scope="col"></th>
-					    	</tr>
-					  	</thead>
-					  	<tbody>
-					  		<?php if ($order_count > 0): ?>
-					  			<?php $i = 1; foreach ($orders as $order): ?>
-						  			<tr scope="row">
-						  				<td><?= $i; ?></td>
-						  				<td>
-						  					<?= $order['orders_id']; ?>
-						  					<?php 
-						  						if ($order['orders_status'] == 0) {
-	                                                echo '<br><span class="badge bg-danger h6 text-uppercase">New</span>';
-	                                            } elseif ($order['orders_status'] == 1) {
-	                                                echo '<br><span class="badge bg-warning h6 text-uppercase">Processing</span>';
-	                                            } elseif ($order['orders_status'] == 2) {
-	                                                echo '<br><span class="badge bg-info h6 text-uppercase">Paid</span>';
-	                                            } elseif ($order['orders_status'] == 3) {
-	                                                echo '<br><span class="badge bg-success h6 text-uppercase">Ordered</span>';
-	                                            } elseif ($order['orders_status'] == 4) {
-	                                            } else {
-	                                                echo '';
-	                                            }
-						  					?>		
-						  				</td>
-						  				<td><?= $order['orders_product']; ?></td>
-						  				<td><?= $order['orders_quantity']; ?></td>
-						  				<td><?= ucwords($order['user_fullname']); ?></td>
-						  				<td><?= pretty_date($order['orders_orderdate']); ?></td>
-						  				<td>
-						  					<a href="<?= PROOT; ?>adminvonna/Orders/<?= $order['orders_id']; ?>" class="btn btn-warning">Details</a>						  						
-						  				</td>
-						  			</tr>
-					  			<?php $i++; endforeach; ?>
-					  		<?php else: ?>
-					  			<tr>
-					  				<td rowspan="6">No orders.</td>
-					  			</tr>
-					  		<?php endif; ?>
-					  	</tbody>
-					</table>
-				</div>
-				<?php endif ?>
 			</div>
 		</div>
 	</div>

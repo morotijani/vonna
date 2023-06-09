@@ -460,6 +460,60 @@
 							</table>
 						</div>
 					<?php elseif ($_GET['pj'] == 'receipt'): ?>
+						<h3 class="my-4">Receipt Books</h3>
+						<div class="table-responsive mt-5">
+							<table class="table table-hover">
+							  	<thead>
+								    <tr>
+								      	<th></th>
+                                        <th>ID</th>
+                                        <th>Outfit name</th>
+                                        <th>Type</th>
+                                        <th>Date</th>
+                                        <th></th>
+							    	</tr>
+							  	</thead>
+							  	<tbody>
+							  		<?php if ($count_receipts > 0): ?>
+							  			 <?php $i = 1;
+                                            foreach ($receipts as $receipt): 
+                                        ?>
+                                        <tr>
+                                            <td><?= $i; ?></td>
+                                            <td>
+                                                <?php
+                                                    echo $receipt["receipt_id"];
+
+                                                    if ($receipt['receipt_status'] == 0) {
+	                                                	echo '<br><span class="badge bg-danger h6 text-uppercase">New</span>';
+		                                            } elseif ($receipt['receipt_status'] == 1) {
+		                                                echo '<br><span class="badge bg-warning h6 text-uppercase">Processing</span>';
+		                                            } elseif ($receipt['receipt_status'] == 2) {
+		                                                echo '<br><span class="badge bg-info h6 text-uppercase">Paid</span>';
+		                                            } elseif ($receipt['receipt_status'] == 3) {
+		                                                echo '<br><span class="badge bg-success h6 text-uppercase">Ordered</span>';
+		                                            } elseif ($receipt['receipt_status'] == 4) {
+		                                            } else {
+		                                                echo '';
+		                                            }
+                                                ?>
+                                            </td>
+                                          	<td><?= $receipt["receipt_outfit_name"]; ?></td>
+                                            <td><?= $receipt["receipt_type"]; ?></td>
+                                            <td><?= pretty_date($receipt["receipt_createdAt"]); ?></td>
+                                            <td>
+                                                <a href="<?= PROOT; ?>adminvonna/Print-Job-View.php?view=receipt&id=<?= $receipt['receipt_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
+                                            </td>
+                                        </tr>
+                                        <?php $i++; endforeach; ?>
+							  		<?php else: ?>
+							  			<tr>
+							  				<td rowspan="6">No orders.</td>
+							  			</tr>
+							  		<?php endif; ?>
+							  	</tbody>
+							</table>
+						</div>
 					<?php elseif ($_GET['pj'] == 'customize'): ?>
 					<?php elseif ($_GET['pj'] == 'card'): ?>
 					<?php else: ?>

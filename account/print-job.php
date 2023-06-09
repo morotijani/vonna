@@ -1571,7 +1571,7 @@
                         if (want == 'Yes') {
                             $('.yes-want-logo').removeClass('d-none')
                             $('#upload-logo').attr('required', true)
-                        } else {
+                        } else if (want == 'No') {
                             $('.yes-want-logo').addClass('d-none')
                             $('#upload-logo').val('')
                             $('#upload-logo').attr('required', false)

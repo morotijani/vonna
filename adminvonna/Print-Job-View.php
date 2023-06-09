@@ -248,6 +248,66 @@
 			redirect(PROOT . 'adminvonna/Print-Job?pj=flier');
 		}
 	}
+
+	/**
+	 * RECEIPT BOOK
+	 */
+	 // check for ordered order
+	if (isset($_GET['receiptordered']) && !empty($_GET['receiptordered'])) {
+		// code...
+		$status = sanitize((int)$_GET['receiptordered']);
+		$id = sanitize($_GET['id']);
+		if ($id != '') {
+			// code...
+			$sql = "
+				UPDATE vonna_print_job_receipt 
+				SET receipt_status = ? 
+				WHERE receipt_id = ?
+			";
+			$statement = $conn->prepare($sql);
+			$result = $statement->execute([$status, $id]);
+
+			if ($result) {
+				// code...
+				$_SESSION['flash_success'] = 'Receipt book print job ' . (($status == 1) ? 'Un-ordered' : 'Ordered');
+				redirect(PROOT . 'adminvonna/Print-Job?pj=receipt');
+			} else {
+				echo js_alert('Something went wrong... try again');
+			}
+		} else {
+			$_SESSION['flash_error'] = 'Unknow Receipt book print job order';
+			redirect(PROOT . 'adminvonna/Print-Job?pj=receipt');
+		}
+	}
+
+	// check for paid order
+	if (isset($_GET['receiptpaid']) && !empty($_GET['receiptpaid'])) {
+		// code...
+		$status = sanitize((int)$_GET['receiptpaid']);
+		$id = sanitize($_GET['id']);
+		if ($id != '') {
+			// code...
+			$sql = "
+				UPDATE vonna_print_job_receipt 
+				SET receipt_status = ? 
+				WHERE receipt_id = ?
+			";
+			$statement = $conn->prepare($sql);
+			$result = $statement->execute([$status, $id]);
+
+			if ($result) {
+				// code...
+				$_SESSION['flash_success'] = 'Receipt book print job ' . (($status == 1) ? 'Not Paid' : 'Paid, ready for order');
+				redirect(PROOT . 'adminvonna/Print-Job?pj=receipt');
+			} else {
+				echo js_alert('Something went wrong... try again');
+				//redirect(PROOT . 'adminvonna/Print-Job?pj=receipt');
+			}
+		} else {
+			$_SESSION['flash_error'] = 'Unknow Receipt book print job order';
+			redirect(PROOT . 'adminvonna/Print-Job?pj=receipt');
+		}
+	}
     
 
 	/**
@@ -264,30 +324,6 @@
     $count_callcards = $statement->rowCount();
     $callcards = $statement->fetchAll();
 
-
-    
-
-    $queryCustomize = "
-        SELECT * FROM vonna_print_job_customze 
-        INNER JOIN vonna_user 
-        ON vonna_user.user_id = vonna_print_job_customze.customze_userid 
-        ORDER BY id DESC
-    ";
-    $statement = $conn->prepare($queryCustomize);
-    $statement->execute();
-    $count_cutomizes = $statement->rowCount();
-    $cutomizes = $statement->fetchAll();
-
-    $queryReceipt = "
-        SELECT * FROM vonna_print_job_receipt 
-        INNER JOIN vonna_user 
-        ON vonna_user.user_id = vonna_print_job_receipt.receipt_userid 
-        ORDER BY id DESC
-    ";
-    $statement = $conn->prepare($queryReceipt);
-    $statement->execute();
-    $count_receipts = $statement->rowCount();
-    $receipts = $statement->fetchAll();
 
 
 ?>
@@ -338,13 +374,15 @@
 						    $count_exams = $statement->rowCount();
 						    $exam = $statement->fetchAll();
 						    if ($count_exams > 0) {
-						    	$updateQ = "
-									UPDATE vonna_printjob 
-									SET printjob_status = ? 
-									WHERE printjob_id = ? 
-								";
-								$statement = $conn->prepare($updateQ);
-								$statement->execute([1, $printjobid]);
+						    	if ($exam[0]['printjob_status'] == 0) {
+							    	$updateQ = "
+										UPDATE vonna_printjob 
+										SET printjob_status = ? 
+										WHERE printjob_id = ? 
+									";
+									$statement = $conn->prepare($updateQ);
+									$statement->execute([1, $printjobid]);
+						    	}
 						    } else {
 						    	$_SESSION['flash_error'] = 'Could not find Examination question.';
 						    	redirect(PROOT . 'adminvonna/Print-Job?pj=exams');
@@ -500,13 +538,15 @@
 						    $count_thesis = $statement->rowCount();
 						    $thesis = $statement->fetchAll();
 						    if ($count_thesis > 0) {
-						    	$updateQ = "
-									UPDATE vonna_printjob_thesis 
-									SET thesis_status = ? 
-									WHERE thesis_id = ? 
-								";
-								$statement = $conn->prepare($updateQ);
-								$statement->execute([1, $thesisid]);
+						    	if ($thesis[0]['thesis_status'] == 0) {
+							    	$updateQ = "
+										UPDATE vonna_printjob_thesis 
+										SET thesis_status = ? 
+										WHERE thesis_id = ? 
+									";
+									$statement = $conn->prepare($updateQ);
+									$statement->execute([1, $thesisid]);
+								}
 						    } else {
 						    	$_SESSION['flash_error'] = 'Could not find Thesis/Reserch.';
 						    	redirect(PROOT . 'adminvonna/Print-Job?pj=thesis');
@@ -630,13 +670,15 @@
 					    $count_fliers = $statement->rowCount();
 					    $flier = $statement->fetchAll();
 					     if ($count_fliers > 0) {
-						    	$updateQ = "
-									UPDATE vonna_printjob_fliers 
-									SET flier_status = ? 
-									WHERE flier_id = ? 
-								";
-								$statement = $conn->prepare($updateQ);
-								$statement->execute([1, $flierid]);
+						    	if ($flier[0]['flier_status'] == 0) {
+							    	$updateQ = "
+										UPDATE vonna_printjob_fliers 
+										SET flier_status = ? 
+										WHERE flier_id = ? 
+									";
+									$statement = $conn->prepare($updateQ);
+									$statement->execute([1, $flierid]);
+								}
 						    } else {
 						    	$_SESSION['flash_error'] = 'Could not find Flier.';
 						    	redirect(PROOT . 'adminvonna/Print-Job?pj=flier');
@@ -749,7 +791,7 @@
 						    $count_banners = $statement->rowCount();
 						    $banner = $statement->fetchAll();
 						    if ($count_banners > 0) {
-						    	if ($banner[0]['banner_status'] == 0) 
+						    	if ($banner[0]['banner_status'] == 0) {
 							    	$updateQ = "
 										UPDATE vonna_printjob_banners 
 										SET banner_status = ? 
@@ -757,6 +799,7 @@
 									";
 									$statement = $conn->prepare($updateQ);
 									$statement->execute([1, $bannerid]);
+								}
 						    } else {
 						    	$_SESSION['flash_error'] = 'Could not find Banner.';
 						    	redirect(PROOT . 'adminvonna/Print-Job?pj=banner');
@@ -854,11 +897,268 @@
 							<input type="hidden" id="orderId" value="<?= $banner[0]['banner_id']; ?>">						
 							<input type="hidden" id="id" value="<?= $banner[0]['id']; ?>">						
 						</form>
-	                           
-							  		
-					<?php elseif ($_GET['view'] == 'receipt'): ?>
-					<?php elseif ($_GET['view'] == 'customize'): ?>
+	                       
+					<?php 
+						elseif ($_GET['view'] == 'receipt'): 
+							$receiptid = $_GET['id'];
+							$queryReceipt = "
+						        SELECT * FROM vonna_print_job_receipt 
+						        INNER JOIN vonna_user 
+						        ON vonna_user.user_id = vonna_print_job_receipt.receipt_userid 
+						        WHERE vonna_print_job_receipt.receipt_id = ?
+						        ORDER BY id DESC
+						    ";
+						    $statement = $conn->prepare($queryReceipt);
+						    $statement->execute([$receiptid]);
+						    $count_receipts = $statement->rowCount();
+						    $receipt = $statement->fetchAll();
+						    if ($count_receipts > 0) {
+						    	if ($receipt[0]['receipt_status'] == 0) {
+							    	$updateQ = "
+										UPDATE vonna_print_job_receipt 
+										SET receipt_status = ? 
+										WHERE receipt_id = ? 
+									";
+									$statement = $conn->prepare($updateQ);
+									$statement->execute([1, $receiptid]);
+								}
+						    } else {
+						    	$_SESSION['flash_error'] = 'Could not find Receipt Book.';
+						    	redirect(PROOT . 'adminvonna/Print-Job?pj=receipt');
+						    }
+					?>
+					<h3 class="my-4">Receipt Book view</h3>
+	                    <p class="text-muted">
+	                        <?php 
+	                         	$outputreceipt_logo = '';
+                                if ($receipt[0]['receipt_upload_logo'] != '') {
+                                    // code...
+                                    $receipt_logos = explode(',', $receipt[0]['receipt_upload_logo']);
+                                    foreach ($receipt_logos as $receipt_logo) 
+                                        $outputreceipt_logo .= '<a href="' . PROOT . 'account/' . $receipt_logo.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                }
+
+                                $outputreceipt_file = '';
+                                if ($receipt[0]['receipt_upload_outfit_design'] != '') {
+                                    // code...
+                                    $receipt_files = explode(',', $receipt[0]['receipt_upload_outfit_design']);
+                                    foreach ($receipt_files as $receipt_file) 
+                                        $outputreceipt_file .= '<a href="' . PROOT . 'account/' . $receipt_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                }
+
+	                            if ($receipt[0]['receipt_status'] == 0) {
+	                                echo '<span class="badge bg-danger h6 text-uppercase">Pending</span>';
+	                            } elseif ($receipt[0]['receipt_status'] == 1) {
+	                                echo '<span class="badge bg-warning h6 text-uppercase">Processing</span>';
+	                            } elseif ($receipt[0]['receipt_status'] == 2) {
+	                                echo '<span class="badge bg-info h6 text-uppercase">Paid</span>';
+	                            } elseif ($receipt[0]['receipt_status'] == 3) {
+	                                echo '<span class="badge bg-success h6 text-uppercase">Ordered</span>';
+	                            }
+	                        ?>
+	                    </p>
+	                        
+	                    <ul class="list-group">
+	                        <li class="list-group-item"><span class="fw-bold text-info">what is the name of your outfit?</span> <?= $receipt[0]['receipt_outfit_name']; ?></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">what type of receipt book do you want?</span> <?= $receipt[0]['receipt_type']; ?></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">if Customized,Do you have a logo for your company?</span> <?= $receipt[0]['receipt_want_logo']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">if yes, upload your logo here:</span> <?= $outputreceipt_logo; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">How many receipt books do you want?</span> <?= $receipt[0]['receipt_quantity']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">When do you want the receipt books delivered?</span> <?= $receipt[0]['receipt_delivery_date']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">Upload the design of your outfit for the design:</span> <?= $outputreceipt_file; ?></a></li>
+	                        <button type="button" class="list-group-item list-group-item-action fw-bold text-primary" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Customer: <?= ucwords($receipt[0]['user_fullname']); ?></button>
+					    	<div class="collapse" id="collapseExample">
+							  	<div class="card card-body">
+							    	<ul class="list-group">
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Email
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_email']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Phone
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_phone']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Occupation
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_occupation']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Name of instituition
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_name_of_instituition']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Postal Address
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_postal_address']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Pysical Address
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_physical_address']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Size of instituition
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_size_of_instituition']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Country
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_country']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    State/Region
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_state']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    City
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_city']; ?></span>
+										</li>
+									</ul>
+							  	</div>
+							</div>
+	                        <li class="list-group-item"><span class="fw-bold text-info">Date: </span> <?= pretty_date($receipt[0]['receipt_createdAt']); ?></li>
+	                    </ul>
+	                    <form action="" class="mt-3">
+							<div class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" role="switch" id="receiptPaidSwitch" <?= (($receipt[0]['receipt_status'] == 2 || $receipt[0]['receipt_status'] == 3) ? 'checked' : ''); ?> name="paid">
+								<label class="form-check-label" for="receiptPaidSwitch">Paid</label>
+							</div>
+							<div class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" role="switch" id="receiptOrderedSwitch" <?= (($receipt[0]['receipt_status'] == 3) ? 'checked' : ''); ?> name="ordered" value="<?= (($receipt[0]['receipt_status'] == 2) ? 3 : 1); ?>">
+								<label class="form-check-label" for="receiptOrderedSwitch">Ordered</label>
+							</div>
+							<input type="hidden" id="orderId" value="<?= $receipt[0]['receipt_id']; ?>">						
+							<input type="hidden" id="id" value="<?= $receipt[0]['id']; ?>">						
+						</form>
+
+					<?php 
+						elseif ($_GET['view'] == 'customize'): 
+							$customizeid = $_GET['id'];
+							$queryCustomize = "
+						        SELECT * FROM vonna_print_job_customze 
+						        INNER JOIN vonna_user 
+						        ON vonna_user.user_id = vonna_print_job_customze.customze_userid 
+						        WHERE vonna_print_job_customze.customze_id = ?
+						        ORDER BY id DESC
+						    ";
+						    $statement = $conn->prepare($queryCustomize);
+						    $statement->execute([$customizeid]);
+						    $count_cutomizes = $statement->rowCount();
+						    $cutomize = $statement->fetchAll();
+						    if ($count_cutomizes > 0) {
+						    	if ($receipt[0]['receipt_status'] == 0) {
+							    	$updateQ = "
+										UPDATE vonna_print_job_receipt 
+										SET receipt_status = ? 
+										WHERE receipt_id = ? 
+									";
+									$statement = $conn->prepare($updateQ);
+									$statement->execute([1, $customizeid]);
+								}
+						    } else {
+						    	$_SESSION['flash_error'] = 'Could not find Customized office Files.';
+						    	redirect(PROOT . 'adminvonna/Print-Job?pj=customize');
+						    }
+					?>
+						<h3 class="my-4">Customized office Files view</h3>
+	                    <p class="text-muted">
+	                        <?php 
+	                         	$outputreceipt_logo = '';
+                                if ($receipt[0]['receipt_upload_logo'] != '') {
+                                    // code...
+                                    $receipt_logos = explode(',', $receipt[0]['receipt_upload_logo']);
+                                    foreach ($receipt_logos as $receipt_logo) 
+                                        $outputreceipt_logo .= '<a href="' . PROOT . 'account/' . $receipt_logo.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                }
+
+                                $outputreceipt_file = '';
+                                if ($receipt[0]['receipt_upload_outfit_design'] != '') {
+                                    // code...
+                                    $receipt_files = explode(',', $receipt[0]['receipt_upload_outfit_design']);
+                                    foreach ($receipt_files as $receipt_file) 
+                                        $outputreceipt_file .= '<a href="' . PROOT . 'account/' . $receipt_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                }
+
+	                            if ($receipt[0]['receipt_status'] == 0) {
+	                                echo '<span class="badge bg-danger h6 text-uppercase">Pending</span>';
+	                            } elseif ($receipt[0]['receipt_status'] == 1) {
+	                                echo '<span class="badge bg-warning h6 text-uppercase">Processing</span>';
+	                            } elseif ($receipt[0]['receipt_status'] == 2) {
+	                                echo '<span class="badge bg-info h6 text-uppercase">Paid</span>';
+	                            } elseif ($receipt[0]['receipt_status'] == 3) {
+	                                echo '<span class="badge bg-success h6 text-uppercase">Ordered</span>';
+	                            }
+	                        ?>
+	                    </p>
+	                        
+	                    <ul class="list-group">
+	                        <li class="list-group-item"><span class="fw-bold text-info">what is the name of your outfit?</span> <?= $receipt[0]['receipt_outfit_name']; ?></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">what type of receipt book do you want?</span> <?= $receipt[0]['receipt_type']; ?></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">if Customized,Do you have a logo for your company?</span> <?= $receipt[0]['receipt_want_logo']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">if yes, upload your logo here:</span> <?= $outputreceipt_logo; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">How many receipt books do you want?</span> <?= $receipt[0]['receipt_quantity']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">When do you want the receipt books delivered?</span> <?= $receipt[0]['receipt_delivery_date']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">Upload the design of your outfit for the design:</span> <?= $outputreceipt_file; ?></a></li>
+	                        <button type="button" class="list-group-item list-group-item-action fw-bold text-primary" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Customer: <?= ucwords($receipt[0]['user_fullname']); ?></button>
+					    	<div class="collapse" id="collapseExample">
+							  	<div class="card card-body">
+							    	<ul class="list-group">
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Email
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_email']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Phone
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_phone']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Occupation
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_occupation']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Name of instituition
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_name_of_instituition']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Postal Address
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_postal_address']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Pysical Address
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_physical_address']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Size of instituition
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_size_of_instituition']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Country
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_country']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    State/Region
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_state']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    City
+										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_city']; ?></span>
+										</li>
+									</ul>
+							  	</div>
+							</div>
+	                        <li class="list-group-item"><span class="fw-bold text-info">Date: </span> <?= pretty_date($receipt[0]['receipt_createdAt']); ?></li>
+	                    </ul>
+	                    <form action="" class="mt-3">
+							<div class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" role="switch" id="receiptPaidSwitch" <?= (($receipt[0]['receipt_status'] == 2 || $receipt[0]['receipt_status'] == 3) ? 'checked' : ''); ?> name="paid">
+								<label class="form-check-label" for="receiptPaidSwitch">Paid</label>
+							</div>
+							<div class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" role="switch" id="receiptOrderedSwitch" <?= (($receipt[0]['receipt_status'] == 3) ? 'checked' : ''); ?> name="ordered" value="<?= (($receipt[0]['receipt_status'] == 2) ? 3 : 1); ?>">
+								<label class="form-check-label" for="receiptOrderedSwitch">Ordered</label>
+							</div>
+							<input type="hidden" id="orderId" value="<?= $receipt[0]['receipt_id']; ?>">						
+							<input type="hidden" id="id" value="<?= $receipt[0]['id']; ?>">						
+						</form>
 					<?php elseif ($_GET['view'] == 'card'): ?>
+
 					<?php else: ?>
 						<?php redirect(PROOT . 'adminvonna/Print-Job');  ?>
 					<?php endif; ?>
@@ -979,6 +1279,30 @@
 	            		ordered = 3
 	            	}
 	            	window.location = '<?= PROOT; ?>adminvonna/Print-Job-View?flierordered='+ordered+'&id='+id;
+            });
+
+            // FLIER
+            $("#receiptPaidSwitch").change(function(event) {
+            	event.preventDefault()
+            	if (confirm('Are you sure')) 
+	            	var paid = 1;
+	            	var id = $('#orderId').val();
+	            	
+	            	if ($('#receiptPaidSwitch').is(":checked") == true) {
+	            		paid = 2;
+	            	}
+	            	window.location = '<?= PROOT; ?>adminvonna/Print-Job-View?receiptpaid='+paid+'&id='+id;
+            });
+
+            $("#receiptOrderedSwitch").change(function(event) {
+            	event.preventDefault()
+            	if (confirm('Are you sure')) 
+	            	var ordered = 1;
+	            	var id = $('#orderId').val();
+	            	if ($('#receiptOrderedSwitch').is(":checked") == true) {
+	            		ordered = 3
+	            	}
+	            	window.location = '<?= PROOT; ?>adminvonna/Print-Job-View?receiptordered='+ordered+'&id='+id;
             });
         })
     </script>

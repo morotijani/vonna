@@ -194,8 +194,8 @@
     ";
     $statement = $conn->prepare($queryCustomize);
     $statement->execute();
-    $count_cutomizes = $statement->rowCount();
-    $cutomizes = $statement->fetchAll();
+    $count_customizes = $statement->rowCount();
+    $customizes = $statement->fetchAll();
 
     $queryReceipt = "
         SELECT * FROM vonna_print_job_receipt 
@@ -515,7 +515,117 @@
 							</table>
 						</div>
 					<?php elseif ($_GET['pj'] == 'customize'): ?>
+						<h3 class="my-4">Customized Office Files</h3>
+						<div class="table-responsive mt-5">
+							<table class="table table-hover">
+							  	<thead>
+								    <tr>
+								      	<th></th>
+                                        <th>ID</th>
+                                        <th>Outfit name</th>
+                                        <th>Address</th>
+                                        <th>Date</th>
+                                        <th></th>
+							    	</tr>
+							  	</thead>
+							  	<tbody>
+							  		<?php if ($count_customizes > 0): ?>
+							  			 <?php $i = 1;
+                                            foreach ($customizes as $customize): 
+                                        ?>
+                                        <tr>
+                                            <td><?= $i; ?></td>
+                                            <td>
+                                                <?php
+                                                    echo $customize["customze_id"];
+
+                                                    if ($customize['customze_status'] == 0) {
+	                                                	echo '<br><span class="badge bg-danger h6 text-uppercase">New</span>';
+		                                            } elseif ($customize['customze_status'] == 1) {
+		                                                echo '<br><span class="badge bg-warning h6 text-uppercase">Processing</span>';
+		                                            } elseif ($customize['customze_status'] == 2) {
+		                                                echo '<br><span class="badge bg-info h6 text-uppercase">Paid</span>';
+		                                            } elseif ($customize['customze_status'] == 3) {
+		                                                echo '<br><span class="badge bg-success h6 text-uppercase">Ordered</span>';
+		                                            } elseif ($customize['customze_status'] == 4) {
+		                                            } else {
+		                                                echo '';
+		                                            }
+                                                ?>
+                                            </td>
+                                          	<td><?= $customize["customize_outfit_name"]; ?></td>
+                                            <td><?= $customize["customize_outfit_address"]; ?></td>
+                                            <td><?= pretty_date($customize["customze_createdAt"]); ?></td>
+                                            <td>
+                                                <a href="<?= PROOT; ?>adminvonna/Print-Job-View.php?view=customize&id=<?= $customize['customze_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
+                                            </td>
+                                        </tr>
+                                        <?php $i++; endforeach; ?>
+							  		<?php else: ?>
+							  			<tr>
+							  				<td rowspan="6">No orders.</td>
+							  			</tr>
+							  		<?php endif; ?>
+							  	</tbody>
+							</table>
+						</div>
 					<?php elseif ($_GET['pj'] == 'card'): ?>
+						<h3 class="my-4">Call Cards</h3>
+						<div class="table-responsive mt-5">
+							<table class="table table-hover">
+							  	<thead>
+								    <tr>
+								      	<th></th>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Company name</th>
+                                        <th>Address</th>
+                                        <th>Date</th>
+                                        <th></th>
+							    	</tr>
+							  	</thead>
+							  	<tbody>
+							  		<?php if ($count_callcards > 0): ?>
+							  			 <?php $i = 1;
+                                            foreach ($callcards as $callcard): 
+                                        ?>
+                                        <tr>
+                                            <td><?= $i; ?></td>
+                                            <td>
+                                                <?php
+                                                    echo $callcard["card_id"];
+
+                                                    if ($callcard['card_status'] == 0) {
+	                                                	echo '<br><span class="badge bg-danger h6 text-uppercase">New</span>';
+		                                            } elseif ($callcard['card_status'] == 1) {
+		                                                echo '<br><span class="badge bg-warning h6 text-uppercase">Processing</span>';
+		                                            } elseif ($callcard['card_status'] == 2) {
+		                                                echo '<br><span class="badge bg-info h6 text-uppercase">Paid</span>';
+		                                            } elseif ($callcard['card_status'] == 3) {
+		                                                echo '<br><span class="badge bg-success h6 text-uppercase">Ordered</span>';
+		                                            } elseif ($callcard['card_status'] == 4) {
+		                                            } else {
+		                                                echo '';
+		                                            }
+                                                ?>
+                                            </td>
+                                          	<td><?= $callcard["card_name"]; ?></td>
+                                            <td><?= $callcard["card_company_name"]; ?></td>
+                                            <td><?= $callcard["card_address"]; ?></td>
+                                            <td><?= pretty_date($callcard["card_createdAt"]); ?></td>
+                                            <td>
+                                                <a href="<?= PROOT; ?>adminvonna/Print-Job-View.php?view=card&id=<?= $callcard['card_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
+                                            </td>
+                                        </tr>
+                                        <?php $i++; endforeach; ?>
+							  		<?php else: ?>
+							  			<tr>
+							  				<td rowspan="6">No orders.</td>
+							  			</tr>
+							  		<?php endif; ?>
+							  	</tbody>
+							</table>
+						</div>
 					<?php else: ?>
 						<?php redirect(PROOT . 'adminvonna/Print-Job');  ?>
 					<?php endif; ?>

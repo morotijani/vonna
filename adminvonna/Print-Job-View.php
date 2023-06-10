@@ -308,21 +308,126 @@
 			redirect(PROOT . 'adminvonna/Print-Job?pj=receipt');
 		}
 	}
+
+	/**
+	 * CUSTOMIZE OFFICE FILES
+	 */
+	 // check for ordered order
+	if (isset($_GET['customizeordered']) && !empty($_GET['customizeordered'])) {
+		// code...
+		$status = sanitize((int)$_GET['customizeordered']);
+		$id = sanitize($_GET['id']);
+		if ($id != '') {
+			// code...
+			$sql = "
+				UPDATE vonna_print_job_customze 
+				SET customze_status = ? 
+				WHERE customze_id = ?
+			";
+			$statement = $conn->prepare($sql);
+			$result = $statement->execute([$status, $id]);
+
+			if ($result) {
+				// code...
+				$_SESSION['flash_success'] = 'Customize office files print job ' . (($status == 1) ? 'Un-ordered' : 'Ordered');
+				redirect(PROOT . 'adminvonna/Print-Job?pj=customize');
+			} else {
+				echo js_alert('Something went wrong... try again');
+			}
+		} else {
+			$_SESSION['flash_error'] = 'Unknow Customize office files print job order';
+			redirect(PROOT . 'adminvonna/Print-Job?pj=customize');
+		}
+	}
+
+	// check for paid order
+	if (isset($_GET['customizepaid']) && !empty($_GET['customizepaid'])) {
+		// code...
+		$status = sanitize((int)$_GET['customizepaid']);
+		$id = sanitize($_GET['id']);
+		if ($id != '') {
+			// code...
+			$sql = "
+				UPDATE vonna_print_job_customze 
+				SET customze_status = ? 
+				WHERE customze_id = ?
+			";
+			$statement = $conn->prepare($sql);
+			$result = $statement->execute([$status, $id]);
+
+			if ($result) {
+				// code...
+				$_SESSION['flash_success'] = 'Customize office files print job ' . (($status == 1) ? 'Not Paid' : 'Paid, ready for order');
+				redirect(PROOT . 'adminvonna/Print-Job?pj=customize');
+			} else {
+				echo js_alert('Something went wrong... try again');
+				//redirect(PROOT . 'adminvonna/Print-Job?pj=customize');
+			}
+		} else {
+			$_SESSION['flash_error'] = 'Unknow Customize office files print job order';
+			redirect(PROOT . 'adminvonna/Print-Job?pj=customize');
+		}
+	}
     
 
 	/**
 	 * CALL CARDS
 	 */
-    $queryCallcards = "
-        SELECT * FROM vonna_printjob_callcards 
-        INNER JOIN vonna_user 
-        ON vonna_user.user_id = vonna_printjob_callcards.card_userid  
-        ORDER BY id DESC
-    ";
-    $statement = $conn->prepare($queryCallcards);
-    $statement->execute();
-    $count_callcards = $statement->rowCount();
-    $callcards = $statement->fetchAll();
+   if (isset($_GET['cardordered']) && !empty($_GET['cardordered'])) {
+		// code...
+		$status = sanitize((int)$_GET['cardordered']);
+		$id = sanitize($_GET['id']);
+		if ($id != '') {
+			// code...
+			$sql = "
+				UPDATE vonna_printjob_callcards 
+				SET card_status = ? 
+				WHERE card_id = ?
+			";
+			$statement = $conn->prepare($sql);
+			$result = $statement->execute([$status, $id]);
+
+			if ($result) {
+				// code...
+				$_SESSION['flash_success'] = 'Call cards print job ' . (($status == 1) ? 'Un-ordered' : 'Ordered');
+				redirect(PROOT . 'adminvonna/Print-Job?pj=card');
+			} else {
+				echo js_alert('Something went wrong... try again');
+			}
+		} else {
+			$_SESSION['flash_error'] = 'Unknow Call cards print job order';
+			redirect(PROOT . 'adminvonna/Print-Job?pj=card');
+		}
+	}
+
+	// check for paid order
+	if (isset($_GET['cardpaid']) && !empty($_GET['cardpaid'])) {
+		// code...
+		$status = sanitize((int)$_GET['cardpaid']);
+		$id = sanitize($_GET['id']);
+		if ($id != '') {
+			// code...
+			$sql = "
+				UPDATE vonna_printjob_callcards 
+				SET card_status = ? 
+				WHERE card_id = ?
+			";
+			$statement = $conn->prepare($sql);
+			$result = $statement->execute([$status, $id]);
+
+			if ($result) {
+				// code...
+				$_SESSION['flash_success'] = 'Call cards print job ' . (($status == 1) ? 'Not Paid' : 'Paid, ready for order');
+				redirect(PROOT . 'adminvonna/Print-Job?pj=card');
+			} else {
+				echo js_alert('Something went wrong... try again');
+				//redirect(PROOT . 'adminvonna/Print-Job?pj=card');
+			}
+		} else {
+			$_SESSION['flash_error'] = 'Unknow Call cards print job order';
+			redirect(PROOT . 'adminvonna/Print-Job?pj=card');
+		}
+	}
 
 
 
@@ -1041,13 +1146,13 @@
 						    $statement = $conn->prepare($queryCustomize);
 						    $statement->execute([$customizeid]);
 						    $count_cutomizes = $statement->rowCount();
-						    $cutomize = $statement->fetchAll();
+						    $customize = $statement->fetchAll();
 						    if ($count_cutomizes > 0) {
-						    	if ($receipt[0]['receipt_status'] == 0) {
+						    	if ($customize[0]['customze_status'] == 0) {
 							    	$updateQ = "
-										UPDATE vonna_print_job_receipt 
-										SET receipt_status = ? 
-										WHERE receipt_id = ? 
+										UPDATE vonna_print_job_customze 
+										SET customze_status = ? 
+										WHERE customze_id = ? 
 									";
 									$statement = $conn->prepare($updateQ);
 									$statement->execute([1, $customizeid]);
@@ -1060,104 +1165,226 @@
 						<h3 class="my-4">Customized office Files view</h3>
 	                    <p class="text-muted">
 	                        <?php 
-	                         	$outputreceipt_logo = '';
-                                if ($receipt[0]['receipt_upload_logo'] != '') {
+                                $outputcustomize_logo = '';
+                                if ($customize[0]['customize_upload_logo'] != '') {
                                     // code...
-                                    $receipt_logos = explode(',', $receipt[0]['receipt_upload_logo']);
-                                    foreach ($receipt_logos as $receipt_logo) 
-                                        $outputreceipt_logo .= '<a href="' . PROOT . 'account/' . $receipt_logo.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                    $customize_logos = explode(',', $customize[0]['customize_upload_logo']);
+                                    foreach ($customize_logos as $customize_logo) 
+                                        $outputcustomize_logo .= '<a href="' . PROOT . 'account/' . $customize_logo.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
                                 }
 
-                                $outputreceipt_file = '';
-                                if ($receipt[0]['receipt_upload_outfit_design'] != '') {
-                                    // code...
-                                    $receipt_files = explode(',', $receipt[0]['receipt_upload_outfit_design']);
-                                    foreach ($receipt_files as $receipt_file) 
-                                        $outputreceipt_file .= '<a href="' . PROOT . 'account/' . $receipt_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
-                                }
-
-	                            if ($receipt[0]['receipt_status'] == 0) {
+	                            if ($customize[0]['customze_status'] == 0) {
 	                                echo '<span class="badge bg-danger h6 text-uppercase">Pending</span>';
-	                            } elseif ($receipt[0]['receipt_status'] == 1) {
+	                            } elseif ($customize[0]['customze_status'] == 1) {
 	                                echo '<span class="badge bg-warning h6 text-uppercase">Processing</span>';
-	                            } elseif ($receipt[0]['receipt_status'] == 2) {
+	                            } elseif ($customize[0]['customze_status'] == 2) {
 	                                echo '<span class="badge bg-info h6 text-uppercase">Paid</span>';
-	                            } elseif ($receipt[0]['receipt_status'] == 3) {
+	                            } elseif ($customize[0]['customze_status'] == 3) {
 	                                echo '<span class="badge bg-success h6 text-uppercase">Ordered</span>';
 	                            }
 	                        ?>
 	                    </p>
 	                        
 	                    <ul class="list-group">
-	                        <li class="list-group-item"><span class="fw-bold text-info">what is the name of your outfit?</span> <?= $receipt[0]['receipt_outfit_name']; ?></li>
-                            <li class="list-group-item"><span class="fw-bold text-info">what type of receipt book do you want?</span> <?= $receipt[0]['receipt_type']; ?></li>
-                            <li class="list-group-item"><span class="fw-bold text-info">if Customized,Do you have a logo for your company?</span> <?= $receipt[0]['receipt_want_logo']; ?></a></li>
-                            <li class="list-group-item"><span class="fw-bold text-info">if yes, upload your logo here:</span> <?= $outputreceipt_logo; ?></a></li>
-                            <li class="list-group-item"><span class="fw-bold text-info">How many receipt books do you want?</span> <?= $receipt[0]['receipt_quantity']; ?></a></li>
-                            <li class="list-group-item"><span class="fw-bold text-info">When do you want the receipt books delivered?</span> <?= $receipt[0]['receipt_delivery_date']; ?></a></li>
-                            <li class="list-group-item"><span class="fw-bold text-info">Upload the design of your outfit for the design:</span> <?= $outputreceipt_file; ?></a></li>
-	                        <button type="button" class="list-group-item list-group-item-action fw-bold text-primary" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Customer: <?= ucwords($receipt[0]['user_fullname']); ?></button>
+	                        <li class="list-group-item"><span class="fw-bold text-info">What is the name of your outfit?</span> <?= $customize[0]['customize_outfit_name']; ?></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">what is your the addresss of your outfit?</span> <?= $customize[0]['customize_outfit_address']; ?></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">Contact:</span> <?= $customize[0]['customize_contact']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">Email:</span> <?= $customize[0]['customize_email']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">Location:</span> <?= $customize[0]['customize_location']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">GPS address:</span> <?= $customize[0]['customize_gps']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">Does your company have a logo?</span> <?= $customize[0]['customize_have_logo']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">if yes, upload your logo here:</span> <?= $outputcustomize_logo; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">If No, Do you want us to design a logo for your company?</span> <?= $customize[0]['customze_us_to_design_logo']; ?></a></li>
+	                        <button type="button" class="list-group-item list-group-item-action fw-bold text-primary" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Customer: <?= ucwords($customize[0]['user_fullname']); ?></button>
 					    	<div class="collapse" id="collapseExample">
 							  	<div class="card card-body">
 							    	<ul class="list-group">
 										<li class="list-group-item d-flex justify-content-between align-items-center">
 										    Email
-										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_email']; ?></span>
+										    <span class="badge bg-primary rounded-pill"><?= $customize[0]['user_email']; ?></span>
 										</li>
 										<li class="list-group-item d-flex justify-content-between align-items-center">
 										    Phone
-										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_phone']; ?></span>
+										    <span class="badge bg-primary rounded-pill"><?= $customize[0]['user_phone']; ?></span>
 										</li>
 										<li class="list-group-item d-flex justify-content-between align-items-center">
 										    Occupation
-										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_occupation']; ?></span>
+										    <span class="badge bg-primary rounded-pill"><?= $customize[0]['user_occupation']; ?></span>
 										</li>
 										<li class="list-group-item d-flex justify-content-between align-items-center">
 										    Name of instituition
-										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_name_of_instituition']; ?></span>
+										    <span class="badge bg-primary rounded-pill"><?= $customize[0]['user_name_of_instituition']; ?></span>
 										</li>
 										<li class="list-group-item d-flex justify-content-between align-items-center">
 										    Postal Address
-										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_postal_address']; ?></span>
+										    <span class="badge bg-primary rounded-pill"><?= $customize[0]['user_postal_address']; ?></span>
 										</li>
 										<li class="list-group-item d-flex justify-content-between align-items-center">
 										    Pysical Address
-										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_physical_address']; ?></span>
+										    <span class="badge bg-primary rounded-pill"><?= $customize[0]['user_physical_address']; ?></span>
 										</li>
 										<li class="list-group-item d-flex justify-content-between align-items-center">
 										    Size of instituition
-										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_size_of_instituition']; ?></span>
+										    <span class="badge bg-primary rounded-pill"><?= $customize[0]['user_size_of_instituition']; ?></span>
 										</li>
 										<li class="list-group-item d-flex justify-content-between align-items-center">
 										    Country
-										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_country']; ?></span>
+										    <span class="badge bg-primary rounded-pill"><?= $customize[0]['user_country']; ?></span>
 										</li>
 										<li class="list-group-item d-flex justify-content-between align-items-center">
 										    State/Region
-										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_state']; ?></span>
+										    <span class="badge bg-primary rounded-pill"><?= $customize[0]['user_state']; ?></span>
 										</li>
 										<li class="list-group-item d-flex justify-content-between align-items-center">
 										    City
-										    <span class="badge bg-primary rounded-pill"><?= $receipt[0]['user_city']; ?></span>
+										    <span class="badge bg-primary rounded-pill"><?= $customize[0]['user_city']; ?></span>
 										</li>
 									</ul>
 							  	</div>
 							</div>
-	                        <li class="list-group-item"><span class="fw-bold text-info">Date: </span> <?= pretty_date($receipt[0]['receipt_createdAt']); ?></li>
+	                        <li class="list-group-item"><span class="fw-bold text-info">Date: </span> <?= pretty_date($customize[0]['customze_createdAt']); ?></li>
 	                    </ul>
 	                    <form action="" class="mt-3">
 							<div class="form-check form-switch">
-								<input class="form-check-input" type="checkbox" role="switch" id="receiptPaidSwitch" <?= (($receipt[0]['receipt_status'] == 2 || $receipt[0]['receipt_status'] == 3) ? 'checked' : ''); ?> name="paid">
-								<label class="form-check-label" for="receiptPaidSwitch">Paid</label>
+								<input class="form-check-input" type="checkbox" role="switch" id="customizePaidSwitch" <?= (($customize[0]['customze_status'] == 2 || $customize[0]['customze_status'] == 3) ? 'checked' : ''); ?> name="paid">
+								<label class="form-check-label" for="customizePaidSwitch">Paid</label>
 							</div>
 							<div class="form-check form-switch">
-								<input class="form-check-input" type="checkbox" role="switch" id="receiptOrderedSwitch" <?= (($receipt[0]['receipt_status'] == 3) ? 'checked' : ''); ?> name="ordered" value="<?= (($receipt[0]['receipt_status'] == 2) ? 3 : 1); ?>">
-								<label class="form-check-label" for="receiptOrderedSwitch">Ordered</label>
+								<input class="form-check-input" type="checkbox" role="switch" id="customizeOrderedSwitch" <?= (($customize[0]['customze_status'] == 3) ? 'checked' : ''); ?> name="ordered" value="<?= (($customize[0]['customze_status'] == 2) ? 3 : 1); ?>">
+								<label class="form-check-label" for="customizeOrderedSwitch">Ordered</label>
 							</div>
-							<input type="hidden" id="orderId" value="<?= $receipt[0]['receipt_id']; ?>">						
-							<input type="hidden" id="id" value="<?= $receipt[0]['id']; ?>">						
+							<input type="hidden" id="orderId" value="<?= $customize[0]['customze_id']; ?>">						
+							<input type="hidden" id="id" value="<?= $customize[0]['id']; ?>">						
 						</form>
-					<?php elseif ($_GET['view'] == 'card'): ?>
+
+					<?php 
+						elseif ($_GET['view'] == 'card'): 
+							$cardid = $_GET['id'];
+							 $queryCallcards = "
+						        SELECT * FROM vonna_printjob_callcards 
+						        INNER JOIN vonna_user 
+						        ON vonna_user.user_id = vonna_printjob_callcards.card_userid 
+						        WHERE vonna_printjob_callcards.card_id = ?
+						        ORDER BY id DESC
+						    ";
+						    $statement = $conn->prepare($queryCallcards);
+						    $statement->execute([$cardid]);
+						    $count_callcards = $statement->rowCount();
+						    $callcard = $statement->fetchAll();
+						    if ($count_callcards > 0) {
+						    	if ($callcard[0]['card_status'] == 0) {
+							    	$updateQ = "
+										UPDATE vonna_printjob_callcards 
+										SET card_status = ? 
+										WHERE card_id = ? 
+									";
+									$statement = $conn->prepare($updateQ);
+									$statement->execute([1, $cardid]);
+								}
+						    } else {
+						    	$_SESSION['flash_error'] = 'Could not find Call card.';
+						    	redirect(PROOT . 'adminvonna/Print-Job?pj=card');
+						    }
+					?>
+					<h3 class="my-4">Customized office Files view</h3>
+	                    <p class="text-muted">
+	                        <?php 
+                                $outputcard_file = '';
+                                if ($callcard[0]['card_upload_logo'] != '') {
+                                    // code...
+                                    $card_files = explode(',', $callcard[0]['card_upload_logo']);
+                                    foreach ($card_files as $card_file) 
+                                        $outputcard_file .= '<a href="' . PROOT . 'account/' . $card_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                }
+
+	                            if ($callcard[0]['card_status'] == 0) {
+	                                echo '<span class="badge bg-danger h6 text-uppercase">Pending</span>';
+	                            } elseif ($callcard[0]['card_status'] == 1) {
+	                                echo '<span class="badge bg-warning h6 text-uppercase">Processing</span>';
+	                            } elseif ($callcard[0]['card_status'] == 2) {
+	                                echo '<span class="badge bg-info h6 text-uppercase">Paid</span>';
+	                            } elseif ($callcard[0]['card_status'] == 3) {
+	                                echo '<span class="badge bg-success h6 text-uppercase">Ordered</span>';
+	                            }
+	                        ?>
+	                    </p>
+	                        
+	                    <ul class="list-group">
+	                       <li class="list-group-item"><span class="fw-bold text-info">What is your name?</span> <?= $callcard[0]['card_name']; ?></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">What is the name of your company?</span> <?= $callcard[0]['card_company_name']; ?></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">what is your address?</span> <?= $callcard[0]['card_address']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">what is your email?</span> <?= $callcard[0]['card_email']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">Facebook:</span> <?= $callcard[0]['card_facebook']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">Instagram:</span> <?= $callcard[0]['card_instagram']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">Twitter:</span> <?= $callcard[0]['card_twitter']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">Tik tok:</span> <?= $callcard[0]['card_tiktok']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">Office Contact:</span> <?= $callcard[0]['card_office_contact']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">Personal Contact:</span> <?= $callcard[0]['card_whatsapp']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">Whatsapp:</span> <?= $callcard[0]['card_personal_contact']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">Does your company have a logo?</span> <?= $callcard[0]['card_have_logo']; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">If yes , upload your company logo here:</span> <?= $outputcard_file; ?></a></li>
+                            <li class="list-group-item"><span class="fw-bold text-info">If no,Do you want us to design a logo for you?</span> <?= $callcard[0]['card_us_to_design_logo']; ?></li>
+	                        <button type="button" class="list-group-item list-group-item-action fw-bold text-primary" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Customer: <?= ucwords($callcard[0]['user_fullname']); ?></button>
+					    	<div class="collapse" id="collapseExample">
+							  	<div class="card card-body">
+							    	<ul class="list-group">
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Email
+										    <span class="badge bg-primary rounded-pill"><?= $callcard[0]['user_email']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Phone
+										    <span class="badge bg-primary rounded-pill"><?= $callcard[0]['user_phone']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Occupation
+										    <span class="badge bg-primary rounded-pill"><?= $callcard[0]['user_occupation']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Name of instituition
+										    <span class="badge bg-primary rounded-pill"><?= $callcard[0]['user_name_of_instituition']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Postal Address
+										    <span class="badge bg-primary rounded-pill"><?= $callcard[0]['user_postal_address']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Pysical Address
+										    <span class="badge bg-primary rounded-pill"><?= $callcard[0]['user_physical_address']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Size of instituition
+										    <span class="badge bg-primary rounded-pill"><?= $callcard[0]['user_size_of_instituition']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    Country
+										    <span class="badge bg-primary rounded-pill"><?= $callcard[0]['user_country']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    State/Region
+										    <span class="badge bg-primary rounded-pill"><?= $callcard[0]['user_state']; ?></span>
+										</li>
+										<li class="list-group-item d-flex justify-content-between align-items-center">
+										    City
+										    <span class="badge bg-primary rounded-pill"><?= $callcard[0]['user_city']; ?></span>
+										</li>
+									</ul>
+							  	</div>
+							</div>
+	                        <li class="list-group-item"><span class="fw-bold text-info">Date: </span> <?= pretty_date($callcard[0]['card_createdAt']); ?></li>
+	                    </ul>
+	                    <form action="" class="mt-3">
+							<div class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" role="switch" id="cardPaidSwitch" <?= (($callcard[0]['card_status'] == 2 || $callcard[0]['card_status'] == 3) ? 'checked' : ''); ?> name="paid">
+								<label class="form-check-label" for="cardPaidSwitch">Paid</label>
+							</div>
+							<div class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" role="switch" id="cardOrderedSwitch" <?= (($callcard[0]['card_status'] == 3) ? 'checked' : ''); ?> name="ordered" value="<?= (($callcard[0]['card_status'] == 2) ? 3 : 1); ?>">
+								<label class="form-check-label" for="cardOrderedSwitch">Ordered</label>
+							</div>
+							<input type="hidden" id="orderId" value="<?= $callcard[0]['card_id']; ?>">						
+							<input type="hidden" id="id" value="<?= $callcard[0]['id']; ?>">						
+						</form>
 
 					<?php else: ?>
 						<?php redirect(PROOT . 'adminvonna/Print-Job');  ?>
@@ -1303,6 +1530,54 @@
 	            		ordered = 3
 	            	}
 	            	window.location = '<?= PROOT; ?>adminvonna/Print-Job-View?receiptordered='+ordered+'&id='+id;
+            });
+
+            // CUSTOMIZED OFFICE FILES
+            $("#customizePaidSwitch").change(function(event) {
+            	event.preventDefault()
+            	if (confirm('Are you sure')) 
+	            	var paid = 1;
+	            	var id = $('#orderId').val();
+	            	
+	            	if ($('#customizePaidSwitch').is(":checked") == true) {
+	            		paid = 2;
+	            	}
+	            	window.location = '<?= PROOT; ?>adminvonna/Print-Job-View?customizepaid='+paid+'&id='+id;
+            });
+
+            $("#customizeOrderedSwitch").change(function(event) {
+            	event.preventDefault()
+            	if (confirm('Are you sure')) 
+	            	var ordered = 1;
+	            	var id = $('#orderId').val();
+	            	if ($('#customizeOrderedSwitch').is(":checked") == true) {
+	            		ordered = 3
+	            	}
+	            	window.location = '<?= PROOT; ?>adminvonna/Print-Job-View?customizeordered='+ordered+'&id='+id;
+            });
+
+            // CALL CARDS
+            $("#cardPaidSwitch").change(function(event) {
+            	event.preventDefault()
+            	if (confirm('Are you sure')) 
+	            	var paid = 1;
+	            	var id = $('#orderId').val();
+	            	
+	            	if ($('#cardPaidSwitch').is(":checked") == true) {
+	            		paid = 2;
+	            	}
+	            	window.location = '<?= PROOT; ?>adminvonna/Print-Job-View?cardpaid='+paid+'&id='+id;
+            });
+
+            $("#cardOrderedSwitch").change(function(event) {
+            	event.preventDefault()
+            	if (confirm('Are you sure')) 
+	            	var ordered = 1;
+	            	var id = $('#orderId').val();
+	            	if ($('#cardOrderedSwitch').is(":checked") == true) {
+	            		ordered = 3
+	            	}
+	            	window.location = '<?= PROOT; ?>adminvonna/Print-Job-View?cardordered='+ordered+'&id='+id;
             });
         })
     </script>

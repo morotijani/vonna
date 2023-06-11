@@ -501,7 +501,7 @@
 		                            // code...
 		                            $exams_files = explode(',', $exam[0]['printjob_upload_typed_work']);
 		                            foreach ($exams_files as $exams_file) 
-		                                $outputexams_file .= '<a href="'.$exams_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+		                                $outputexams_file .= '<a href="' . PROOT . 'account/' . $exams_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
 		                        }
 
 		                        if ($exam[0]['printjob_status'] == 0) {
@@ -698,7 +698,6 @@
                             <li class="list-group-item"><span class="fw-bold text-info">If yes , Upload your work here:</span> <?= $outputthesis_file; ?></a></li>
                             <li class="list-group-item"><span class="fw-bold text-info">If no, upload your thesis/research so far:</span> <?= $outputthesis_work_file; ?></a></li>
                             <li class="list-group-item"><span class="fw-bold text-info">When do you want your work delivered?</span> <?= $thesis[0]['thesis_day_week'] . ' - ' . $thesis[0]['thesis_delivered_tr']; ?></li>
-                            <li class="list-group-item"><span class="fw-bold text-info">Date: </span> <?= pretty_date($thesis[0]['thesis_createdAt']); ?></li>
 	                        <button type="button" class="list-group-item list-group-item-action fw-bold text-primary" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Customer: <?= ucwords($thesis[0]['user_fullname']); ?></button>
 					    	<div class="collapse" id="collapseExample">
 							  	<div class="card card-body">

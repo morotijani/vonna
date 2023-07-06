@@ -122,14 +122,16 @@
                                     <label for="" class="form-check-label">Kofi BIO</label>
                                     <br>
                                     <input type="radio" class="form-check-input" name="writer" id="" value="Other">
-                                    <label for="" class="form-check-label">Other</label>
-                                    <br>
-                                    <label>Specify</label>
-                                    <input type="text" name="writer" class="form-control">
+                                    <label for="" class="form-check-label">Other</label>   
                                 </div>
                             </div>
 
                             <div class="d-none" id="other">
+                                <div class="form-group mb-3">
+                                    <label>Specify</label>
+                                    <input type="text" name="writer" class="form-control">
+                                </div>
+
                                 <div class="form-group mb-3">
                                     <label for="">What is the title of the book you are looking for?</label>
                                     <input type="text" class="form-control" name="title" value="" placeholder="Title">
@@ -216,9 +218,19 @@
                             </div>
 
                             <!-- GOLDEN SERIES -->
-                            <div class="" id="golden-series">
+                            <div class="d-none" id="golden-series">
+                                <div class="form-group mb-3">
+                                    <label for="">What level do of study are you looking for?</label>
+                                    <select class="form-control" id="golden-level" name="level" type="text">
+                                        <option value="">Level:</option>
+                                        <option value="Kindergarten">Kindergarten</option>
+                                        <option value="Nursery">Nursery</option>
+                                        <option value="Primary">Primary</option>
+                                    </select>
+                                </div>
+
                                 <!-- GOLDEN SERIES KINDERGARTEN -->
-                                <div class="form-group mb-3" id="golden-kindergarten">
+                                <div class="form-group mb-3 d-none" id="golden-kindergarten">
                                     <div class="form-check">
                                         <input type="radio" class="form-check-input" name="book" id="" value="Creative Arts">
                                         <label for="" class="form-check-label">Creative Arts</label>
@@ -238,7 +250,7 @@
                                 </div>
 
                                 <!-- GOLDEN SERIES NURSERY -->
-                                <div class="form-group mb-3" id="golden-nursery">
+                                <div class="form-group mb-3 d-none" id="golden-nursery">
                                     <div class="form-check">
                                         <input type="radio" class="form-check-input" name="book" id="" value="Mathematics">
                                         <label for="" class="form-check-label">Mathematics</label>
@@ -568,24 +580,45 @@
 
             // var level = $("#level option:selected").val();
 
-            $('input[name="writer"]').click(function() {
+            $('input[name="writer"]').click(function(e) {
+                e.preventDefault()
                 var writer = $('input[name="writer"]:checked').val();
 
                 if (writer == 'Excellence Series') {
-                    var level = $("#exellence-level option:selected").val();
                     $('#exellence-series').removeClass('d-none')
+                    $('#golden-series').addClass('d-none')
+                    
+                    $("#exellence-level").change(function(e) {
+                        e.preventDefault()
+                        var level = $("#exellence-level option:selected").val();
+                        if (level == 'Nursery') {
+                            $('#exellence-nusery').removeClass('d-none')
+                            $('#exellence-primary').addClass('d-none')
+                        } else if (level == 'Primary') {
+                            $('#exellence-nusery').addClass('d-none')
+                            $('#exellence-primary').removeClass('d-none')
+                        }
+                    })
 
-                    if (level == 'Nursery') {
-                        alert('Please')
-                        $('#exellence-nusery').removeClass('d-none')
-                        $('#exellence-primary').addClass('d-none')
-                    } else if (level == 'Primary') {
-                        $('#exellence-nusery').addClass('d-none')
-                        $('#exellence-primary').removeClass('d-none')
-                    }
 
                 } else if (writer == 'Golden Series') {
+                    $('#golden-series').removeClass('d-none')
                     $('#exellence-series').addClass('d-none')
+                    
+                    $("#exellence-level").change(function(e) {
+                        e.preventDefault()
+                        var level = $("#exellence-level option:selected").val();
+                        if (level == 'Kindergarten') {
+                            $('#exellence-nusery').removeClass('d-none')
+                            $('#exellence-primary').addClass('d-none')
+                        } else if (level == 'Nursery') {
+                            $('#exellence-nusery').addClass('d-none')
+                            $('#exellence-primary').removeClass('d-none')
+                        } else if (level == 'Primary') {
+                            $('#exellence-nusery').addClass('d-none')
+                            $('#exellence-primary').removeClass('d-none')
+                        }
+                    })
 
                 } else if (writer == 'Reuben Series') {
                     

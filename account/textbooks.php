@@ -100,8 +100,8 @@
                                     <input type="radio" class="form-check-input" name="writer" id="" value="Golden Series">
                                     <label for="" class="form-check-label">Golden Series</label>
                                     <br>
-                                    <input type="radio" class="form-check-input" name="writer" id="" value="Reuben Series">
-                                    <label for="" class="form-check-label">Reuben Series</label>
+                                    <input type="radio" class="form-check-input" name="writer" id="" value="Best Brain">
+                                    <label for="" class="form-check-label">Best Brain</label>
                                     <br>
                                     <input type="radio" class="form-check-input" name="writer" id="" value="Approaches">
                                     <label for="" class="form-check-label">Approaches</label>
@@ -291,7 +291,14 @@
                             </div>
 
                             <!-- BEST BRAIN -->
-                            <div class="" id="golden-series">
+                            <div class="d-none" id="bestbrain">
+                                <div class="form-group mb-3">
+                                    <label for="">What level do of study are you looking for?</label>
+                                    <select class="form-control" id="bestbrain-level" name="level" type="text">
+                                        <option value="Primary" selected>Primary</option>
+                                    </select>
+                                </div>
+
                                 <!-- BEST BRAIN Primary -->
                                 <div class="form-group mb-3" id="bestbrain-primary">
                                     <div class="form-check">
@@ -587,6 +594,7 @@
                 if (writer == 'Excellence Series') {
                     $('#exellence-series').removeClass('d-none')
                     $('#golden-series').addClass('d-none')
+                    $('#bestbrain').addClass('d-none')
 
                     $("#exellence-level").change(function(e) {
                         e.preventDefault()
@@ -604,6 +612,7 @@
                 } else if (writer == 'Golden Series') {
                     $('#golden-series').removeClass('d-none')
                     $('#exellence-series').addClass('d-none')
+                    $('#bestbrain').addClass('d-none')
                     
                     $("#golden-level").change(function(e) {
                         e.preventDefault()
@@ -623,7 +632,10 @@
                         }
                     })
 
-                } else if (writer == 'Reuben Series') {
+                } else if (writer == 'Best Brain') {
+                    $('#bestbrain').removeClass('d-none')
+                    $('#golden-series').addClass('d-none')
+                    $('#exellence-series').addClass('d-none')
                     
                 } else if (writer == 'Approaches') {
                     

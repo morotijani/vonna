@@ -264,7 +264,7 @@
                                 </div>
 
                                 <!-- GOLDEN SERIES PRIMARY -->
-                                <div class="form-group mb-3" id="golden-primary">
+                                <div class="form-group mb-3 d-none" id="golden-primary">
                                     <div class="form-check">
                                         <input type="radio" class="form-check-input" name="book" id="" value="Mathematics">
                                         <label for="" class="form-check-label">Mathematics</label>
@@ -587,7 +587,7 @@
                 if (writer == 'Excellence Series') {
                     $('#exellence-series').removeClass('d-none')
                     $('#golden-series').addClass('d-none')
-                    
+
                     $("#exellence-level").change(function(e) {
                         e.preventDefault()
                         var level = $("#exellence-level option:selected").val();
@@ -605,18 +605,21 @@
                     $('#golden-series').removeClass('d-none')
                     $('#exellence-series').addClass('d-none')
                     
-                    $("#exellence-level").change(function(e) {
+                    $("#golden-level").change(function(e) {
                         e.preventDefault()
-                        var level = $("#exellence-level option:selected").val();
+                        var level = $("#golden-level option:selected").val();
                         if (level == 'Kindergarten') {
-                            $('#exellence-nusery').removeClass('d-none')
-                            $('#exellence-primary').addClass('d-none')
+                            $('#golden-kindergarten').removeClass('d-none')
+                            $('#golden-nursery').addClass('d-none')
+                            $('#golden-primary').addClass('d-none')
                         } else if (level == 'Nursery') {
-                            $('#exellence-nusery').addClass('d-none')
-                            $('#exellence-primary').removeClass('d-none')
+                            $('#golden-kindergarten').addClass('d-none')
+                            $('#golden-nursery').removeClass('d-none')
+                            $('#golden-primary').addClass('d-none')
                         } else if (level == 'Primary') {
-                            $('#exellence-nusery').addClass('d-none')
-                            $('#exellence-primary').removeClass('d-none')
+                            $('#golden-kindergarten').addClass('d-none')
+                            $('#golden-nursery').addClass('d-none')
+                            $('#golden-primary').removeClass('d-none')
                         }
                     })
 

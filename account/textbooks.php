@@ -469,7 +469,6 @@
                             </div>
 
 
-
                             <button type="submit" class="btn w-100 btn-warning" id="orderButton" name="orderButton" disabled>
                                 Order Now
                             </button>
@@ -567,7 +566,7 @@
 
                     $("#akiola-level").change(function(e) {
                         e.preventDefault()
-                        var level = $("#exellence-level option:selected").val();
+                        var level = $("#akiola-level option:selected").val();
                         if (level == 'Junior High School') {
                             $('#akiola-jhs').removeClass('d-none')
                             $('#akiola-shs').addClass('d-none')

@@ -324,9 +324,18 @@
                             </div>
 
                             <!-- AKI-OLA SERIES -->
-                            <div class="" id="golden-series">
+                            <div class="d-none" id="akiola-series">
+                                <div class="form-group mb-3">
+                                    <label for="">What level do of study are you looking for?</label>
+                                    <select class="form-control" id="akiola-level" name="level" type="text">
+                                        <option value="">Level:</option>
+                                        <option value="Junior High School">Junior High School</option>
+                                        <option value="Senior High School">Senior High School</option>
+                                    </select>
+                                </div>
+
                                 <!-- AKI-OLA SERIES JUNIOR HIGH SCHOOL -->
-                                <div class="form-group mb-3" id="akiola-jhs">
+                                <div class="form-group mb-3 d-none" id="akiola-jhs">
                                     <div class="form-check">
                                         <input type="radio" class="form-check-input" name="book" id="" value="Mathematics">
                                         <label for="" class="form-check-label">Mathematics</label>
@@ -349,7 +358,7 @@
                                 </div>
 
                                 <!-- AKI-OLA SERIES SENIOR HIGH SCHOOL -->
-                                <div class="form-group mb-3" id="akiola-shs">
+                                <div class="form-group mb-3 d-none" id="akiola-shs">
                                     <div class="form-check">
                                         <input type="radio" class="form-check-input" name="book" id="" value="Mathematics">
                                         <label for="" class="form-check-label">Mathematics</label>
@@ -461,100 +470,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                            <div class="form-group">
-                                <label class="visually-hidden" for="product">
-                                    What item do you want:
-                                </label>
-                                <select class="form-control" id="product" name="product" type="text">
-                                    <option value="">What item do you want:</option>
-                                    <option value="Plain Paper">Plain Paper</option>
-                                    <option value="Ruled Paper">Ruled Paper</option>
-                                    <option value="Flip Chart">Flip Chart</option>
-                                    <option value="Notepad">Notepad</option>
-                                    <option value="Envelope">Envelope</option>
-                                </select>
-                            </div>
-
-                            <div id="plainpaper" class="d-none">
-                                <div class="form-group">
-                                    <select class="form-control" id="plain_A_type" name="plain_A_type" type="text">
-                                        <option value="">What size of paper would you need:</option>
-                                        <option value="A4">A4</option>
-                                        <option value="A3">A3</option>
-                                        <option value="A1">A1</option>
-                                    </select>
-                                </div>
-                                <div class="input-group form-group">
-                                    <select type="text" class="form-control" name="plainpaper_type" id="plainpaper_type">
-                                        <option value="">What quantity would you want</option>
-                                        <option value="Rim(s)">Rim(s)</option>
-                                        <option value="Box(es)">Box(es)</option>
-                                    </select>
-                                    <span class="input-group-text">&</span>
-                                    <input type="number" min="1" class="form-control" name="plainpaper_qty" id="plainpaper_qty" placeholder="Quantity" aria-label="Server">
-                                </div>
-                            </div>
-
-                            <div id="ruledpaper" class="d-none">
-                                <div class="form-group">
-                                    <label class="visually-hidden" for="ruledpaper_qty">
-                                        Ruled Paper
-                                    </label>
-                                    <input type="number" min="1" class="form-control" name="ruledpaper_qty" id="ruledpaper_qty" placeholder="Quantity" aria-label="Server">
-                                </div>
-                            </div>
-
-                            <div id="flipchart" class="d-none">
-                                <div class="input-group form-group">
-                                    <input type="text" class="form-control" name="flipchart_size" id="flipchart_size" placeholder="What size do you want:" aria-label="Server">
-                                    <span class="input-group-text">&</span>
-                                    <input type="number" min="1" class="form-control" name="flipchart_qty" id="flipchart_qty" placeholder="Quantity" aria-label="Server">
-                                </div>
-                            </div>
-
-                            <div id="notepad" class="d-none">
-                                <div class="input-group form-group">
-                                    <input type="text" min="1" class="form-control" name="notepad_size" id="notepad_size" placeholder="What size do you want:" aria-label="Server">
-                                    <span class="input-group-text">&</span>
-                                    <input type="number" min="1" class="form-control" name="notepad_qty" id="notepad_qty" placeholder="Quantity" aria-label="Server">
-                                </div>
-                            </div>
-
-                            <div id="envelope" class="d-none">
-                                <div class="input-group form-group">
-                                    <select class="form-control" id="envelope_color" name="envelope_color" type="text">
-                                        <option value="">What color of Envelopes would you want:</option>
-                                        <option value="Brown">Brown</option>
-                                        <option value="White">White</option>
-                                    </select>
-                                    <span class="input-group-text">&</span>
-                                    <input type="number" min="1" class="form-control" name="envelope_qty" id="envelope_qty" placeholder="Quantity" aria-label="Server">
-                                </div>
-                                <div class="form-group">
-                                    <select class="form-control" id="envelope_type" name="envelope_type" type="text">
-                                        <option value="">What size of Envelope do you want:</option>
-                                        <option value="A4">A4</option>
-                                        <option value="A3">A3</option>
-                                        <option value="A1">A1</option>
-                                    </select>
-                                </div>
-                            </div>
-
                             <button type="submit" class="btn w-100 btn-warning" id="orderButton" name="orderButton" disabled>
                                 Order Now
                             </button>
@@ -595,6 +510,7 @@
                     $('#exellence-series').removeClass('d-none')
                     $('#golden-series').addClass('d-none')
                     $('#bestbrain').addClass('d-none')
+                    $('#akiola-series').addClass('d-none')
 
                     $("#exellence-level").change(function(e) {
                         e.preventDefault()
@@ -608,11 +524,11 @@
                         }
                     })
 
-
                 } else if (writer == 'Golden Series') {
                     $('#golden-series').removeClass('d-none')
                     $('#exellence-series').addClass('d-none')
                     $('#bestbrain').addClass('d-none')
+                    $('#akiola-series').addClass('d-none')
                     
                     $("#golden-level").change(function(e) {
                         e.preventDefault()
@@ -638,9 +554,28 @@
                     $('#exellence-series').addClass('d-none')
                     
                 } else if (writer == 'Approaches') {
-                    
+                    $('#exellence-series').addClass('d-none')
+                    $('#golden-series').addClass('d-none')
+                    $('#bestbrain').addClass('d-none')
+                    $('#akiola-series').addClass('d-none')
+
                 } else if (writer == 'Aki oLa') {
-                    
+                    $('#akiola-series').removeClass('d-none')
+                    $('#exellence-series').addClass('d-none')
+                    $('#golden-series').addClass('d-none')
+                    $('#bestbrain').addClass('d-none')
+
+                    $("#akiola-level").change(function(e) {
+                        e.preventDefault()
+                        var level = $("#exellence-level option:selected").val();
+                        if (level == 'Junior High School') {
+                            $('#akiola-jhs').removeClass('d-none')
+                            $('#akiola-shs').addClass('d-none')
+                        } else if (level == 'Senior High School') {
+                            $('#akiola-jhs').addClass('d-none')
+                            $('#akiola-shs').removeClass('d-none')
+                        }
+                    })
                 } else if (writer == 'Flamingo') {
                     
                 } else if (writer == 'Myles') {

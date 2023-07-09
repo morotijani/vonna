@@ -16,7 +16,8 @@
             redirect(PROOT . 'account/index');
         }
         $post = cleanPost($_POST);
-        
+        print_r($post);
+        die;
         $writer = $post['writer'];
         $level = $post['level'];
         $book = $post['book'];
@@ -27,27 +28,10 @@
         $order_date = date('Y-m-d H:i:s');
 
 
-        // if ($post['product'] == 'Plain Paper') {
-        //     $size = $post['plain_A_type'];
-        //     $type = $post['plainpaper_type'];
-        //     $quantity =  $post['plainpaper_qty'];
-        // } else if ($post['product'] == 'Ruled Paper') {
-        //     $quantity = $post['ruledpaper_qty'];
-        // } else if ($post['product'] == 'Flip Chart') {
-        //     $size = $post['flipchart_size'];
-        //     $quantity = $post['flipchart_qty'];
-        // } else if ($post['product'] == 'Notepad') {
-        //     $size = $post['notepad_size'];
-        //     $quantity = $post['notepad_qty'];
-        // } else if ($post['product'] == 'Envelope') {
-        //     $color = $post['envelope_color'];
-        //     $quantity = $post['envelope_qty'];
-        //     $size = $post['envelope_type'];
-        // } else {
-        //     $_SESSION['flash_error'] = 'Select a product to order!';
-        //     redirect(PROOT . 'account/index');
-        // }
-
+        if ($writer == 'Other') {
+            $writer = $post['other_writer'];
+            $level = $post['other_level'];
+        }
 
         $query = '
             INSERT INTO `vonna_textbooks`(`textbook_id`, `textbook_writer`, `textbook_level`, `textbook_book`, `textbook_quantity`, `textbiok_userid`, `textbook_createdAt`) 
@@ -126,7 +110,7 @@
                             <div class="d-none" id="other">
                                 <div class="form-group mb-3">
                                     <label>Specify</label>
-                                    <input type="text" name="writer" class="form-control">
+                                    <input type="text" name="other_writer" class="form-control">
                                 </div>
 
                                 <div class="form-group mb-3">
@@ -136,7 +120,7 @@
                                 
                                 <div class="form-group mb-3">
                                     <label for="">What level do of study are you looking for?</label>
-                                    <select class="form-control" id="other-level" name="level" type="text">
+                                    <select class="form-control" id="other-level" name="other_level" type="text">
                                         <option value="">Level:</option>
                                         <option value="Chreche">Chreche</option>
                                         <option value="Nursery">Nursery</option>
@@ -151,7 +135,6 @@
                                     </select>
                                 </div>
                             </div>
-
 
                             <!-- EXCELLENCE SERIES -->
                             <div class="d-none" id="exellence-series">
@@ -687,7 +670,7 @@
                     $('#akiola-series').addClass('d-none')
                 }
 
-
+                $('#orderButton').attr('disabled', false)
 
             });
         });

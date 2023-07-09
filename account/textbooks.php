@@ -382,7 +382,14 @@
                             </div>
 
                             <!-- APPROACHERS -->
-                            <div class="" id="approachers">
+                            <div class="d-none" id="approachers">
+                                <div class="form-group mb-3">
+                                    <label for="">What level do of study are you looking for?</label>
+                                    <select class="form-control" id="approachers-level" name="level" type="text">
+                                        <option value="Senior High School" selected>Senior High School</option>
+                                    </select>
+                                </div>
+
                                 <!-- APPROACHERS SENIOR HIGH SCHOOL -->
                                 <div class="form-group mb-3" id="approachers-shs">
                                     <div class="form-check">
@@ -408,7 +415,14 @@
                             </div>
 
                             <!-- FLAMINGO SERIES -->
-                            <div class="" id="flamingo-series">
+                            <div class="d-none" id="flamingo-series">
+                                <div class="form-group mb-3">
+                                    <label for="">What level do of study are you looking for?</label>
+                                    <select class="form-control" id="flamingo-level" name="level" type="text">
+                                        <option value="Senior High School" selected>Senior High School</option>
+                                    </select>
+                                </div>
+
                                 <!-- FLAMINGO SERIES SENIOR HIGH SCHOOL -->
                                 <div class="form-group mb-3" id="flamingo-shs">
                                     <div class="form-check">
@@ -498,9 +512,6 @@
         }
 
         $(document).ready(function() {
-
-            // var level = $("#level option:selected").val();
-
             $('input[name="writer"]').click(function(e) {
                 e.preventDefault()
                 var writer = $('input[name="writer"]:checked').val();
@@ -510,6 +521,8 @@
                     $('#golden-series').addClass('d-none')
                     $('#bestbrain').addClass('d-none')
                     $('#akiola-series').addClass('d-none')
+                    $('#approachers').addClass('d-none')
+                    $('#flamingo-series').addClass('d-none')
 
                     $("#exellence-level").change(function(e) {
                         e.preventDefault()
@@ -528,6 +541,8 @@
                     $('#exellence-series').addClass('d-none')
                     $('#bestbrain').addClass('d-none')
                     $('#akiola-series').addClass('d-none')
+                    $('#approachers').addClass('d-none')
+                    $('#flamingo-series').addClass('d-none')
                     
                     $("#golden-level").change(function(e) {
                         e.preventDefault()
@@ -551,18 +566,25 @@
                     $('#bestbrain').removeClass('d-none')
                     $('#golden-series').addClass('d-none')
                     $('#exellence-series').addClass('d-none')
+                    $('#akiola-series').addClass('d-none')
+                    $('#approachers').addClass('d-none')
+                    $('#flamingo-series').addClass('d-none')
                     
                 } else if (writer == 'Approaches') {
+                    $('#approachers').removeClass('d-none')
                     $('#exellence-series').addClass('d-none')
                     $('#golden-series').addClass('d-none')
                     $('#bestbrain').addClass('d-none')
                     $('#akiola-series').addClass('d-none')
+                    $('#flamingo-series').addClass('d-none')
 
                 } else if (writer == 'Aki oLa') {
                     $('#akiola-series').removeClass('d-none')
                     $('#exellence-series').addClass('d-none')
                     $('#golden-series').addClass('d-none')
                     $('#bestbrain').addClass('d-none')
+                    $('#approachers').addClass('d-none')
+                    $('#flamingo-series').addClass('d-none')
 
                     $("#akiola-level").change(function(e) {
                         e.preventDefault()
@@ -576,7 +598,13 @@
                         }
                     })
                 } else if (writer == 'Flamingo') {
-                    
+                    $('#flamingo-series').removeClass('d-none')
+                    $('#approachers').addClass('d-none')
+                    $('#exellence-series').addClass('d-none')
+                    $('#golden-series').addClass('d-none')
+                    $('#bestbrain').addClass('d-none')
+                    $('#akiola-series').addClass('d-none')
+
                 } else if (writer == 'Myles') {
                     
                 } else if (writer == 'Reuben Series') {

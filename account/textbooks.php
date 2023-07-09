@@ -448,7 +448,14 @@
                             </div>
 
                             <!-- REUBEN SERIES -->
-                            <div class="" id="reuben-series">
+                            <div class="d-none" id="reuben-series">
+                                 <div class="form-group mb-3">
+                                    <label for="">What level do of study are you looking for?</label>
+                                    <select class="form-control" id="reuben-level" name="level" type="text">
+                                        <option value="Junior High School" selected>Junior High School</option>
+                                    </select>
+                                </div>
+
                                 <!-- REUBEN SERIES JUNIOR HIGH SCHOOL -->
                                 <div class="form-group mb-3" id="reuben-jhs">
                                     <div class="form-check">
@@ -459,9 +466,18 @@
                             </div>
 
                             <!-- KOFI BIO -->
-                            <div class="" id="kofi-bio">
+                            <div class="d-none" id="kofi-bio">
+                                <div class="form-group mb-3">
+                                    <label for="">What level do of study are you looking for?</label>
+                                    <select class="form-control" id="kofi-bio-level" name="level" type="text">
+                                        <option value="">Level:</option>
+                                        <option value="Primary">Primary</option>
+                                        <option value="Junior High School">Junior High School</option>
+                                    </select>
+                                </div>
+
                                 <!-- KOFI BIO PRIMARY -->
-                                <div class="form-group mb-3" id="kofi-bio-primary">
+                                <div class="d-none form-group mb-3" id="kofi-bio-primary">
                                     <div class="form-check">
                                         <input type="radio" class="form-check-input" name="book" id="" value="A guide to the Study of French">
                                         <label for="" class="form-check-label">A guide to the Study of French</label>
@@ -469,7 +485,7 @@
                                 </div>
 
                                 <!-- JUNIOR HIGH SCHOOL -->
-                                <div class="form-group mb-3" id="kofi-bio-jhs">
+                                <div class="d-none form-group mb-3" id="kofi-bio-jhs">
                                     <div class="form-check">
                                         <input type="radio" class="form-check-input" name="book" id="" value="A guide to the Study of French">
                                         <label for="" class="form-check-label">A guide to the Study of French</label>
@@ -523,6 +539,8 @@
                     $('#akiola-series').addClass('d-none')
                     $('#approachers').addClass('d-none')
                     $('#flamingo-series').addClass('d-none')
+                    $('#reuben-series').addClass('d-none')
+                    $('#kofi-bio').addClass('d-none')
 
                     $("#exellence-level").change(function(e) {
                         e.preventDefault()
@@ -543,6 +561,8 @@
                     $('#akiola-series').addClass('d-none')
                     $('#approachers').addClass('d-none')
                     $('#flamingo-series').addClass('d-none')
+                    $('#reuben-series').addClass('d-none')
+                    $('#kofi-bio').addClass('d-none')
                     
                     $("#golden-level").change(function(e) {
                         e.preventDefault()
@@ -569,6 +589,8 @@
                     $('#akiola-series').addClass('d-none')
                     $('#approachers').addClass('d-none')
                     $('#flamingo-series').addClass('d-none')
+                    $('#reuben-series').addClass('d-none')
+                    $('#kofi-bio').addClass('d-none')
                     
                 } else if (writer == 'Approaches') {
                     $('#approachers').removeClass('d-none')
@@ -577,6 +599,8 @@
                     $('#bestbrain').addClass('d-none')
                     $('#akiola-series').addClass('d-none')
                     $('#flamingo-series').addClass('d-none')
+                    $('#reuben-series').addClass('d-none')
+                    $('#kofi-bio').addClass('d-none')
 
                 } else if (writer == 'Aki oLa') {
                     $('#akiola-series').removeClass('d-none')
@@ -585,6 +609,8 @@
                     $('#bestbrain').addClass('d-none')
                     $('#approachers').addClass('d-none')
                     $('#flamingo-series').addClass('d-none')
+                    $('#reuben-series').addClass('d-none')
+                    $('#kofi-bio').addClass('d-none')
 
                     $("#akiola-level").change(function(e) {
                         e.preventDefault()
@@ -604,13 +630,49 @@
                     $('#golden-series').addClass('d-none')
                     $('#bestbrain').addClass('d-none')
                     $('#akiola-series').addClass('d-none')
+                    $('#reuben-series').addClass('d-none')
+                    $('#kofi-bio').addClass('d-none')
 
                 } else if (writer == 'Myles') {
-                    
+                    $('#reuben-series').addClass('d-none')
+                    $('#flamingo-series').addClass('d-none')
+                    $('#approachers').addClass('d-none')
+                    $('#exellence-series').addClass('d-none')
+                    $('#golden-series').addClass('d-none')
+                    $('#bestbrain').addClass('d-none')
+                    $('#akiola-series').addClass('d-none')
+                    $('#kofi-bio').addClass('d-none')
                 } else if (writer == 'Reuben Series') {
+                    $('#reuben-series').removeClass('d-none')
+                    $('#flamingo-series').addClass('d-none')
+                    $('#approachers').addClass('d-none')
+                    $('#exellence-series').addClass('d-none')
+                    $('#golden-series').addClass('d-none')
+                    $('#bestbrain').addClass('d-none')
+                    $('#akiola-series').addClass('d-none')
+                    $('#kofi-bio').addClass('d-none')
                     
                 } else if (writer == 'Kofi BIO') {
+                    $('#kofi-bio').removeClass('d-none')
+                    $('#reuben-series').addClass('d-none')
+                    $('#flamingo-series').addClass('d-none')
+                    $('#approachers').addClass('d-none')
+                    $('#exellence-series').addClass('d-none')
+                    $('#golden-series').addClass('d-none')
+                    $('#bestbrain').addClass('d-none')
+                    $('#akiola-series').addClass('d-none')
                     
+                    $("#kofi-bio-level").change(function(e) {
+                        e.preventDefault()
+                        var level = $("#kofi-bio-level option:selected").val();
+                        if (level == 'Primary') {
+                            $('#kofi-bio-primary').removeClass('d-none')
+                            $('#kofi-bio-jhs').addClass('d-none')
+                        } else if (level == 'Junior High School') {
+                            $('#kofi-bio-primary').addClass('d-none')
+                            $('#kofi-bio-jhs').removeClass('d-none')
+                        }
+                    })
                 } else if (writer == 'Other') {
                     
                 }

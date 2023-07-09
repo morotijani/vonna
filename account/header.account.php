@@ -19,6 +19,9 @@
                         <a class="nav-link" href="<?= PROOT; ?>account/index">Order</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="<?= PROOT; ?>account/textbooks">Text Books</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="<?= PROOT; ?>account/print-job">Print Job</a>
                     </li>
                     <li class="nav-item">
@@ -33,9 +36,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="<?= PROOT; ?>account/profile">Profile</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="<?= PROOT; ?>account/change-password">Change Password</a>
-                    </li>
+                    </li> -->
                 </ul>
                 <div class="d-lg-flex col-lg-3 justify-content-lg-end">
                     <a href="<?= PROOT; ?>auth/logout" class="btn btn-danger btn-sm">Logout</a>

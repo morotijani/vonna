@@ -79,6 +79,16 @@
     $count_receipts = $statement->rowCount();
     $receipts = $statement->fetchAll();
 
+    // receipt query
+    $queryInvoice = "
+        SELECT * FROM vonna_print_job_invoice
+        ORDER BY id DESC
+    ";
+    $statement = $conn->prepare($queryInvoice);
+    $statement->execute();
+    $count_invoices = $statement->rowCount();
+    $invoices = $statement->fetchAll();
+
 ?>
 
 
@@ -833,7 +843,7 @@
                                 </div>
 
                                 <!-- Receipt -->
-                                 <?php 
+                                <?php 
 
                                     // CANCEL / RE ORDER
                                     if (isset($_GET['cancelreceipt']) && !empty($_GET['cancelreceipt'])) {
@@ -1015,8 +1025,186 @@
                                 </div>
 
                                 <!-- Invoice -->
+                                <?php 
+
+                                    // CANCEL / RE ORDER
+                                    if (isset($_GET['cancelinvoice']) && !empty($_GET['cancelinvoice'])) {
+                                        // code...
+                                        $order_id = sanitize($_GET['cancelinvoice']);
+                                        $status = $_GET['status'];
+                                        if ($status == 'new') {
+                                            $status = 0;
+                                        }
+                                        if (is_numeric($order_id)) {
+                                            $query = "
+                                                UPDATE vonna_print_job_invoice 
+                                                SET invoice_status = ? 
+                                                WHERE invoice_id = ?
+                                            ";
+                                            $statement = $conn->prepare($query);
+                                            $result = $statement->execute([$status, $order_id]);
+                                            if ($result) {
+                                                // code...
+                                                $_SESSION['flash_success'] = 'Order cancel successfully.';
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            } else {
+                                                echo js_alert('Something went wrong... please try again.');
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            }
+                                        }
+                                    }
+
+                                    // DELETE ORDER
+                                    if (isset($_GET['trashinvoice']) && !empty($_GET['trashinvoice'])) {
+                                        // code...
+                                        $order_id = sanitize($_GET['trashinvoice']);
+                                        if (is_numeric($order_id)) {
+                                            if ($_GET['media'] != '') {
+                                                $medias = explode(',', $_GET['media']);
+                                                foreach ($medias as $media) {
+                                                    if (file_exists(BASEURL . 'account/' . $media)) {
+                                                        unlink(BASEURL . 'account/' . $media);
+                                                    }
+                                                }
+                                            }
+
+                                            if ($_GET['media1'] != '') {
+                                                $medias1 = explode(',', $_GET['media1']);
+                                                foreach ($medias1 as $media1) {
+                                                    if (file_exists(BASEURL . 'account/' . $media1)) {
+                                                        unlink(BASEURL . 'account/' . $media1);
+                                                    }
+                                                }
+                                            }
+
+                                            $query = "
+                                                DELETE FROM vonna_print_job_invoice 
+                                                WHERE invoice_id = ?
+                                            ";
+                                            $statement = $conn->prepare($query);
+                                            $result = $statement->execute([$order_id]);
+                                            if ($result) {
+                                                // code...
+                                                $_SESSION['flash_success'] = 'Order deleted successfully.';
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            } else {
+                                                echo js_alert('Something went wrong... please try again.');
+                                                redirect(PROOT . 'account/printjob-requests');
+                                            }
+                                        }
+                                    }
+
+                                ?>
                                 <div class="tab-pane fade" id="v-pills-iv" role="tabpanel" aria-labelledby="v-pills-iv-tab" tabindex="0">
                                     <p class="text-center text-muted h2">INVOICE</p>
+                                
+                                    <div class="table-responsive">
+                                        <table class="table" style="width: 100%">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>ID</th>
+                                                    <th>Outfit name</th>
+                                                    <th>Type</th>
+                                                    <th>Date</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php $i = 1;
+                                                    foreach ($invoices as $invoice): 
+                                                ?>
+                                                <tr>
+                                                    <td><?= $i; ?></td>
+                                                    <td>
+                                                        <?php
+                                                            echo $invoice["invoice_id"];
+
+                                                            if ($invoice['invoice_status'] == 0) {
+                                                                // code...
+                                                                echo '<br><span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
+                                                                echo '&nbsp;<a href="?cancelinvoice='.$invoice["invoice_id"].'&status=4" class="">cancel order</a>';
+                                                            } elseif ($invoice['invoice_status'] == 1) {
+                                                                echo '<br><span class="badge bg-warning-soft h6 text-uppercase">Processing</span>';
+                                                            } elseif ($invoice['invoice_status'] == 2) {
+                                                                echo '<br><span class="badge bg-info-soft h6 text-uppercase">Paid</span>';
+                                                            } elseif ($invoice['invoice_status'] == 3) {
+                                                                echo '<br><span class="badge bg-success-soft h6 text-uppercase">Ordered</span>';
+                                                            } elseif ($invoice['invoice_status'] == 4) {
+                                                                echo '<br><a href="?cancelinvoice='.$invoice["invoice_id"].'&status=new" class="">re-order</a>';
+                                                            } else {
+                                                                echo '';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                    <td><?= $invoice["invoice_outfit_name"]; ?></td>
+                                                    <td><?= $invoice["invoice_type"]; ?></td>
+                                                    <td><?= pretty_date($invoice["invoice_createdAt"]); ?></td>
+                                                    <td>
+                                                        <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#Modal<?= $invoice['invoice_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
+                                                        <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/printjob-requests?trashinvoice=<?= $invoice['invoice_id']; ?>&media=<?= $invoice['invoice_upload_logo']; ?>&media1=<?= $invoice['invoice_upload_outfit_design']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
+                                                    </td>
+                                                </tr>
+                                                <div class="modal fade" id="Modal<?= $invoice['invoice_id']; ?>" tabindex="-1" aria-labelledby="ModalLabel<?= $invoice['invoice_id']; ?>" aria-modal="true" role="dialog">
+                                                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-body text-center">
+                                                                <button class="btn-close" data-bs-dismiss="modal" type="button" aria-label="Close"></button>
+                                                                <h1 class="mb-4" id="ModalLabel<?= $invoice['invoice_id']; ?>">
+                                                                    <?= $invoice['invoice_id']; ?>
+                                                                </h1>
+                                                                <p class="text-muted">
+                                                                    <?php 
+                                                                        $outputinvoice_logo = '';
+                                                                        if ($invoice['invoice_upload_logo'] != '') {
+                                                                            // code...
+                                                                            $invoice_logos = explode(',', $invoice['invoice_upload_logo']);
+                                                                            foreach ($invoice_logos as $invoice_logo) 
+                                                                                $outputinvoice_logo .= '<a href="'.$invoice_logo.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        }
+
+                                                                        $outputinvoice_file = '';
+                                                                        if ($invoice['invoice_upload_outfit_design'] != '') {
+                                                                            // code...
+                                                                            $invoice_files = explode(',', $invoice['invoice_upload_outfit_design']);
+                                                                            foreach ($invoice_files as $invoice_file) 
+                                                                                $outputinvoice_file .= '<a href="'.$invoice_file.'"><img src="' . PROOT . 'account/media/file.png" class="img-fluid" width="70"></a>';
+                                                                        }
+
+                                                                        if ($invoice['invoice_status'] == 0) {
+                                                                            echo '<span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
+                                                                        } elseif ($invoice['invoice_status'] == 1) {
+                                                                            echo '<span class="badge bg-warning-soft h6 text-uppercase">Processing</span>';
+                                                                        } elseif ($invoice['invoice_status'] == 2) {
+                                                                            echo '<span class="badge bg-info-soft h6 text-uppercase">Paid</span>';
+                                                                        } elseif ($invoice['invoice_status'] == 3) {
+                                                                            echo '<span class="badge bg-success-soft h6 text-uppercase">Ordered</span>';
+                                                                        }
+                                                                    ?>
+                                                                </p>
+                                                                    
+                                                                <ul class="list-group">
+                                                                    <li class="list-group-item"><span class="fw-bold text-info">what is the name of your outfit?</span> <?= $invoice['invoice_outfit_name']; ?></li>
+                                                                    <li class="list-group-item"><span class="fw-bold text-info">what type of receipt book do you want?</span> <?= $invoice['invoice_type']; ?></li>
+                                                                    <li class="list-group-item"><span class="fw-bold text-info">if Customized,Do you have a logo for your company?</span> <?= $invoice['invoice_want_logo']; ?></a></li>
+                                                                    <li class="list-group-item"><span class="fw-bold text-info">if yes, upload your logo here:</span> <?= $outputinvoice_logo; ?></a></li>
+                                                                    <li class="list-group-item"><span class="fw-bold text-info">How many receipt books do you want?</span> <?= $invoice['invoice_quantity']; ?></a></li>
+                                                                    <li class="list-group-item"><span class="fw-bold text-info">When do you want the receipt books delivered?</span> <?= $invoice['invoice_delivery_date']; ?></a></li>
+                                                                    <li class="list-group-item"><span class="fw-bold text-info">Upload the design of your outfit for the design:</span> <?= $outputinvoice_file; ?></a></li>
+                                                                    <li class="list-group-item"><span class="fw-bold text-info">Date: </span> <?= pretty_date($invoice['invoice_createdAt']); ?></li>
+                                                                </ul>
+                                                                <!-- Text -->
+                                                                <small class="text-muted mt-2">
+                                                                    <a class="text-reset" data-bs-dismiss="modal" href="javascript:;">Close.</a>
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <?php $i++; endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
 
                                 <!-- Customize -->

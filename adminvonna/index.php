@@ -72,7 +72,7 @@
 				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_orders")->rowCount(); ?></span>
 				                    	</div>
 				                    	<div class="col-auto">
-				                      		<div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+				                      		<div class="icon icon-shape bg-warning text-white rounded-circle shadow">
 				                        		<i data-feather="shopping-cart"></i>
 				                      		</div>
 				                    	</div>
@@ -93,7 +93,7 @@
 				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_user")->rowCount(); ?></span>
 				                    	</div>
 				                    	<div class="col-auto">
-				                      		<div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+				                      		<div class="icon icon-shape bg-success text-white rounded-circle shadow">
 				                        		<i data-feather="users"></i>
 				                      		</div>
 				                    	</div>
@@ -114,7 +114,7 @@
 				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_contact")->rowCount(); ?></span>
 				                    	</div>
 				                    	<div class="col-auto">
-				                      		<div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+				                      		<div class="icon icon-shape bg-info text-white rounded-circle shadow">
 				                        		<i data-feather="mail"></i>
 				                      		</div>
 				                    	</div>
@@ -132,10 +132,10 @@
 				                  	<div class="row">
 				                    	<div class="col">
 				                      		<h5 class="card-title text-uppercase text-muted mb-0">EXAMINATION QUESTIONS</h5>
-				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_contact")->rowCount(); ?></span>
+				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_printjob")->rowCount(); ?></span>
 				                    	</div>
 				                    	<div class="col-auto">
-				                      		<div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+				                      		<div class="icon icon-shape bg-success text-white rounded-circle shadow">
 				                        		<i data-feather="file"></i>
 				                      		</div>
 				                    	</div>
@@ -153,7 +153,7 @@
 				                  	<div class="row">
 				                    	<div class="col">
 				                      		<h5 class="card-title text-uppercase text-muted mb-0">THESIS/RESEARCH</h5>
-				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_contact")->rowCount(); ?></span>
+				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_printjob_thesis")->rowCount(); ?></span>
 				                    	</div>
 				                    	<div class="col-auto">
 				                      		<div class="icon icon-shape bg-danger text-white rounded-circle shadow">
@@ -174,10 +174,10 @@
 				                  	<div class="row">
 				                    	<div class="col">
 				                      		<h5 class="card-title text-uppercase text-muted mb-0">FLIERS</h5>
-				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_contact")->rowCount(); ?></span>
+				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_printjob_fliers")->rowCount(); ?></span>
 				                    	</div>
 				                    	<div class="col-auto">
-				                      		<div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+				                      		<div class="icon icon-shape bg-primary text-white rounded-circle shadow">
 				                        		<i data-feather="square"></i>
 				                      		</div>
 				                    	</div>
@@ -195,10 +195,10 @@
 				                  	<div class="row">
 				                    	<div class="col">
 				                      		<h5 class="card-title text-uppercase text-muted mb-0">BANNERS</h5>
-				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_contact")->rowCount(); ?></span>
+				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_printjob_banners")->rowCount(); ?></span>
 				                    	</div>
 				                    	<div class="col-auto">
-				                      		<div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+				                      		<div class="icon icon-shape bg-secondary text-white rounded-circle shadow">
 				                        		<i data-feather="target"></i>
 				                      		</div>
 				                    	</div>
@@ -216,10 +216,31 @@
 				                  	<div class="row">
 				                    	<div class="col">
 				                      		<h5 class="card-title text-uppercase text-muted mb-0">RECEIPT BOOKS</h5>
-				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_contact")->rowCount(); ?></span>
+				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_print_job_receipt")->rowCount(); ?></span>
 				                    	</div>
 				                    	<div class="col-auto">
-				                      		<div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+				                      		<div class="icon icon-shape bg-dark text-white rounded-circle shadow">
+				                        		<i data-feather="table"></i>
+				                      		</div>
+				                    	</div>
+				                  	</div>
+					                <p class="mt-3 mb-0 text-muted text-sm">
+					                    <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> <?= date('Y-m-d'); ?></span>
+					                    <span class="text-nowrap"><?= date('F'); ?></span>
+					                </p>
+					            </div>
+					        </div>
+            			</div>
+            			<div class="col-xl-4 col-lg-6 mt-4 mb-xl-0">
+		              		<div class="card card-stats">
+		                		<div class="card-body">
+				                  	<div class="row">
+				                    	<div class="col">
+				                      		<h5 class="card-title text-uppercase text-muted mb-0">Invoice</h5>
+				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_print_job_invoice")->rowCount(); ?></span>
+				                    	</div>
+				                    	<div class="col-auto">
+				                      		<div class="icon icon-shape bg-info text-white rounded-circle shadow">
 				                        		<i data-feather="table"></i>
 				                      		</div>
 				                    	</div>
@@ -237,10 +258,10 @@
 				                  	<div class="row">
 				                    	<div class="col">
 				                      		<h5 class="card-title text-uppercase text-muted mb-0">CUSTOMIZES OFFICE FILES</h5>
-				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_contact")->rowCount(); ?></span>
+				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_print_job_customze")->rowCount(); ?></span>
 				                    	</div>
 				                    	<div class="col-auto">
-				                      		<div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+				                      		<div class="icon icon-shape bg-warning text-white rounded-circle shadow">
 				                        		<i data-feather="globe"></i>
 				                      		</div>
 				                    	</div>
@@ -258,7 +279,7 @@
 				                  	<div class="row">
 				                    	<div class="col">
 				                      		<h5 class="card-title text-uppercase text-muted mb-0">CALL CARDS</h5>
-				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_contact")->rowCount(); ?></span>
+				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_printjob_callcards")->rowCount(); ?></span>
 				                    	</div>
 				                    	<div class="col-auto">
 				                      		<div class="icon icon-shape bg-danger text-white rounded-circle shadow">

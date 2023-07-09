@@ -424,7 +424,107 @@
                     INSERT INTO `vonna_print_job_receipt`(`receipt_id`, `receipt_userid`, `receipt_outfit_name`, `receipt_type`, `receipt_quantity`, `receipt_want_logo`, `receipt_upload_logo`, `receipt_delivery_date`, `receipt_upload_outfit_design`, `receipt_createdAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ";
             } else if ($post['print_type'] == "Invoice") {
+                $outfit_name = ((isset($_POST['outfit_name']) && !empty($_POST['outfit_name'])) ? sanitize($_POST['outfit_name']) : '');
+                $receipt_type = ((isset($_POST['receipt_type']) && !empty($_POST['receipt_type'])) ? sanitize($_POST['receipt_type']) : '');
+                $receipt_quantity = ((isset($_POST['receipt_quantity']) && !empty($_POST['receipt_quantity'])) ? sanitize($_POST['receipt_quantity']) : '');
+                $want_logo = ((isset($_POST['want_logo']) && !empty($_POST['want_logo'])) ? sanitize($_POST['want_logo']) : '');
+                // $upload_logo = ((isset($_POST['upload_logo']) && !empty($_POST['upload_logo'])) ? sanitize($_POST['upload_logo']) : '');
+                $receipt_delivery_date = ((isset($_POST['receipt_delivery_date']) && !empty($_POST['receipt_delivery_date'])) ? sanitize($_POST['receipt_delivery_date']) : '');
+                // $upload_outfit_design = ((isset($_POST['upload_outfit_design']) && !empty($_POST['upload_outfit_design'])) ? sanitize($_POST['upload_outfit_design']) : '');
+                $receipt_id = time() . mt_rand() . $user_id;
+                $createdAt = date('Y-m-d H:i:s');
                 
+                $upload_logo = '';
+                if (isset($_FILES['upload_logo'])) {
+                    $count_files = count($_FILES['upload_logo']['name']);
+                    for ($i = 0; $i < $count_files; $i++) {
+                        if (!empty($_FILES['upload_logo']['name'][$i])) {
+                            $fileName = $_FILES['upload_logo']['name'][$i];
+                            $fileSize = $_FILES['upload_logo']['size'][$i];
+                            $fileType = $_FILES['upload_logo']['type'][$i];
+                            $fileTmpName = $_FILES['upload_logo']['tmp_name'][$i];
+                            $fileError = $_FILES['upload_logo']['error'][$i];
+
+                            $fileExt = explode('.', $fileName);
+                            $fileActualExt = strtolower(end($fileExt));
+
+                            $maxSize = 10000000; //10mb 
+                            $allowed = array('jpg', 'pdf','jpeg', 'pdf', 'png');
+
+                            if (in_array($fileActualExt, $allowed)) {
+                                if ($fileError === 0) {
+                                    if ($fileSize < $maxSize) {
+                                        $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                        $fileDestination =  'media/uploads/' . $fileNewName;
+                                        if (file_exists($fileDestination)) {
+                                            $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                            $fileDestination = 'media/uploads/' . $fileNewName;
+                                        }
+                                        $moveFiles = move_uploaded_file($fileTmpName, $fileDestination);
+                                        if ($moveFiles) {
+                                            $upload_logo .= $fileDestination . ',';
+                                        } else {
+                                            $message = 'Your file(s) was not able to upload.';
+                                        }
+                                    } else {
+                                    }
+                                } else {
+                                    $message = 'There was an error uploading your file(s).';
+                                }
+                            } else {
+                                $message = 'You cannot upload file(s) of this type!';
+                            }
+                        }
+                    }
+                }
+
+                $upload_outfit_design = '';
+                if (isset($_FILES['upload_outfit_design'])) {
+                    $count_files = count($_FILES['upload_outfit_design']['name']);
+                    for ($i = 0; $i < $count_files; $i++) {
+                        if (!empty($_FILES['upload_outfit_design']['name'][$i])) {
+                            $fileName = $_FILES['upload_outfit_design']['name'][$i];
+                            $fileSize = $_FILES['upload_outfit_design']['size'][$i];
+                            $fileType = $_FILES['upload_outfit_design']['type'][$i];
+                            $fileTmpName = $_FILES['upload_outfit_design']['tmp_name'][$i];
+                            $fileError = $_FILES['upload_outfit_design']['error'][$i];
+
+                            $fileExt = explode('.', $fileName);
+                            $fileActualExt = strtolower(end($fileExt));
+
+                            $maxSize = 10000000; //10mb 
+                            $allowed = array('jpg', 'pdf','jpeg', 'pdf', 'png');
+
+                            if (in_array($fileActualExt, $allowed)) {
+                                if ($fileError === 0) {
+                                    if ($fileSize < $maxSize) {
+                                        $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                        $fileDestination =  'media/uploads/' . $fileNewName;
+                                        if (file_exists($fileDestination)) {
+                                            $fileNewName = uniqid('', true) . "." . $fileActualExt;
+                                            $fileDestination = 'media/uploads/' . $fileNewName;
+                                        }
+                                        $moveFiles = move_uploaded_file($fileTmpName, $fileDestination);
+                                        if ($moveFiles) {
+                                            $upload_outfit_design .= $fileDestination . ',';
+                                        } else {
+                                            $message = 'Your file(s) was not able to upload.';
+                                        }
+                                    } else {
+                                    }
+                                } else {
+                                    $message = 'There was an error uploading your file(s).';
+                                }
+                            } else {
+                                $message = 'You cannot upload file(s) of this type!';
+                            }
+                        }
+                    }
+                }
+                $data = [$receipt_id, $user_id, $outfit_name, $receipt_type, $receipt_quantity, $want_logo, rtrim($upload_logo, ', '), $receipt_delivery_date, rtrim($upload_outfit_design, ', '), $createdAt];
+                $query = "
+                    INSERT INTO `vonna_print_job_invoice`(`invoice_id`, `invoice_userid`, `invoice_outfit_name`, `invoice_type`, `invoice_quantity`, `invoice_want_logo`, `invoice_upload_logo`, `invoice_delivery_date`, `invoice_upload_outfit_design`, `invoice_createdAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ";
             } else if ($post['print_type'] == "Customized office Files") {
                 $customize_outfit_name = ((isset($_POST['customize_outfit_name']) && !empty($_POST['customize_outfit_name'])) ? sanitize($_POST['customize_outfit_name']) : '');
                 $customize_outfit_address = ((isset($_POST['customize_outfit_address']) && !empty($_POST['customize_outfit_address'])) ? sanitize($_POST['customize_outfit_address']) : '');
@@ -912,6 +1012,50 @@
 
                             <!-- INVOICE -->
                             <div class="invoice d-none">
+                                <div class="mb-3">
+                                    <label for="">what is the name of your outfit?</label>
+                                    <input type="text" name="invoice_outfit_name" class="form-control" id="invoice-outfit-name">
+                                </div>
+
+                                <div class="mb-3">
+                                    <select type="text" name="invoice_receipt_type" class="form-control" id="invoice-receipt-type">
+                                        <option value="">what type of receipt book do you want?</option>
+                                        <option value="Customized Receipt book">Customized Receipt book</option>
+                                        <option value="General receipt book">General receipt book</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="">if Customized, Do you have a logo for your company?</label>
+                                    <br>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" name="invoice_want_logo" id="invoice-want-logoYes" value="Yes">
+                                        <label for="invoice-want-logoYes" class="form-check-label">Yes</label>
+                                        <br>
+                                        <input type="radio" class="form-check-input" name="invoice_want_logo" id="invoice-want-logoNo" value="No">
+                                        <label for="invoice-want-logoNo" class="form-check-label">No</label>
+                                    </div>
+                                </div>
+
+                                <div class="d-none invoice-yes-want-logo mb-3">
+                                    <label for="">if yes, upload your logo here</label>
+                                    <input type="file" multiple name="invoice_upload_logo[]" class="form-control" id="invoice-upload-logo">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>How many receipt books do you want?</label>
+                                    <input type="number" min="1" name="invoice_receipt_quantity" placeholder="" class="form-control" id="invoice-receipt-quantity">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>When do you want the receipt books delivered?</label>
+                                    <input type="date" name="invoice_receipt_delivery_date" class="form-control" id="invoice-receipt-delivery-date">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="">upload the design of your outfit for the design?</label>
+                                    <input type="file" multiple name="invoice_upload_outfit_design[]" class="form-control" id="invoice-upload-outfit-design">
+                                </div>
                                 
                             </div>
 
@@ -1578,17 +1722,90 @@
 
                         }
                     })
-
+                   // $('#ir').val('Receipt');
                     $('#printjobSubmitButton').attr('disabled', false);
                 } else if (printType == 'Invoice') {
-                    $('.invoice').addClass('d-none');
-                    $('.customized').addClass('d-none');
-                    $('.receipt').addClass('d-none');
+                    // $('.invoice').removeClass('d-none');
+                    // $('.customized').addClass('d-none');
+                    // $('.receipt').addClass('d-none');
+                    // $('.banners').addClass('d-none');
+                    // $('.fliers').addClass('d-none');
+                    // $('.thesis').addClass('d-none');
+                    // $('.exams').addClass('d-none');
+                    // $('.call-cards').addClass('d-none');
+
+
+                    $('.receipt').removeClass('d-none');
                     $('.banners').addClass('d-none');
                     $('.fliers').addClass('d-none');
                     $('.thesis').addClass('d-none');
                     $('.exams').addClass('d-none');
+                    $('.customized').addClass('d-none');
                     $('.call-cards').addClass('d-none');
+
+                    $('#outfit-name').attr('required', true)
+                    $('#receipt-type').attr('required', true)
+                    $('#want-logoYes').attr('required', true)
+                    $('#receipt-quantity').attr('required', true)
+                    $('#receipt-delivery-date').attr('required', true)
+                    $('#upload-outfit-design').attr('required', true)
+
+                    $('#banner_size').attr('required', false);
+                    $('#banner_quantity').attr('required', false);
+                    $('input[name="have_banner_designs"]').attr('required', false);
+                    $('#size-to-print').attr('required', false)
+                    $('#quantity-to-print').attr('required', false)
+                    $('#have-designsYes').attr('required', false)
+                    $('#date-to-deliver').attr('required', false)
+                    $('#already-have-trYes').attr('required', false)
+                    $('#have-you-typedYes').attr('required', false)
+                    $('#final-editingYes').attr('required', false)
+                    $('#delivered-tr').attr('required', false)
+                    $('#day-week').attr('required', false)
+                    $('#your-thesis-research').attr('required', false)
+                    $('input[name="name_of_subject[]"]').attr('required', false)
+                    $('input[name="number_to_be_printed[]"]').attr('required', false)
+                    $('select[name="level[]"]').attr('required', false)
+                    $('input[name="class_or_form[]"]').attr('required', false)
+                    $('input[name="total_students"]').attr('required', false)
+                    $('input[name="typed_already"]').attr('required', false)
+                    $('select[name="when_to_be_delivered"]').attr('required', false)
+                    $('input[name="delivery_address_1"]').attr('required', false)
+                    $('input[name="delivery_address_2"]').attr('required', false)
+                    $('#customize-outfit-name').attr('required', false)
+                    $('#customize-outfit-address').attr('required', false)
+                    $('#customize-contact').attr('required', false)
+                    $('#customize-email').attr('required', false)
+                    $('#customize-location').attr('required', false)
+                    $('#customize-gps').attr('required', false)
+                    $('#customize-have-logoYes').attr('required', false)
+                    $('#customize-upload-logo').attr('required', false)
+                    $('#us-to-design-logoYes').attr('required', false)
+                    $('#card-name').attr('required', false)
+                    $('#card-company-name').attr('required', false)
+                    $('#card-address').attr('required', false)
+                    $('#card-email').attr('required', false)
+                    $('#card-office-contact').attr('required', false)
+                    $('#card-personal-contact').attr('required', false)
+                    $('#card-whatsapp').attr('required', false)
+                    $('#card-have-logoYes').attr('required', false)
+                    $('#card-us-to-design-logoYes').attr('required', false)
+                    $('#card-upload-logo').attr('required', false)
+
+                    $('input[name="want_logo"]').click(function() {
+                        var want = $('input[name="want_logo"]:checked').val();
+                        if (want == 'Yes') {
+                            $('.yes-want-logo').removeClass('d-none')
+                            $('#upload-logo').attr('required', true)
+                        } else if (want == 'No') {
+                            $('.yes-want-logo').addClass('d-none')
+                            $('#upload-logo').val('')
+                            $('#upload-logo').attr('required', false)
+
+                        }
+                    })
+                   //  $('#ir').val('Invoice');
+                    $('#printjobSubmitButton').attr('disabled', false);
 
                 } else if (printType == 'Customized office Files') {
                     $('.customized').removeClass('d-none');

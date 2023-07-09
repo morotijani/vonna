@@ -17,59 +17,56 @@
         }
         $post = cleanPost($_POST);
         
-        $product = $post['product'];
-        $quantity = '';
-        $size = '';
-        $type = '';
-        $a_type = '';
-        $color = '';
+        $writer = $post['writer'];
+        $level = $post['level'];
+        $book = $post['book'];
+        $quantity = $post['quantity'];
 
         $userid = $user_id;
         $orderid = time() . mt_rand() . $userid;
         $order_date = date('Y-m-d H:i:s');
 
 
-        if ($post['product'] == 'Plain Paper') {
-            $size = $post['plain_A_type'];
-            $type = $post['plainpaper_type'];
-            $quantity =  $post['plainpaper_qty'];
-        } else if ($post['product'] == 'Ruled Paper') {
-            $quantity = $post['ruledpaper_qty'];
-        } else if ($post['product'] == 'Flip Chart') {
-            $size = $post['flipchart_size'];
-            $quantity = $post['flipchart_qty'];
-        } else if ($post['product'] == 'Notepad') {
-            $size = $post['notepad_size'];
-            $quantity = $post['notepad_qty'];
-        } else if ($post['product'] == 'Envelope') {
-            $color = $post['envelope_color'];
-            $quantity = $post['envelope_qty'];
-            $size = $post['envelope_type'];
-        } else {
-            $_SESSION['flash_error'] = 'Select a product to order!';
-            redirect(PROOT . 'account/index');
-        }
+        // if ($post['product'] == 'Plain Paper') {
+        //     $size = $post['plain_A_type'];
+        //     $type = $post['plainpaper_type'];
+        //     $quantity =  $post['plainpaper_qty'];
+        // } else if ($post['product'] == 'Ruled Paper') {
+        //     $quantity = $post['ruledpaper_qty'];
+        // } else if ($post['product'] == 'Flip Chart') {
+        //     $size = $post['flipchart_size'];
+        //     $quantity = $post['flipchart_qty'];
+        // } else if ($post['product'] == 'Notepad') {
+        //     $size = $post['notepad_size'];
+        //     $quantity = $post['notepad_qty'];
+        // } else if ($post['product'] == 'Envelope') {
+        //     $color = $post['envelope_color'];
+        //     $quantity = $post['envelope_qty'];
+        //     $size = $post['envelope_type'];
+        // } else {
+        //     $_SESSION['flash_error'] = 'Select a product to order!';
+        //     redirect(PROOT . 'account/index');
+        // }
 
 
         $query = '
-            INSERT INTO `vonna_orders`(`orders_id`, `orders_product`, `orders_size`, `orders_type`, `orders_quantity`, `orders_color`, `orders_userid`, `orders_orderdate`)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO `vonna_textbooks`(`textbook_id`, `textbook_writer`, `textbook_level`, `textbook_book`, `textbook_quantity`, `textbiok_userid`, `textbook_createdAt`) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         ';
         $statement = $conn->prepare($query);
         $result = $statement->execute([
             $orderid,
-            $product,
-            $size,
-            $type,
+            $writer,
+            $level,
+            $book,
             $quantity,
-            $color,
             $userid,
             $order_date
         ]);
 
         if (isset($result)) {
             // code...
-            $_SESSION['flash_success'] = $post['product'] . ' order successfully made, product will be delivered soon.';
+            $_SESSION['flash_success'] = 'Text book successfully made, product will be delivered soon.';
             redirect(PROOT . 'account/index');
         } else {
             $_SESSION['flash_error'] = 'Order couldn\'t go through, please try again';
@@ -134,7 +131,7 @@
 
                                 <div class="form-group mb-3">
                                     <label for="">What is the title of the book you are looking for?</label>
-                                    <input type="text" class="form-control" name="title" value="" placeholder="Title">
+                                    <input type="text" class="form-control" name="book" value="" placeholder="Title">
                                 </div>
                                 
                                 <div class="form-group mb-3">
@@ -529,7 +526,7 @@
 
         $(document).ready(function() {
             $('input[name="writer"]').click(function(e) {
-                e.preventDefault()
+                //e.preventDefault()
                 var writer = $('input[name="writer"]:checked').val();
 
                 if (writer == 'Excellence Series') {
@@ -541,6 +538,7 @@
                     $('#flamingo-series').addClass('d-none')
                     $('#reuben-series').addClass('d-none')
                     $('#kofi-bio').addClass('d-none')
+                    $('#other').addClass('d-none')
 
                     $("#exellence-level").change(function(e) {
                         e.preventDefault()
@@ -563,6 +561,7 @@
                     $('#flamingo-series').addClass('d-none')
                     $('#reuben-series').addClass('d-none')
                     $('#kofi-bio').addClass('d-none')
+                    $('#other').addClass('d-none')
                     
                     $("#golden-level").change(function(e) {
                         e.preventDefault()
@@ -591,7 +590,7 @@
                     $('#flamingo-series').addClass('d-none')
                     $('#reuben-series').addClass('d-none')
                     $('#kofi-bio').addClass('d-none')
-                    
+                    $('#other').addClass('d-none')
                 } else if (writer == 'Approaches') {
                     $('#approachers').removeClass('d-none')
                     $('#exellence-series').addClass('d-none')
@@ -601,7 +600,7 @@
                     $('#flamingo-series').addClass('d-none')
                     $('#reuben-series').addClass('d-none')
                     $('#kofi-bio').addClass('d-none')
-
+                    $('#other').addClass('d-none')
                 } else if (writer == 'Aki oLa') {
                     $('#akiola-series').removeClass('d-none')
                     $('#exellence-series').addClass('d-none')
@@ -611,6 +610,7 @@
                     $('#flamingo-series').addClass('d-none')
                     $('#reuben-series').addClass('d-none')
                     $('#kofi-bio').addClass('d-none')
+                    $('#other').addClass('d-none')
 
                     $("#akiola-level").change(function(e) {
                         e.preventDefault()
@@ -632,7 +632,7 @@
                     $('#akiola-series').addClass('d-none')
                     $('#reuben-series').addClass('d-none')
                     $('#kofi-bio').addClass('d-none')
-
+                    $('#other').addClass('d-none')
                 } else if (writer == 'Myles') {
                     $('#reuben-series').addClass('d-none')
                     $('#flamingo-series').addClass('d-none')
@@ -642,6 +642,7 @@
                     $('#bestbrain').addClass('d-none')
                     $('#akiola-series').addClass('d-none')
                     $('#kofi-bio').addClass('d-none')
+                    $('#other').addClass('d-none')
                 } else if (writer == 'Reuben Series') {
                     $('#reuben-series').removeClass('d-none')
                     $('#flamingo-series').addClass('d-none')
@@ -651,7 +652,7 @@
                     $('#bestbrain').addClass('d-none')
                     $('#akiola-series').addClass('d-none')
                     $('#kofi-bio').addClass('d-none')
-                    
+                    $('#other').addClass('d-none')
                 } else if (writer == 'Kofi BIO') {
                     $('#kofi-bio').removeClass('d-none')
                     $('#reuben-series').addClass('d-none')
@@ -661,6 +662,7 @@
                     $('#golden-series').addClass('d-none')
                     $('#bestbrain').addClass('d-none')
                     $('#akiola-series').addClass('d-none')
+                    $('#other').addClass('d-none')
                     
                     $("#kofi-bio-level").change(function(e) {
                         e.preventDefault()
@@ -674,7 +676,15 @@
                         }
                     })
                 } else if (writer == 'Other') {
-                    
+                    $('#other').removeClass('d-none')
+                    $('#kofi-bio').addClass('d-none')
+                    $('#reuben-series').addClass('d-none')
+                    $('#flamingo-series').addClass('d-none')
+                    $('#approachers').addClass('d-none')
+                    $('#exellence-series').addClass('d-none')
+                    $('#golden-series').addClass('d-none')
+                    $('#bestbrain').addClass('d-none')
+                    $('#akiola-series').addClass('d-none')
                 }
 
 

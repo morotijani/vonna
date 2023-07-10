@@ -39,11 +39,11 @@
             $result = $statement->execute([$status, $order_id]);
             if ($result) {
                 // code...
-                $_SESSION['flash_success'] = 'Order cancel successfully.';
-                redirect(PROOT . 'account/textbook-requets');
+                $_SESSION['flash_success'] = 'Text book order cancel successfully.';
+                redirect(PROOT . 'account/textbook-requests');
             } else {
                 echo js_alert('Something went wrong... please try again.');
-                redirect(PROOT . 'account/textbook-requets');
+                redirect(PROOT . 'account/textbook-requests');
             }
         }
     }
@@ -61,11 +61,11 @@
             $result = $statement->execute([$order_id]);
             if ($result) {
                 // code...
-                $_SESSION['flash_success'] = 'Order deleted successfully.';
-                redirect(PROOT . 'account/textbook-requets');
+                $_SESSION['flash_success'] = 'Text book order deleted successfully.';
+                redirect(PROOT . 'account/textbook-requests');
             } else {
                 echo js_alert('Something went wrong... please try again.');
-                redirect(PROOT . 'account/textbook-requets');
+                redirect(PROOT . 'account/textbook-requests');
             }
         }
     }

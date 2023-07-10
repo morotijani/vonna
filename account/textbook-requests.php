@@ -201,7 +201,7 @@
                                     <tr>
                                         <td colspan="7">No textbooks orders yet.</td>
                                     </tr>
-                                <?php endif;c ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
 

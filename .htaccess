@@ -17,6 +17,10 @@ RewriteRule ^account/orders/([0-9a-zA-Z]+)$ account/orders.php?deleted=$1 [NC,L]
 #verify account
 RewriteRule ^auth/verified/([0-9a-zA-Z]+)$ auth/verified.php?vericode=$1 [NC,L]
 
+# Delete order on text book
+RewriteRule ^account/textbook-requests/([0-9a-zA-Z]+)$ account/textbook-requests.php?deleted=$1 [NC,L]
+
+
 #ADMIN, order details
 RewriteRule ^adminvonna/Orders/([0-9a-zA-Z]+)$ adminvonna/Orders.php?details=$1 [NC,L]
 #ADMIN, paid order

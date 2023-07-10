@@ -83,7 +83,7 @@
                             Text book <span class="text-underline-warning">orders</span>
                         </h2>
                         
-                        <table class="table table-hover">
+                        <table class="table table-sm table-hover">
                             <thead>
                                 <tr>
                                     <th></th>
@@ -123,79 +123,18 @@
                                             <td>
                                                 <?= ucwords($order['textbook_writer']); ?>
                                                 <br>
-                                                Qty: <?= ucwords($order['textbook_level']); ?>
+                                                Level: <?= ucwords($order['textbook_level']); ?>
                                             </td>
-                                            <td><?= ucwords($order['textbook_book']); ?></td>
+                                            <td>
+                                                <?= ucwords($order['textbook_book']); ?>
+                                                <br>
+                                                Qty: <?= $order['textbook_quantity']; ?>
+                                            </td>
                                             <td><?= pretty_date($order['textbook_createdAt']); ?></td>
                                             <td>
-                                                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#Modal<?= $order['textbook_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
-                                                <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/orders/<?= $order['textbook_id']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
+                                                <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/textbook-requests/<?= $order['textbook_id']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
                                             </td>
                                         </tr>
-
-                                        <div class="modal fade" id="Modal<?= $order['textbook_id']; ?>" tabindex="-1" aria-labelledby="ModalLabel<?= $order['textbook_id']; ?>" aria-modal="true" role="dialog">
-                                            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-body text-center">
-                                                        <button class="btn-close" data-bs-dismiss="modal" type="button" aria-label="Close"></button>
-                                                        <?php if ($order['orders_product'] == 'Plain Paper'): ?>
-                                                            <img class="img-fluid mb-4 mt-n11" src="<?= PROOT; ?>assets/media/products/plain.jpg" style="width: 350px; height: 350px; object-fit: contain;" alt="...">
-                                                        <?php elseif ($order['orders_product'] == 'Ruled Paper'): ?>
-                                                            <img class="img-fluid mb-4 mt-n11" src="<?= PROOT; ?>assets/media/products/ruled.png" style="width: 350px; height: 350px; object-fit: contain;" alt="...">
-                                                        <?php elseif ($order['orders_product'] == 'Flip Chart'): ?>
-                                                            <img class="img-fluid mb-4 mt-n11" src="<?= PROOT; ?>assets/media/products/flip.png" style="width: 350px; height: 350px; object-fit: contain;" alt="...">
-                                                        <?php elseif ($order['orders_product'] == 'Notepad'): ?>
-                                                            <img class="img-fluid mb-4 mt-n11" src="<?= PROOT; ?>assets/media/products/note.jpg" style="width: 350px; height: 350px; object-fit: contain;" alt="...">
-                                                        <?php elseif ($order['orders_product'] == 'Envelope'): ?>
-                                                            <img class="img-fluid mb-4 mt-n11" src="<?= PROOT; ?>assets/media/products/envelope.jpg" style="width: 350px; height: 350px; object-fit: contain;" alt="...">
-                                                        <?php else: ?>
-                                                        <?php endif ?>
-                                                        <h1 class="mb-4" id="ModalLabel<?= $order['textbook_id']; ?>">
-                                                            <?= $order['textbook_id']; ?>
-                                                        </h1>
-                                                        <p class="text-muted">
-                                                            <?php 
-
-                                                                if ($order['textbooks_status'] == 0) {
-                                                                    // code...
-                                                                    echo '<span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
-                                                                } elseif ($order['textbooks_status'] == 1) {
-                                                                    echo '<span class="badge bg-warning-soft h6 text-uppercase">Processing</span>';
-                                                                } elseif ($order['textbooks_status'] == 2) {
-                                                                    echo '<span class="badge bg-info-soft h6 text-uppercase">Paid</span>';
-                                                                } elseif ($order['textbooks_status'] == 3) {
-                                                                    echo '<span class="badge bg-success-soft h6 text-uppercase">Ordered</span>';
-                                                                }
-                                                            ?>
-                                                        </p>
-                                                        <ul class="list-group">
-                                                            <li class="list-group-item"><?= $order['orders_product']; ?></li>
-                                                            <?php if ($order['orders_size'] != ''): ?>
-                                                                <li class="list-group-item"><span>Size: </span><?= $order['orders_size']; ?></li>
-                                                            <?php endif ?>
-
-                                                            <?php if ($order['orders_type'] != ''): ?>
-                                                                <li class="list-group-item"><?= $order['orders_type']; ?></li>
-                                                            <?php endif ?>
-
-                                                            <?php if ($order['orders_quantity'] != ''): ?>
-                                                                <li class="list-group-item"><span>Quantity: </span><?= $order['orders_quantity']; ?></li>
-                                                            <?php endif ?>
-
-                                                            <?php if ($order['orders_color'] != ''): ?>
-                                                                <li class="list-group-item"><?= $order['orders_color']; ?></li>
-                                                            <?php endif ?>
-
-                                                            <li class="list-group-item"><span>Ordered on: </span><?= pretty_date($order['textbook_createdAt']); ?></li>
-                                                        </ul>
-                                                        <!-- Text -->
-                                                        <small class="text-muted mt-2">
-                                                            <a class="text-reset" data-bs-dismiss="modal" href="javascript:;">Close.</a>
-                                                        </small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     <?php $i++; endforeach; ?>
                                 <?php else: ?>
                                     <tr>

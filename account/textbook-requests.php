@@ -32,8 +32,8 @@
         if (is_numeric($order_id)) {
             $query = "
                 UPDATE vonna_textbooks 
-                SET orders_status = ? 
-                WHERE orders_id = ?
+                SET textbooks_status = ? 
+                WHERE textbook_id = ?
             ";
             $statement = $conn->prepare($query);
             $result = $statement->execute([$status, $order_id]);
@@ -55,7 +55,7 @@
         if (is_numeric($order_id)) {
             $query = "
                 DELETE FROM vonna_textbooks 
-                WHERE orders_id = ?
+                WHERE textbook_id = ?
             ";
             $statement = $conn->prepare($query);
             $result = $statement->execute([$order_id]);
@@ -98,41 +98,42 @@
                             <tbody>
                                 <?php if ($count_orders > 0): ?>
                                     <?php $i = 1; foreach ($orders as $order): ?>
-                                        <tr style="background-color: <?= ($order['orders_status'] == 4) ? '#ff63473d' : ''; ?>">
+                                        <tr style="background-color: <?= ($order['textbooks_status'] == 4) ? '#ff63473d' : ''; ?>">
                                             <td><?= $i; ?></td>
                                             <td>
-                                                <?= $order['orders_id']; ?>
+                                                <?= $order['textbook_id']; ?>
                                                 <?php 
-                                                    if ($order['orders_status'] == 0) {
+                                                    if ($order['textbooks_status'] == 0) {
                                                         // code...
                                                         echo '<br><span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
-                                                        echo '&nbsp;<a href="?cancel='.$order["orders_id"].'&status=4" class="">cancel order</a>';
-                                                    } elseif ($order['orders_status'] == 1) {
+                                                        echo '&nbsp;<a href="?cancel='.$order["textbook_id"].'&status=4" class="">cancel order</a>';
+                                                    } elseif ($order['textbooks_status'] == 1) {
                                                         echo '<br><span class="badge bg-warning-soft h6 text-uppercase">Processing</span>';
-                                                    } elseif ($order['orders_status'] == 2) {
+                                                    } elseif ($order['textbooks_status'] == 2) {
                                                         echo '<br><span class="badge bg-info-soft h6 text-uppercase">Paid</span>';
-                                                    } elseif ($order['orders_status'] == 3) {
+                                                    } elseif ($order['textbooks_status'] == 3) {
                                                         echo '<br><span class="badge bg-success-soft h6 text-uppercase">Ordered</span>';
-                                                    } elseif ($order['orders_status'] == 4) {
-                                                        echo '<br><a href="?cancel='.$order["orders_id"].'&status=new" class="">re-order</a>';
+                                                    } elseif ($order['textbooks_status'] == 4) {
+                                                        echo '<br><a href="?cancel='.$order["textbook_id"].'&status=new" class="">re-order</a>';
                                                     } else {
                                                         echo '';
                                                     }
                                                 ?>
                                             </td>
                                             <td>
-                                                <?= ucwords($order['orders_product']); ?>
+                                                <?= ucwords($order['textbook_writer']); ?>
                                                 <br>
-                                                Qty: <?= $order['orders_quantity']; ?>
+                                                Qty: <?= ucwords($order['textbook_level']); ?>
                                             </td>
+                                            <td><?= ucwords($order['textbook_book']); ?></td>
                                             <td><?= pretty_date($order['textbook_createdAt']); ?></td>
                                             <td>
-                                                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#Modal<?= $order['orders_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
-                                                <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/orders/<?= $order['orders_id']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
+                                                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#Modal<?= $order['textbook_id']; ?>" class="badge bg-primary mb-2"><i data-feather="eye"></i></a>
+                                                <a href="javascript:;"  onclick="(confirm('Order will be deleted!') ? window.location = '<?= PROOT; ?>account/orders/<?= $order['textbook_id']; ?>' : '');" class="badge bg-primary-soft"><i data-feather="trash"></i></a>
                                             </td>
                                         </tr>
 
-                                        <div class="modal fade" id="Modal<?= $order['orders_id']; ?>" tabindex="-1" aria-labelledby="ModalLabel<?= $order['orders_id']; ?>" aria-modal="true" role="dialog">
+                                        <div class="modal fade" id="Modal<?= $order['textbook_id']; ?>" tabindex="-1" aria-labelledby="ModalLabel<?= $order['textbook_id']; ?>" aria-modal="true" role="dialog">
                                             <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-body text-center">
@@ -149,20 +150,20 @@
                                                             <img class="img-fluid mb-4 mt-n11" src="<?= PROOT; ?>assets/media/products/envelope.jpg" style="width: 350px; height: 350px; object-fit: contain;" alt="...">
                                                         <?php else: ?>
                                                         <?php endif ?>
-                                                        <h1 class="mb-4" id="ModalLabel<?= $order['orders_id']; ?>">
-                                                            <?= $order['orders_id']; ?>
+                                                        <h1 class="mb-4" id="ModalLabel<?= $order['textbook_id']; ?>">
+                                                            <?= $order['textbook_id']; ?>
                                                         </h1>
                                                         <p class="text-muted">
                                                             <?php 
 
-                                                                if ($order['orders_status'] == 0) {
+                                                                if ($order['textbooks_status'] == 0) {
                                                                     // code...
                                                                     echo '<span class="badge bg-danger-soft h6 text-uppercase">Pending</span>';
-                                                                } elseif ($order['orders_status'] == 1) {
+                                                                } elseif ($order['textbooks_status'] == 1) {
                                                                     echo '<span class="badge bg-warning-soft h6 text-uppercase">Processing</span>';
-                                                                } elseif ($order['orders_status'] == 2) {
+                                                                } elseif ($order['textbooks_status'] == 2) {
                                                                     echo '<span class="badge bg-info-soft h6 text-uppercase">Paid</span>';
-                                                                } elseif ($order['orders_status'] == 3) {
+                                                                } elseif ($order['textbooks_status'] == 3) {
                                                                     echo '<span class="badge bg-success-soft h6 text-uppercase">Ordered</span>';
                                                                 }
                                                             ?>
@@ -200,7 +201,7 @@
                                     <tr>
                                         <td colspan="7">No textbooks orders yet.</td>
                                     </tr>
-                                <?php endif; ?>
+                                <?php endif;c ?>
                             </tbody>
                         </table>
 

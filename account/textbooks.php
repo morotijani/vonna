@@ -16,10 +16,10 @@
             redirect(PROOT . 'account/index');
         }
         $post = cleanPost($_POST);
-        print_r($post);
-        die;
+        // print_r($post);
+        // die;
         $writer = $post['writer'];
-        $level = $post['level'];
+        $level = '';
         $book = $post['book'];
         $quantity = $post['quantity'];
 
@@ -28,13 +28,31 @@
         $order_date = date('Y-m-d H:i:s');
 
 
-        if ($writer == 'Other') {
+        if ($writer == 'Excellence Series') {
+            $level = $post['exellence-level'];
+        } else if ($writer == 'Golden Series') {
+            $level = $post['golden-level'];
+        } else if ($writer == 'Best Brain') {
+            $level = $post['bestbrain-level'];
+        } else if ($writer == 'Approaches') {
+            $level = $post['approachers-level'];
+        } else if ($writer == 'Aki oLa') {
+            $level = $post['akiola-level'];
+        } else if ($writer == 'Flamingo') {
+            $level = $post['flamingo-level'];
+        } else if ($writer == 'Myles') {
+            // 
+        } else if ($writer == 'Reuben Series') {
+            $level = $post['reuben-level'];
+        } else if ($writer == 'Kofi BIO') {
+            $level = $post['kofi-bio-level'];
+        } else if ($writer == 'Other') {
             $writer = $post['other_writer'];
             $level = $post['other_level'];
         }
 
         $query = '
-            INSERT INTO `vonna_textbooks`(`textbook_id`, `textbook_writer`, `textbook_level`, `textbook_book`, `textbook_quantity`, `textbiok_userid`, `textbook_createdAt`) 
+            INSERT INTO `vonna_textbooks`(`textbook_id`, `textbook_writer`, `textbook_level`, `textbook_book`, `textbook_quantity`, `textbook_userid`, `textbook_createdAt`) 
             VALUES (?, ?, ?, ?, ?, ?, ?)
         ';
         $statement = $conn->prepare($query);
@@ -51,10 +69,10 @@
         if (isset($result)) {
             // code...
             $_SESSION['flash_success'] = 'Text book successfully made, product will be delivered soon.';
-            redirect(PROOT . 'account/index');
+            redirect(PROOT . 'account/textbooks');
         } else {
             $_SESSION['flash_error'] = 'Order couldn\'t go through, please try again';
-            redirect(PROOT . 'account/index');
+            redirect(PROOT . 'account/textbooks');
         }
     }
 
@@ -140,7 +158,7 @@
                             <div class="d-none" id="exellence-series">
                                 <div class="form-group mb-3">
                                     <label for="">What level do of study are you looking for?</label>
-                                    <select class="form-control" id="exellence-level" name="level" type="text">
+                                    <select class="form-control" id="exellence-level" name="exellence-level" type="text">
                                         <option value="">Level:</option>
                                         <option value="Nursery">Nursery</option>
                                         <option value="Primary">Primary</option>
@@ -201,7 +219,7 @@
                             <div class="d-none" id="golden-series">
                                 <div class="form-group mb-3">
                                     <label for="">What level do of study are you looking for?</label>
-                                    <select class="form-control" id="golden-level" name="level" type="text">
+                                    <select class="form-control" id="golden-level" name="golden-level" type="text">
                                         <option value="">Level:</option>
                                         <option value="Kindergarten">Kindergarten</option>
                                         <option value="Nursery">Nursery</option>
@@ -274,7 +292,7 @@
                             <div class="d-none" id="bestbrain">
                                 <div class="form-group mb-3">
                                     <label for="">What level do of study are you looking for?</label>
-                                    <select class="form-control" id="bestbrain-level" name="level" type="text">
+                                    <select class="form-control" id="bestbrain-level" name="bestbrain-level" type="text">
                                         <option value="Primary" selected>Primary</option>
                                     </select>
                                 </div>
@@ -307,7 +325,7 @@
                             <div class="d-none" id="akiola-series">
                                 <div class="form-group mb-3">
                                     <label for="">What level do of study are you looking for?</label>
-                                    <select class="form-control" id="akiola-level" name="level" type="text">
+                                    <select class="form-control" id="akiola-level" name="akiola-level" type="text">
                                         <option value="">Level:</option>
                                         <option value="Junior High School">Junior High School</option>
                                         <option value="Senior High School">Senior High School</option>
@@ -365,7 +383,7 @@
                             <div class="d-none" id="approachers">
                                 <div class="form-group mb-3">
                                     <label for="">What level do of study are you looking for?</label>
-                                    <select class="form-control" id="approachers-level" name="level" type="text">
+                                    <select class="form-control" id="approachers-level" name="approachers-level" type="text">
                                         <option value="Senior High School" selected>Senior High School</option>
                                     </select>
                                 </div>
@@ -398,7 +416,7 @@
                             <div class="d-none" id="flamingo-series">
                                 <div class="form-group mb-3">
                                     <label for="">What level do of study are you looking for?</label>
-                                    <select class="form-control" id="flamingo-level" name="level" type="text">
+                                    <select class="form-control" id="flamingo-level" name="flamingo-level" type="text">
                                         <option value="Senior High School" selected>Senior High School</option>
                                     </select>
                                 </div>
@@ -431,7 +449,7 @@
                             <div class="d-none" id="reuben-series">
                                  <div class="form-group mb-3">
                                     <label for="">What level do of study are you looking for?</label>
-                                    <select class="form-control" id="reuben-level" name="level" type="text">
+                                    <select class="form-control" id="reuben-level" name="reuben-level" type="text">
                                         <option value="Junior High School" selected>Junior High School</option>
                                     </select>
                                 </div>
@@ -449,7 +467,7 @@
                             <div class="d-none" id="kofi-bio">
                                 <div class="form-group mb-3">
                                     <label for="">What level do of study are you looking for?</label>
-                                    <select class="form-control" id="kofi-bio-level" name="level" type="text">
+                                    <select class="form-control" id="kofi-bio-level" name="kofi-bio-level" type="text">
                                         <option value="">Level:</option>
                                         <option value="Primary">Primary</option>
                                         <option value="Junior High School">Junior High School</option>

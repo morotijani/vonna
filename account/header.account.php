@@ -24,9 +24,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="<?= PROOT; ?>account/print-job">Print Job</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="<?= PROOT; ?>account/orders">Orders</a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a class="nav-link" href="javascript:;">|</a>
                     </li>

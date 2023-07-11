@@ -84,7 +84,15 @@
         <?= $flash; ?>
         <div class="container-lg d-flex flex-column">
             <div class="row align-items-start justify-content-center">
-                <div class="col-lg-12 py-6 py-md-9">
+                <div class="col-lg-4 py-6 py-md-9">
+                    <nav class="nav flex-column">
+                        <a class="nav-link disabled">Home</a>
+                        <a class="nav-link"href="<?= PROOT; ?>account/orders">Orders</a>
+                        <a class="nav-link" href="<?= PROOT; ?>account/printjob-requests">Print job orders</a>
+                        <a class="nav-link" href="<?= PROOT; ?>account/textbook-requests">Text book orders</a>
+                    </nav>
+                </div>
+                <div class="col-lg-8 py-6 py-md-9">
                     <section class="py-1">
                         <h2 class="display-3 text-center mb-4">
                             Make An <span class="text-underline-warning">Order</span>

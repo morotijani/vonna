@@ -90,7 +90,6 @@
                                     <th>Order ID</th>
                                     <th>Writer</th>
                                     <th>Boook</th>
-                                    <th>Customer</th>
                                     <th>Date</th>
                                     <th></th>
                                 </tr>

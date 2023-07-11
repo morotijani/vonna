@@ -30,6 +30,12 @@
                     Print Jobs
                 </a>
             </li>
+            <li>
+                <a href="<?= PROOT; ?>adminvonna/Text-Books" class="nav-link link-body-emphasis">
+                    <i data-feather="book"></i>
+                    Text Books
+                </a>
+            </li>
             <!-- <li>
                 <a href="<?= PROOT; ?>adminvonna/Products" class="nav-link link-body-emphasis">
                     <i data-feather="table"></i>

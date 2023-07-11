@@ -294,6 +294,27 @@
 					            </div>
 					        </div>
             			</div>
+            			<div class="col-xl-4 col-lg-6 mt-4 mb-xl-0">
+		              		<div class="card card-stats">
+		                		<div class="card-body">
+				                  	<div class="row">
+				                    	<div class="col">
+				                      		<h5 class="card-title text-uppercase text-muted mb-0">TEXT BOOKS</h5>
+				                      		<span class="h2 font-weight-bold mb-0"><?= $conn->query("SELECT * FROM vonna_textbooks")->rowCount(); ?></span>
+				                    	</div>
+				                    	<div class="col-auto">
+				                      		<div class="icon icon-shape bg-primary text-white rounded-circle shadow">
+				                        		<i data-feather="book"></i>
+				                      		</div>
+				                    	</div>
+				                  	</div>
+					                <p class="mt-3 mb-0 text-muted text-sm">
+					                    <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> <?= date('Y-m-d'); ?></span>
+					                    <span class="text-nowrap"><?= date('F'); ?></span>
+					                </p>
+					            </div>
+					        </div>
+            			</div>
 
 			        </div>
 			    </div>

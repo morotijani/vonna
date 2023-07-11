@@ -23,6 +23,8 @@ RewriteRule ^account/textbook-requests/([0-9a-zA-Z]+)$ account/textbook-requests
 
 #ADMIN, order details
 RewriteRule ^adminvonna/Orders/([0-9a-zA-Z]+)$ adminvonna/Orders.php?details=$1 [NC,L]
+#ADMIN, order details on text book
+RewriteRule ^adminvonna/Text-Books/([0-9a-zA-Z]+)$ adminvonna/Text-Books.php?details=$1 [NC,L]
 #ADMIN, paid order
 #RewriteRule ^adminvonna/Orders/([0-9a-zA-Z]+)$ adminvonna/Orders.php?paid=$1 [NC,L]
 #ADMIN, ordered order

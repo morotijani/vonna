@@ -121,7 +121,7 @@
 				redirect(PROOT . 'adminvonna/Print-Job?pj=banner');
 			} else {
 				echo js_alert('Something went wrong... try again');
-				//redirect(PROOT . 'adminvonna/Print-Job?pj=banner');
+				// redirect(PROOT . 'adminvonna/Print-Job?pj=banner');
 			}
 		} else {
 			$_SESSION['flash_error'] = 'Unknow Banner print job order';
@@ -526,7 +526,7 @@
 		                                foreach ($subjects as $subject) {
 		                                    $sb .= '<div class="d-inline p-2 border m-1 text-bg-light">'.$subject.'</div>';
 		                                }
-		                                echo $sb;
+		                                echo '<div class="my-2">' . $sb . '</div>';
 		                            ?>
 		                            <div class="fw-bold">No to be printed</div>
 		                            <?php 
@@ -535,7 +535,7 @@
 		                                foreach ($exams_prints as $exams_print) {
 		                                    $ep .= '<div class="d-inline p-2 border m-1 text-bg-light">'.$exams_print.'</div>';
 		                                }
-		                                echo $ep;
+		                                echo '<div class="my-2">' . $ep . '</div>';
 		                            ?>
 		                            <div class="fw-bold">Level</div>
 		                            <?php 
@@ -544,7 +544,7 @@
 		                                foreach ($exams_levels as $exams_level) {
 		                                    $el .= '<div class="d-inline p-2 border m-1 text-bg-light">'.$exams_level.'</div>';
 		                                }
-		                                echo $el;
+		                                echo '<div class="my-2">' . $el . '</div>';
 		                            ?>
 		                            <div class="fw-bold">Class/Form</div>
 		                            <?php 
@@ -553,7 +553,7 @@
 		                                foreach ($exams_forms as $exams_form) {
 		                                    $ecf .= '<div class="d-inline p-2 border m-1 text-bg-light">'.$exams_form.'</div>';
 		                                }
-		                                echo $ecf;
+		                                echo '<div class="my-2">' . $ecf . '</div>';
 		                            ?>
 		                        </div>
 		                    </li>
